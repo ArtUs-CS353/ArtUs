@@ -75,6 +75,7 @@ public class ArtusApplication implements CommandLineRunner{
 		//bu haliyle çalışmıyor NEW leri silmek gerekiyor ne kadar doğru bilmiyorum!!jdbcTemplate.execute("CREATE TRIGGER auction_request_notification AFTER UPDATE ON Auction FOR EACH ROW BEGIN INSERT INTO Notification(user_id, type, content) VALUES (NEW.artist_id, 'Auction Request', CONCAT('Your auction request has been ', NEW.status)); END;");
 		jdbcTemplate.execute("CREATE TRIGGER NotifyBidEnthusiastBidStatusChange AFTER UPDATE ON Bid FOR EACH ROW BEGIN IF OLD.status <> NEW.status THEN INSERT INTO Notification(user_id, type, content) VALUES (NEW.user_id, 'Bid Request', CONCAT('Your bid request has been ', NEW.status, '.'));  END IF; END;");
 		jdbcTemplate.execute("CREATE TRIGGER auction_completion AFTER UPDATE ON Auction FOR EACH ROW BEGIN IF OLD.end_date != NEW.end_date AND NEW.end_date < NOW() THEN INSERT INTO Notification(user_id, notification_id, type, content) SELECT ar.user_id, NULL, 'Auction End', CONCAT('Your auction for artwork ID ', ar.artwork_id, ' has ended.') FROM Auction ar WHERE ar.auction_id = NEW.auction_id; END IF; END\n");
+
 	}
 
 }
