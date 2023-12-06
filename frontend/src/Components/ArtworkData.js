@@ -19,6 +19,7 @@ export const ArtworkData = [
       date: "22/10/2022",
       is_featuring: true,
       status: "onAuction",
+      remaining: "1 day 22 hrs",
       availability: "available" },
       
     { artwork_id: 2, 
