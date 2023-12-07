@@ -5,6 +5,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
+import java.util.Date;
 
 @Getter
 @Setter
@@ -20,7 +21,7 @@ public class Artwork {
     private String rarity;
     private String imageURL;
     private String movement;
-    private LocalDateTime date;
+    private Date date;
     private Boolean is_featuring;
     private float price;
     private String status;
