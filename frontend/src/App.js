@@ -17,10 +17,10 @@ function App() {
       <Routes>
       <Route path="/" element={<HomePage />} />
         <Route path="/explore" element={<Explore />} />
-        <Route path="/buy" element={<BuyArtwork />} />
+        <Route path="/buy/:id" element={<BuyArtwork />} />
         <Route path="/uploadArtwork" element={<UploadArtwork />} />
         <Route path="/details/:id" element={<DetailsPage />} />
-        <Route path="/auction" element={<AuctionPage />} />
+        <Route path="/auction/:id" element={<AuctionPage />} />
       </Routes>
     </Router>
   );

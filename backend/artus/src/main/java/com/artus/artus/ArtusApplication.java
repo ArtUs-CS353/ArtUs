@@ -41,6 +41,7 @@ public class ArtusApplication implements CommandLineRunner{
 		jdbcTemplate.execute("create table if not exists Resell(artwork_id int, customer_id int, collector_id int, price double, primary key (artwork_id, customer_id, collector_id), foreign key (artwork_id) references  Artwork(artwork_id), foreign key (customer_id) references  Enthusiast(user_id), foreign key (collector_id) references Collector(user_id));");
 		jdbcTemplate.execute("create table if not exists Display(exhibition_id int, artwork_id int,status varchar(50), primary key (exhibition_id,  artwork_id));");
 
+
 		try {
 			jdbcTemplate.execute("ALTER TABLE User ADD CONSTRAINT unique_email UNIQUE (email);\n");
 			jdbcTemplate.execute("ALTER TABLE User ADD CONSTRAINT unique_user_name UNIQUE (user_name);");
@@ -79,7 +80,6 @@ public class ArtusApplication implements CommandLineRunner{
 		}catch (Exception exception){
 			System.out.println("Error occured while creating trigger or constraint. Check it (You may ignore it):"+exception.getMessage());
 		}
-
 	}
 }
 

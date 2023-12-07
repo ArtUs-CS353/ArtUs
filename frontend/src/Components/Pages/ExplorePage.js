@@ -25,9 +25,13 @@ function ExplorePage() {
   const artists = ArtistData;
 
   function handleArtworkClick(artwork){
-    if(artwork.status === "onAuction"){
+    if (artwork.status === "onAuction"){
       //navigate to auction page
-      navigate(`/auction`);
+      navigate(`/auction/${artwork.artwork_id}`);
+    }
+    else if (artwork.status == "onSale") {
+      //navigate to buy page
+      navigate(`/buy/${artwork.artwork_id}`);
     }
     else{
       //navigate to details page
