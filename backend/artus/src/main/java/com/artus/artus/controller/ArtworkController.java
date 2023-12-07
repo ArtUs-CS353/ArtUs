@@ -2,7 +2,6 @@ package com.artus.artus.controller;
 import com.artus.artus.models.Artwork;
 import com.artus.artus.service.ArtworkService;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
@@ -10,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
+import java.util.List;
 
 @RestController
 @RequestMapping("/artwork")
@@ -52,6 +52,28 @@ public class ArtworkController {
 
         if(result)
             return new ResponseEntity<>(artwork, HttpStatus.OK);
+        else{
+            return new ResponseEntity<>(null, HttpStatus.I_AM_A_TEAPOT);
+        }
+    }
+
+    @GetMapping
+    public ResponseEntity<List<Artwork>> getAllArtworks() {
+        List<Artwork> artworks = artworkService.getAllArtworks();
+        if(artworks != null){
+            return new ResponseEntity<>(artworks, HttpStatus.OK);
+        }
+        else{
+            return new ResponseEntity<>(null, HttpStatus.I_AM_A_TEAPOT);
+        }
+    }
+
+    @GetMapping("/artist/{artistId}")
+    public ResponseEntity<List<Artwork>> getArtworksByArtistId(@PathVariable int artistId) {
+        List<Artwork> artworks = artworkService.getAllArtworksOfArtist(artistId);
+        if(artworks != null){
+            return new ResponseEntity<>(artworks, HttpStatus.OK);
+        }
         else{
             return new ResponseEntity<>(null, HttpStatus.I_AM_A_TEAPOT);
         }

@@ -2,8 +2,11 @@ package com.artus.artus.service;
 
 import com.artus.artus.models.Artwork;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
+import java.util.List;
+
 @Service
 public class ArtworkService {
     private final JdbcTemplate jdbcTemplate;
@@ -26,6 +29,32 @@ public class ArtworkService {
             e.printStackTrace();
             // If the insertion fails, return false
             return false;
+        }
+    }
+
+    public List<Artwork> getAllArtworks() {
+        try{
+            String sql = "SELECT * FROM Artwork";
+            return jdbcTemplate.query(sql, new BeanPropertyRowMapper<>(Artwork.class));
+        }
+        catch(Exception e){
+            // Handle exceptions, log errors, etc.
+            e.printStackTrace();
+            // If the insertion fails, return false
+            return null;
+        }
+    }
+
+    public List<Artwork> getAllArtworksOfArtist(int artistId) {
+        try{
+            String sql = "SELECT * FROM Artwork WHERE artist_id = ?";
+            return jdbcTemplate.query(sql, new BeanPropertyRowMapper<>(Artwork.class), artistId);
+        }
+        catch(Exception e){
+            // Handle exceptions, log errors, etc.
+            e.printStackTrace();
+            // If the insertion fails, return false
+            return null;
         }
     }
 }
