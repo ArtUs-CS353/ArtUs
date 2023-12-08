@@ -1,6 +1,6 @@
-package com.artus.artus.controller;
+package com.artus.artus.controllers;
 import com.artus.artus.models.Artwork;
-import com.artus.artus.service.ArtworkService;
+import com.artus.artus.services.ArtworkService;
 import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
