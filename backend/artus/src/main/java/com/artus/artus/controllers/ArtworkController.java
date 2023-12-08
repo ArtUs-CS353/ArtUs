@@ -8,6 +8,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
 
@@ -34,7 +35,9 @@ public class ArtworkController {
                                                  @RequestParam("material") String material,
                                                  @RequestParam("rarity") String rarity,
                                                  @RequestParam("imageURL") String imageURL,
-                                                 @RequestParam("date") @DateTimeFormat(pattern = "yyyy-MM-dd") Date date
+                                                 @RequestParam("date") LocalDate date,
+                                                 @RequestParam("availability") String availability,
+                                                 @RequestParam("Status") String status
     ) {
         Artwork artwork = new Artwork();
         artwork.setArtist_id(artistId);
@@ -48,6 +51,8 @@ public class ArtworkController {
         artwork.setMovement(movement);
         artwork.setPrice(price);
         artwork.setDate(date);
+        artwork.setAvailability(availability);
+        artwork.setStatus(status);
         boolean result = artworkService.createArtwork(artwork);
 
         if(result)
@@ -57,7 +62,7 @@ public class ArtworkController {
         }
     }
 
-    @GetMapping
+    @GetMapping("/getAll")
     public ResponseEntity<List<Artwork>> getAllArtworks() {
         List<Artwork> artworks = artworkService.getAllArtworks();
         if(artworks != null){
