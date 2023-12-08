@@ -7,7 +7,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
-public class Artist {
+public class Artist extends User{
     private int user_id;
     private String profile_details;
     private int follower_count;

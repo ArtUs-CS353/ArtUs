@@ -1,4 +1,4 @@
-package com.artus.artus.service;
+package com.artus.artus.services;
 
 import com.artus.artus.models.Artwork;
 import org.springframework.beans.factory.annotation.Autowired;

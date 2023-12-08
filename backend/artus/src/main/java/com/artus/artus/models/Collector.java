@@ -7,6 +7,6 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
-public class Collector {
+public class Collector extends Enthusiast{
     private int user_id;
 }
