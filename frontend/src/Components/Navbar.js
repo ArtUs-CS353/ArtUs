@@ -164,8 +164,7 @@ export default function PrimarySearchAppBar() {
               </Badge>
             </IconButton>
             <IconButton
-                color="inherit"
-                onClick={() => navigate('/artistProfile')}>
+                color="inherit">
               <AccountCircle />
             </IconButton>
           </Box>
