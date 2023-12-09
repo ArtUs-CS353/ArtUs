@@ -8,6 +8,9 @@ import HomePage from './Components/Pages/HomePage';
 import './App.css'
 import DetailsPage from './Components/Pages/DetailsPage';
 import AuctionPage from './Components/Pages/AuctionPage';
+import ArtistProfile from './Components/Pages/ArtistProfilePage';
+import DetailsArtistPage from './Components/Pages/DetailsArtistPage'; 
+
 
 function App() {
   return (
@@ -21,6 +24,8 @@ function App() {
         <Route path="/uploadArtwork" element={<UploadArtwork />} />
         <Route path="/details/:id" element={<DetailsPage />} />
         <Route path="/auction/:id" element={<AuctionPage />} />
+        <Route path="/artistProfile" element={<ArtistProfile />} />
+        <Route path="/detailsArtist/:id" element={<DetailsArtistPage />} />
       </Routes>
     </Router>
   );
