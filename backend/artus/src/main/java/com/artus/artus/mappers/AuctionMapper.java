@@ -2,11 +2,14 @@ package com.artus.artus.mappers;
 
 import com.artus.artus.models.Auction;
 import org.springframework.jdbc.core.RowMapper;
+import org.springframework.stereotype.Component;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.time.LocalDateTime;
 
+@Component
 public class AuctionMapper implements RowMapper<Auction> {
     @Override
     public Auction mapRow(ResultSet rs, int rowNum) throws SQLException {
