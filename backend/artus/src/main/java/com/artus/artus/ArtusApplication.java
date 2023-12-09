@@ -18,7 +18,7 @@ public class ArtusApplication implements CommandLineRunner{
 
 	@Override
 	public void run(String... strings) throws Exception {
-		jdbcTemplate.execute("create table if not exists User(user_id int NOT NULL AUTO_INCREMENT, user_name VARCHAR(50), user_surname VARCHAR(50),user_role int, email VARCHAR(30), password VARCHAR(20), contact_info VARCHAR(100), primary key (user_id));");
+		jdbcTemplate.execute("create table if not exists User(user_id int NOT NULL AUTO_INCREMENT, user_name VARCHAR(50), user_surname VARCHAR(50),user_role int, email VARCHAR(30), password VARCHAR(255), contact_info VARCHAR(100), primary key (user_id));");
 		jdbcTemplate.execute("create table if not exists Enthusiast( user_id INT, address varchar(200), balance NUMERIC(11,2), primary key(user_id), foreign key (user_id) REFERENCES User (user_id));");
 		jdbcTemplate.execute("create table if not exists Collector( user_id INT, primary key(user_id), foreign key (user_id) REFERENCES Enthusiast(user_id));");
 		jdbcTemplate.execute("create table if not exists Admin(user_id INT, role VARCHAR(20), foreign key (user_id) REFERENCES User (user_id));");
