@@ -2,6 +2,7 @@ package com.artus.artus;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
@@ -26,7 +27,7 @@ public class ArtusApplication implements CommandLineRunner{
 		jdbcTemplate.execute("create table if not exists Preference(preference_name VARCHAR(50), primary key (preference_name));");
 		jdbcTemplate.execute("create table if not exists User_Preference(user_id INT, preference_name VARCHAR(20),primary key (user_id, preference_name),foreign key (user_id) references User (user_id),foreign key (preference_name) references Preference(preference_name));");
 		jdbcTemplate.execute("create table if not exists Artwork (artwork_id INT NOT NULL AUTO_INCREMENT, artist_id INT, title VARCHAR(50), description VARCHAR(300), type VARCHAR(50), material VARCHAR(150), size VARCHAR(30), rarity VARCHAR(30), imageURL varchar(300), movement varchar(10), date DATE, is_featuring boolean,price NUMERIC(30), status varchar(20),availability varchar(20), primary key (artwork_id), foreign key (artist_id ) REFERENCES Artist(user_id));");
-		jdbcTemplate.execute("create table if not exists Auction(auction_id int, artwork_id int,start_date datetime, end_date datetime, type varchar(10), starting_amount double,status varchar(10), primary key (auction_id));");
+		jdbcTemplate.execute("create table if not exists Auction(auction_id int NOT NULL AUTO_INCREMENT, artwork_id int,start_date datetime, end_date datetime, type varchar(10), starting_amount double,status varchar(10), primary key (auction_id));");
 		jdbcTemplate.execute("create table if not exists Purchase(user_id int, artwork_id int, purchase_id int, purchase_date date, price double, receipt BLOB, primary key (user_id, artwork_id, purchase_id), foreign key (artwork_id) references Artwork(artwork_id), foreign key (user_id) references User(user_id));");
 		jdbcTemplate.execute("create table if not exists Notification(user_id int, notification_id int, type varchar(10), content varchar(50), primary key (user_id, notification_id), foreign key (user_id) references User(user_id));");
 		jdbcTemplate.execute("create table if not exists Bid(user_id int,auction_id int,bid_id int,amount int,time_stamp datetime, status varchar(50), primary key (user_id, auction_id, bid_id),foreign key (user_id) references User(user_id),foreign key (auction_id) references Auction(auction_id));");

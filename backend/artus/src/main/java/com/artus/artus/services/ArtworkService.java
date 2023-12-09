@@ -1,5 +1,6 @@
 package com.artus.artus.services;
 
+import com.artus.artus.mappers.ArtworkMapper;
 import com.artus.artus.models.Artwork;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
@@ -10,10 +11,12 @@ import java.util.List;
 @Service
 public class ArtworkService {
     private final JdbcTemplate jdbcTemplate;
+    private final ArtworkMapper artworkMapper;
 
     @Autowired
-    public ArtworkService(JdbcTemplate jdbcTemplate) {
+    public ArtworkService(JdbcTemplate jdbcTemplate, ArtworkMapper artworkMapper) {
         this.jdbcTemplate = jdbcTemplate;
+        this.artworkMapper = artworkMapper;
     }
 
     public boolean createArtwork(Artwork artwork) {
@@ -35,7 +38,7 @@ public class ArtworkService {
     public List<Artwork> getAllArtworks() {
         try{
             String sql = "SELECT * FROM Artwork";
-            return jdbcTemplate.query(sql, new BeanPropertyRowMapper<>(Artwork.class));
+            return jdbcTemplate.query(sql, artworkMapper);
         }
         catch(Exception e){
             // Handle exceptions, log errors, etc.
@@ -48,7 +51,7 @@ public class ArtworkService {
     public List<Artwork> getAllArtworksOfArtist(int artistId) {
         try{
             String sql = "SELECT * FROM Artwork WHERE artist_id = ?";
-            return jdbcTemplate.query(sql, new BeanPropertyRowMapper<>(Artwork.class), artistId);
+            return jdbcTemplate.query(sql, artworkMapper, artistId);
         }
         catch(Exception e){
             // Handle exceptions, log errors, etc.

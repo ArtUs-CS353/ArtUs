@@ -1,12 +1,15 @@
 package com.artus.artus.mappers;
 
 import com.artus.artus.models.Artwork;
+import org.springframework.context.annotation.Bean;
 import org.springframework.jdbc.core.RowMapper;
+import org.springframework.stereotype.Component;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.time.LocalDate;
 import java.util.Date;
-
+@Component
 public class ArtworkMapper implements RowMapper<Artwork> {
     @Override
     public Artwork mapRow(ResultSet rs, int rowNum) throws SQLException {
@@ -20,7 +23,7 @@ public class ArtworkMapper implements RowMapper<Artwork> {
         String rarity = rs.getString("rarity");
         String imageURL = rs.getString("imageURL");
         String movement = rs.getString("movement");
-        Date date = rs.getObject("date", Date.class);
+        LocalDate date = rs.getObject("date", LocalDate.class);
         Boolean is_featuring = rs.getBoolean("is_featuring");
         float price = rs.getFloat("price");
         String status = rs.getString("status");
