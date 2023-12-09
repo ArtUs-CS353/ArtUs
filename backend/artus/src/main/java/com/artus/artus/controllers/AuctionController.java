@@ -1,5 +1,4 @@
 package com.artus.artus.controllers;
-import com.artus.artus.models.Artwork;
 import com.artus.artus.models.Auction;
 import com.artus.artus.services.AuctionService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,7 +7,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -24,19 +22,35 @@ public class AuctionController {
     }
 
     @PostMapping("/create")
-    public ResponseEntity<Auction> createAuction(@RequestParam String type, @RequestParam float price, @RequestParam int artworkId, @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm") LocalDateTime startDatetime, @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm") LocalDateTime endDatetime) {
-        Auction auction= new Auction();
+    public ResponseEntity<Auction> createAuction(@RequestParam String type,
+                                                 @RequestParam float price,
+                                                 @RequestParam int artworkId,
+                                                 @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm") LocalDateTime startDatetime,
+                                                 @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm") LocalDateTime endDatetime) {
+
+        if(startDatetime.isBefore(LocalDateTime.now())){
+            System.out.println("Start datetime must be in the future");
+            return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
+        }
+
+        if(endDatetime.isBefore(startDatetime)){
+            System.out.println("End datetime must be after start datetime");
+            return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
+        }
+
+        // Your existing code to create an Auction
+        Auction auction = new Auction();
         auction.setType(type);
         auction.setStarting_amount(price);
         auction.setArtwork_id(artworkId);
         auction.setStart_date(startDatetime);
         auction.setEnd_date(endDatetime);
+
         boolean result = auctionService.createAuction(auction);
 
-        if(result){
+        if (result) {
             return new ResponseEntity<>(auction, HttpStatus.OK);
-        }
-        else{
+        } else {
             return new ResponseEntity<>(null, HttpStatus.I_AM_A_TEAPOT);
         }
     }
