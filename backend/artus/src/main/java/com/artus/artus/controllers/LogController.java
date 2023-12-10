@@ -9,10 +9,9 @@ import com.artus.artus.services.RegisterService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping()
@@ -46,6 +45,27 @@ public class LogController {
         enthusiast.setUser_role(role);
         return new ResponseEntity<>(registerService.registerEnthusiast(enthusiast,preferences), HttpStatus.OK);
     }
+
+    @GetMapping("/register/getTypes")
+    public ResponseEntity<List<String>> getTypes(){
+        return new ResponseEntity<>(registerService.getTypes(),HttpStatus.OK);
+    }
+
+    @GetMapping("/register/getMaterials")
+    public ResponseEntity<List<String>> getMaterials(){
+        return new ResponseEntity<>(registerService.getMaterials(),HttpStatus.OK);
+    }
+
+    @GetMapping("/register/getRarities")
+    public ResponseEntity<List<String>> getRarities(){
+        return new ResponseEntity<>(registerService.getRarities(),HttpStatus.OK);
+    }
+
+    @GetMapping("/register/getMovements")
+    public ResponseEntity<List<String>> getMovements(){
+        return new ResponseEntity<>(registerService.getMovements(),HttpStatus.OK);
+    }
+
 
     @PostMapping("/register/artist")
     public ResponseEntity<String> registerArtist(@RequestParam("userName") String userName,

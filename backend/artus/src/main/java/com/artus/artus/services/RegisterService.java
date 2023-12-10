@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Objects;
 
 @Service
@@ -74,6 +75,28 @@ public class RegisterService {
             return "Error at registration process! Check It.";
         }
     }
+
+    public List<String> getTypes(){
+        String sql = "Select type_name from Type order by type_name";
+        return jdbcTemplate.query(sql, (rs, rowNum) -> rs.getString(1));
+    }
+
+    public List<String> getMaterials(){
+        String sql = "Select material_name from Material order by material_name";
+        return jdbcTemplate.query(sql, (rs, rowNum) -> rs.getString(1));
+    }
+
+    public List<String> getRarities(){
+        String sql = "Select rarity_name from Rarity order by rarity_name";
+        return jdbcTemplate.query(sql, (rs, rowNum) -> rs.getString(1));
+    }
+
+    public List<String> getMovements(){
+        String sql = "Select movement_name from Movement order by movement_name";
+        return jdbcTemplate.query(sql, (rs, rowNum) -> rs.getString(1));
+    }
+
+
 
 
 }
