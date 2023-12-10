@@ -1,0 +1,9 @@
+/register/enthusiast -> registration for enthusiast or collector. preferences as list is needed, role needed. check the logcontroller
+/register/getTypes -> returns all types as list. check the logcontroller
+/register/getMaterials -> returns all materials as list. check the logcontroller
+/register/getRarities -> returns all rarities as list. check the logcontroller
+/register/getMovements -> returns all rarities as list. check the logcontroller
+
+/register/artist -> check the logcontroller
+
+/login -> check the logcontroller
