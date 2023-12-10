@@ -2,7 +2,6 @@ package com.artus.artus;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.context.annotation.ComponentScan;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
@@ -25,7 +24,7 @@ public class ArtusApplication implements CommandLineRunner{
 		jdbcTemplate.execute("create table if not exists Admin(user_id INT, role VARCHAR(20), foreign key (user_id) REFERENCES User (user_id));");
 		jdbcTemplate.execute("create table if not exists Artist(user_id INT,  profile_details VARCHAR(100), follower_count INT, is_featuring boolean, biography VARCHAR(1500), balance NUMERIC(11,2), primary key (user_id), foreign key (user_id) REFERENCES User (user_id)) ;");
 		jdbcTemplate.execute("create table if not exists Preference(preference_name VARCHAR(50), primary key (preference_name));");
-		jdbcTemplate.execute("create table if not exists User_Preference(user_id INT, preference_name VARCHAR(20),primary key (user_id, preference_name),foreign key (user_id) references User (user_id),foreign key (preference_name) references Preference(preference_name));");
+		jdbcTemplate.execute("create table if not exists User_Preference(user_id INT, preference_name VARCHAR(50),primary key (user_id, preference_name),foreign key (user_id) references Enthusiast (user_id),foreign key (preference_name) references Preference(preference_name));");
 		jdbcTemplate.execute("create table if not exists Artwork (artwork_id INT NOT NULL AUTO_INCREMENT, artist_id INT, title VARCHAR(50), description VARCHAR(300), type VARCHAR(50), material VARCHAR(150), size VARCHAR(30), rarity VARCHAR(30), imageURL varchar(300), movement varchar(10), date DATE, is_featuring boolean,price NUMERIC(30), status varchar(20),availability varchar(20), primary key (artwork_id), foreign key (artist_id ) REFERENCES Artist(user_id));");
 		jdbcTemplate.execute("create table if not exists Auction(auction_id int NOT NULL AUTO_INCREMENT, artwork_id int,start_date datetime, end_date datetime, type varchar(10), starting_amount double,status varchar(10), primary key (auction_id));");
 		jdbcTemplate.execute("create table if not exists Purchase(user_id int, artwork_id int, purchase_id int, purchase_date date, price double, receipt BLOB, primary key (user_id, artwork_id, purchase_id), foreign key (artwork_id) references Artwork(artwork_id), foreign key (user_id) references User(user_id));");
@@ -41,11 +40,14 @@ public class ArtusApplication implements CommandLineRunner{
 		jdbcTemplate.execute("create table if not exists Owns(artwork_id int, user_id int, primary key (artwork_id, user_id),foreign key (artwork_id) references  Artwork(artwork_id), foreign key (user_id)references Enthusiast(user_id));");
 		jdbcTemplate.execute("create table if not exists Resell(artwork_id int, customer_id int, collector_id int, price double, primary key (artwork_id, customer_id, collector_id), foreign key (artwork_id) references  Artwork(artwork_id), foreign key (customer_id) references  Enthusiast(user_id), foreign key (collector_id) references Collector(user_id));");
 		jdbcTemplate.execute("create table if not exists Display(exhibition_id int, artwork_id int,status varchar(50), primary key (exhibition_id,  artwork_id));");
+		jdbcTemplate.execute("create table if not exists Type(type_name varchar(50),primary key (type_name));");
+		jdbcTemplate.execute("create table if not exists Rarity(rarity_name varchar(50),primary key (rarity_name));");
+		jdbcTemplate.execute("create table if not exists Material(material_name varchar(50),primary key (material_name));");
+		jdbcTemplate.execute("create table if not exists Movement(movement_name varchar(50),primary key (movement_name));");
 
 
 		try {
 			jdbcTemplate.execute("ALTER TABLE User ADD CONSTRAINT unique_email UNIQUE (email);\n");
-			jdbcTemplate.execute("ALTER TABLE User ADD CONSTRAINT unique_user_name UNIQUE (user_name);");
 			jdbcTemplate.execute("ALTER TABLE Artist ADD CONSTRAINT check_follower_count CHECK (follower_count >= 0);");
 			jdbcTemplate.execute("ALTER TABLE Auction ADD CONSTRAINT check_starting_amount CHECK (starting_amount >= 0);");
 			jdbcTemplate.execute("ALTER TABLE Purchase ADD CONSTRAINT check_purchase_amount CHECK (price > 0);");
@@ -55,6 +57,10 @@ public class ArtusApplication implements CommandLineRunner{
 			jdbcTemplate.execute("ALTER TABLE Artwork MODIFY title VARCHAR(50) NOT NULL;");
 			jdbcTemplate.execute("ALTER TABLE User ADD CONSTRAINT chk_password_length CHECK (CHAR_LENGTH(password) >= 6);");
 			jdbcTemplate.execute("ALTER TABLE Enthusiast ADD CONSTRAINT chk_balance CHECK (balance >= 0);");
+			jdbcTemplate.execute("CREATE TRIGGER insert_into_preference_type AFTER INSERT ON Type FOR EACH ROW INSERT INTO Preference (preference_name) VALUES (NEW.type_name);");
+			jdbcTemplate.execute("CREATE TRIGGER insert_into_preference_rarity AFTER INSERT ON Rarity FOR EACH ROW INSERT INTO Preference (preference_name) VALUES (NEW.rarity_name);");
+			jdbcTemplate.execute("CREATE TRIGGER insert_into_preference_material AFTER INSERT ON Material FOR EACH ROW INSERT INTO Preference (preference_name) VALUES (NEW.material_name);");
+			jdbcTemplate.execute("CREATE TRIGGER insert_into_preference_movement AFTER INSERT ON Movement FOR EACH ROW INSERT INTO Preference (preference_name) VALUES (NEW.movement_name);");
 			jdbcTemplate.execute("CREATE TRIGGER delete_associated_bids BEFORE DELETE ON Auction FOR EACH ROW BEGIN DELETE FROM Bid WHERE auction_id = OLD.auction_id; END;");
 			jdbcTemplate.execute("CREATE TRIGGER delete_artist_data BEFORE DELETE ON Artist FOR EACH ROW BEGIN DELETE FROM Follow WHERE artist_id = OLD.user_id; DELETE FROM Sell WHERE user_id = OLD.user_id;  DELETE FROM Artwork WHERE user_id = OLD.user_id; DELETE FROM Message WHERE artist_id = OLD.user_id; END;");
 			jdbcTemplate.execute("CREATE TRIGGER delete_artwork_data BEFORE DELETE ON Artwork FOR EACH ROW BEGIN  DELETE FROM Auction WHERE artwork_id = OLD.artwork_id; END;");

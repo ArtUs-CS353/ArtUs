@@ -32,7 +32,9 @@ public class LogController {
                                                       @RequestParam("email") String email,
                                                       @RequestParam("password") String password,
                                                       @RequestParam("contactInfo") String contactInfo,
-                                                      @RequestParam("address") String address
+                                                      @RequestParam("address") String address,
+                                                      @RequestParam("role") int role,
+                                                      @RequestParam("Preferences") String[] preferences
     ){
         Enthusiast enthusiast = new Enthusiast();
         enthusiast.setContact_info(contactInfo);
@@ -41,7 +43,8 @@ public class LogController {
         enthusiast.setUser_name(userName);
         enthusiast.setUser_surname(userSurname);
         enthusiast.setAddress(address);
-        return new ResponseEntity<>(registerService.registerEnthusiast(enthusiast), HttpStatus.OK);
+        enthusiast.setUser_role(role);
+        return new ResponseEntity<>(registerService.registerEnthusiast(enthusiast,preferences), HttpStatus.OK);
     }
 
     @PostMapping("/register/artist")

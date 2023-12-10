@@ -58,7 +58,7 @@ public class DatabaseLoader {
 
     private void initArtworkTable(){
         try {
-            jdbcTemplate.execute("INSERT INTO Artwork (artwork_id, artist_id, title, description, type, material, size, rarity, imageURL, movement, date, is_featuring, price, status, availability) VALUES\n" +
+            jdbcTemplate.execute("INSERT INTO Artwork (artwork_id, artist_id, title, description, type, material, size, rarity, imageURL, movement, date, is_featuring, price, status, availability) VALUES" +
                     "(1, 1, 'Untitled', 'Hand-signed by artist, Hand Signed Lower Right, Includes a Certificate of Authenticity', 'Drawing, Collage or other Work on Paper', 'Mixed Media on Paper', '22.9 × 30.5 cm','Unique','https://d7hftxdivxxvm.cloudfront.net?height=667&quality=85&resize_to=fit&src=https%3A%2F%2Fd32dm0rphc51dk.cloudfront.net%2FOK0GVkyEWSSFJFz2TOqf0Q%2Fnormalized.jpg&width=800', '','2019-01-01',  FALSE, 15000.00, 'auction', 'available')," +
                     "(2, 1, 'Veszhuu A Party in Vegas Wolf Spider or a Owl', 'Hand-signed by artist, Back of Painting, Includes a Certificate of Authenticity', 'Painting', 'Mixed Media on Canvas', '152.4 × 109.2 cm', 'Unique', 'https://d7hftxdivxxvm.cloudfront.net?height=800&quality=85&resize_to=fit&src=https%3A%2F%2Fd32dm0rphc51dk.cloudfront.net%2FWMT6K8I6v3qxQwVl-s_T2Q%2Fmain.jpg&width=800', '', '2015-01-01', TRUE, 55000.00, 'sale', 'available')," +
                     "(3, 1, 'Artist Plate Project', 'Signed in plate, Plate signed, Part of a limited edition set, Includes a Certificate of Authenticity', 'Ephemera or Merchandise', 'Ceramic', '26.7 × 26.7 cm', 'Limited edition', 'https://d7hftxdivxxvm.cloudfront.net?height=800&quality=85&resize_to=fit&src=https%3A%2F%2Fd32dm0rphc51dk.cloudfront.net%2F4EvVyQNvM9TqrBJviww7lg%2Fmain.jpg&width=800', '', '2023-01-01', false, 750, 'auction', 'available')," +
@@ -73,12 +73,14 @@ public class DatabaseLoader {
 
     private void initPreferenceTable(){
         try {
-            jdbcTemplate.execute("INSERT INTO Preference (preference_name) Values (''),('Drawing'),('Collage'),('Paper'),('Mixed Media'),('Unique'),('Limited edition'),('Painting'),('Paint'),('Canvas')," +
-                    "('Ceramic'),('Print'),('Oil'),('Clothing'),('Ink'),('Acrylic'),('Open Edition'),('Photography'),('NFT'),('Design'),('Film/Video'),('Performance Art'),('Ephemera or Merchandise'),('Clay')," +
-                    "('Cotton'),('Digital'),('Glass'),('Gold'),('Iron'),('Marble'),('Metal'),('Panel'),('Pencil'),('Plastic'),('Silk'),('Silver'),('Steel'),('Stone'),('Wood');");
-
+            jdbcTemplate.execute("INSERT INTO Type (type_name) Values ('Drawing'),('Painting'),('Prints'),('Photography'),('NFT'),('Film/Video'),('Performance Art'),('Ephemera or Merchandise'),('Sculpture'),('Work on Paper'),('Design'),('Installation'),('Jewelry'),('Reproduction');");
+            jdbcTemplate.execute("INSERT INTO Material (material_name) Values ('Collage'),('Paper'),('Arches paper'),('Art paper'),('Laid paper'),('Rag paper'),('Wove paper'),('Mixed Media'),('Paint'),('Spray paint'),('Blown glass'),('Canvas'),('Sound'),('Video')," +
+                    "('Ceramic'),('Screen print'),('Oil'),('Ink'),('Acrylic'),('Clay'),('Crystal'),('Dye'),('Foam'),('Graphite'),('Leaf'),('Lacquer'),('Leather'),('Monotype'),('Pastel'),('Pigment'),('Platinum'),('Polaroid'),('Porcelain'),('Resin'),('Thread'),('Walnut')," +
+                    "('Cotton'),('Digital'),('Glass'),('Gold'),('Iron'),('Marble'),('Metal'),('Panel'),('Pencil'),('Plastic'),('Plaster'),('Silk'),('Concrete'),('Copper'),('Silver'),('Stainless steel'),('Bronze'),('Cardboard'),('Steel'),('Stone'),('Wood'),('Wire');");
+            jdbcTemplate.execute("INSERT INTO Rarity (rarity_name) Values ('Unique'),('Limited Edition'),('Open Edition'),('Unknown Edition');");
+            jdbcTemplate.execute("INSERT INTO Movement (movement_name) VALUES ('Contemporary Art'),('Emerging Art'),('Street Art'),('Abstract Art'),('Pop Art'),('Minimalism'),('Impressionist and Modern Art'),('Surrealism'),('Cubism'),('Romanticism')");
         }catch (Exception e){
-            System.out.println("Error occurred while inserting into Preference table:"+e.getMessage());
+            System.out.println("Error occurred while inserting into Preference tables:"+e.getMessage());
         }
     }
 
