@@ -22,7 +22,7 @@ public class BidService {
     }
 
     public double getHighestBid(int auctionId){
-        String sql1 = "SELECT MAX(amount) FROM Bid WHERE auction_id =?";
+        String sql1 = "SELECT MAX(price) FROM Bid WHERE auction_id =?";
         Double highestBid = jdbcTemplate.queryForObject(sql1, Double.class, auctionId);
 
         if (highestBid != null) {
@@ -37,7 +37,7 @@ public class BidService {
 
     public Boolean bidForAuction(int userId, int auctionId, double price) {
         try{
-            String sql = "INSERT INTO Bid(user_id ,auction_id , amount,time_stamp, status) VALUES (?, ?, ?, ?, ?)";
+            String sql = "INSERT INTO Bid(user_id ,auction_id , price,time_stamp, status) VALUES (?, ?, ?, ?, ?)";
             jdbcTemplate.update(sql,  userId, auctionId, price, LocalDateTime.now(), "Waiting");
             return true;
         }
@@ -78,4 +78,16 @@ public class BidService {
     }
 
 
+    public Bid getBidWithHighestPrice(int auctionId) {
+        try{
+            String sql1 = "SELECT * FROM Bid WHERE auction_id = ? ORDER BY price DESC LIMIT 1;";
+            Bid highestBid = jdbcTemplate.queryForObject(sql1, bidMapper, auctionId);
+            return highestBid;
+        } catch (Exception e) {
+            // Handle exceptions, log errors, etc.
+            e.printStackTrace();
+            // If the update fails, return false
+            return null;
+        }
+    }
 }

@@ -19,6 +19,16 @@ public class BidController {
         this.auctionService = auctionService;
     }
 
+    @GetMapping("/getHighestBid")
+    public ResponseEntity<Bid> getHighestBid(int auctionId){
+        Bid bid = bidService.getBidWithHighestPrice(auctionId);
+        if(bid != null)
+            return new ResponseEntity<>(bid, HttpStatus.OK);
+        else{
+            return new ResponseEntity<>(null, HttpStatus.I_AM_A_TEAPOT);
+        }
+    }
+
     @PostMapping("/bidForAuction")
     public ResponseEntity<Bid> bidForAuction(int user_id, int auction_id, double price){
         String type = auctionService.getAuctionType(auction_id);
@@ -39,7 +49,7 @@ public class BidController {
         Bid bid = new Bid();
         bid.setAuction_id(auction_id);
         bid.setUser_id(user_id);
-        bid.setAmount(price);
+        bid.setPrice(price);
         Boolean result = bidService.bidForAuction(user_id,  auction_id,  price);
         if(result)
             return new ResponseEntity<>(bid, HttpStatus.OK);
