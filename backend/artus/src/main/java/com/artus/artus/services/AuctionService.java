@@ -95,4 +95,19 @@ private final AuctionMapper auctionMapper;
             return null;
         }
     }
+
+    public String getAuctionStatus(int auctionId){
+        String sql1 = "SELECT * FROM Auction WHERE auction_id =?";
+        return jdbcTemplate.queryForObject(sql1, auctionMapper, auctionId).getStatus();
+    }
+
+    public String getAuctionType(int auctionId){
+        String sql1 = "SELECT * FROM Auction WHERE auction_id =?";
+        return jdbcTemplate.queryForObject(sql1, auctionMapper, auctionId).getType();
+    }
+
+    public double getAuctionStartingAmount(int auctionId){
+        String sql1 = "SELECT * FROM Auction WHERE auction_id =?";
+        return jdbcTemplate.queryForObject(sql1, auctionMapper, auctionId).getStarting_amount();
+    }
 }

@@ -16,6 +16,6 @@ public class Auction {
     private LocalDateTime start_date;
     private LocalDateTime end_date;
     private String type;
-    private float starting_amount;
+    private double starting_amount;
     private String status;
 }
