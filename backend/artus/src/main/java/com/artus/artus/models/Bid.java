@@ -13,7 +13,7 @@ public class Bid {
     private int user_id;
     private int auction_id;
     private int bid_id;
-    private int amount;
+    private double price;
     private LocalDateTime time_stamp;
     private String status;
 }

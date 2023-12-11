@@ -110,4 +110,8 @@ public class AuctionController {
         }
     }
 
+    public String getStatus(int auctionId){
+        return auctionService.getAuctionStatus(auctionId);
+    }
+
 }

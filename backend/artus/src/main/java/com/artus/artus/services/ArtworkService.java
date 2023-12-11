@@ -60,4 +60,17 @@ public class ArtworkService {
             return null;
         }
     }
+
+    public Artwork getArtwork(int artworkId) {
+        try{
+            String sql = "SELECT * FROM Artwork WHERE artwork_id = ?";
+            return jdbcTemplate.queryForObject(sql, artworkMapper, artworkId);
+        }
+        catch(Exception e){
+            // Handle exceptions, log errors, etc.
+            e.printStackTrace();
+            // If the insertion fails, return false
+            return null;
+        }
+    }
 }

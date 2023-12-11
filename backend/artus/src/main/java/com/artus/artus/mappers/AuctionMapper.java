@@ -18,7 +18,7 @@ public class AuctionMapper implements RowMapper<Auction> {
         LocalDateTime start_date = rs.getObject("start_date", LocalDateTime.class);
         LocalDateTime end_date = rs.getObject("end_date", LocalDateTime.class);
         String type = rs.getString("type");
-        float starting_amount = rs.getFloat("starting_amount");
+        double starting_amount = rs.getFloat("starting_amount");
         String status = rs.getString("status");
 
         Auction auction = new Auction();
