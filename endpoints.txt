@@ -1,3 +1,6 @@
+(You can check/run the APIs below from Swagger link, therefore you can see what are the inputs and outputs)
+http://localhost:8080/swagger-ui/index.html#/
+
 /register/enthusiast -> registration for enthusiast or collector. preferences as list is needed, role needed. check the logcontroller
 /register/getTypes -> returns all types as list. check the logcontroller
 /register/getMaterials -> returns all materials as list. check the logcontroller
@@ -7,3 +10,22 @@
 /register/artist -> check the logcontroller
 
 /login -> check the logcontroller
+
+/artwork/upload -> Upload a new artwork
+/artwork/getAll
+/artwork/artist/{artistId} -> get all artworks of a spesific Artist
+/artwork/{artworkId} -> get information  of a specific artwork
+
+/bid/getHighestBid
+/bid/bidForAuction
+/bid/acceptBid
+/bid/rejectBid
+
+/auction/create
+/auction/getAllWaitingAuctions
+/auction/getAllApprovedAuctions
+/auction/getAllDeclinedAuctions
+/auction/approve
+/auction/decline
+
+
