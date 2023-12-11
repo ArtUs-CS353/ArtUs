@@ -83,4 +83,15 @@ public class ArtworkController {
             return new ResponseEntity<>(null, HttpStatus.I_AM_A_TEAPOT);
         }
     }
+
+    @GetMapping("/{artworkId}")
+    public ResponseEntity<Artwork> getArtwork(@PathVariable int artworkId) {
+        Artwork artwork = artworkService.getArtwork(artworkId);
+        if(artwork != null){
+            return new ResponseEntity<>(artwork, HttpStatus.OK);
+        }
+        else{
+            return new ResponseEntity<>(null, HttpStatus.I_AM_A_TEAPOT);
+        }
+    }
 }
