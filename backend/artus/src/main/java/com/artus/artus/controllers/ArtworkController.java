@@ -3,13 +3,11 @@ import com.artus.artus.models.Artwork;
 import com.artus.artus.services.ArtworkService;
 import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
-import java.util.Date;
 import java.util.List;
 
 @RestController
@@ -93,5 +91,30 @@ public class ArtworkController {
         else{
             return new ResponseEntity<>(null, HttpStatus.I_AM_A_TEAPOT);
         }
+    }
+
+    @GetMapping("/title/{title}")
+    public ResponseEntity<List<Artwork>> searchArtworkWithTitle(@PathVariable String title){
+        List<Artwork> artworkList = artworkService.searchArtworkWithTitle(title);
+        if(artworkList != null)
+            return new ResponseEntity<>(artworkService.searchArtworkWithTitle(title),HttpStatus.OK);
+        return new ResponseEntity<>(null, HttpStatus.I_AM_A_TEAPOT);
+    }
+
+    @GetMapping("filter")
+    public ResponseEntity<List<Artwork>> filterArtworks(@RequestParam(value = "types" , required = false) List<String> types,
+                                                        @RequestParam(value = "material" , required = false) List<String> material,
+                                                        @RequestParam(value = "rarity" , required = false) List<String> rarities,
+                                                        @RequestParam(value = "min_price" , required = false) Integer minPrice,
+                                                        @RequestParam(value = "max_price" , required = false) Integer maxPrice,
+                                                        @RequestParam(value = "start_date" , required = false) LocalDate startDatetime,
+                                                        @RequestParam(value = "end_date", required = false) LocalDate endDatetime)
+    {
+        return new ResponseEntity<>(artworkService.filterArtworks(types,material,rarities,minPrice,maxPrice,startDatetime,endDatetime),HttpStatus.OK);
+    }
+
+    @GetMapping("/explorePage")
+    public ResponseEntity<List<Artwork>> getExplorePage(){
+        return new ResponseEntity<>(artworkService.getExplorePage(),HttpStatus.OK);
     }
 }

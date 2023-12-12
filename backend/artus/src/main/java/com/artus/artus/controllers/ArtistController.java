@@ -38,4 +38,8 @@ public class ArtistController {
     public ResponseEntity<List<AuctionProperties>> getAuctionsByArtistID(@PathVariable int artistId){
         return new ResponseEntity<>(artistService.getAuctionsByArtistID(artistId),HttpStatus.OK);
     }
+    @GetMapping("search/{artistName}")
+    public ResponseEntity<List<Artist>> getArtistByName(@PathVariable String artistName){
+        return new ResponseEntity<>(artistService.searchArtistByNameBySurname(artistName),HttpStatus.OK);
+    }
 }
