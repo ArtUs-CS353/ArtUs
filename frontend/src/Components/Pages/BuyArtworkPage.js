@@ -10,10 +10,10 @@ function BuyArtworkPage() {
      context={  <>
       <hr style={{ width: '50%', marginRight: '50%' }}></hr>
       <Typography gutterBottom variant="h5" component="div">
-        {"Highest Bid: "}<span style={{ fontWeight: 'bold' }}>1500$</span>
+        {"Price: "}<span style={{ fontWeight: 'bold' }}>1500$</span>
       </Typography>
       <Button onClick={handleBuy} sx={{ mt: 2, backgroundColor: "#302F4D", '&:hover': { backgroundColor: "#1e1d30" }, pr: 4, pl: 4 }} variant="contained">
-        Place Bid
+        Buy Artwork
       </Button>
     </>}
      />

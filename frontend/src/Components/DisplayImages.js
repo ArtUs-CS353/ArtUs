@@ -12,7 +12,7 @@ function DisplayImages({artwork, type, func}){
           <CardMedia
               component="img"
               height="270"
-              image={artwork.image}
+              image={artwork.imageURL}
               alt={artwork.title}
             />
             <CardContent>
@@ -31,8 +31,11 @@ function DisplayImages({artwork, type, func}){
                     <Typography variant="body2" color="text.secondary">
                     {`${artwork.artist}, ${artwork.year}`}
                     </Typography>
-                    {artwork.price && (
-                    <Typography variant="body1">{artwork.price}</Typography>
+                    {artwork.status === "auction" && (
+                      <Typography variant="body1" sx={{fontWeight: 'bold', color:"purple"}}>On Auction</Typography>
+                    )}
+                    {artwork.price > 0 && (
+                    <Typography variant="body1">${artwork.price}</Typography>
                     )}
                 </>
                 )}
