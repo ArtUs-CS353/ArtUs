@@ -173,4 +173,17 @@ public class ArtworkService {
         String sql = "select * from most_favorite_artworks;";
         return jdbcTemplate.query(sql,new ArtworkMapper());
     }
+
+    public List<Artwork> getAllFeaturedArtworks() {
+        try {
+            String sql = "SELECT * FROM Artwork WHERE is_featuring = 1";
+            return jdbcTemplate.query(sql, artworkMapper);
+        } catch (Exception e) {
+            // Handle exceptions, log errors, etc.
+            e.printStackTrace();
+            // If the insertion fails, return false
+            return null;
+
+        }
+    }
 }

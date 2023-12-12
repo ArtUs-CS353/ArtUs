@@ -12,7 +12,6 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/artwork")
-@CrossOrigin
 public class ArtworkController {
     private final ArtworkService artworkService;
 
@@ -24,19 +23,19 @@ public class ArtworkController {
     @PostMapping("/upload")
     @Operation(summary = "To add new user to database", description = "Write user service")
     public ResponseEntity<Artwork> uploadArtworkAdmin(
-                                                 @RequestParam("artistId") int artistId,
-                                                 @RequestParam("title") String title,
-                                                 @RequestParam("type") String type,
-                                                 @RequestParam("size") String size,
-                                                 @RequestParam("movement") String movement,
-                                                 @RequestParam("price") float price,
-                                                 @RequestParam("description") String description,
-                                                 @RequestParam("material") String material,
-                                                 @RequestParam("rarity") String rarity,
-                                                 @RequestParam("imageURL") String imageURL,
-                                                 @RequestParam("date") LocalDate date,
-                                                 @RequestParam("availability") String availability,
-                                                 @RequestParam("Status") String status
+            @RequestParam("artistId") int artistId,
+            @RequestParam("title") String title,
+            @RequestParam("type") String type,
+            @RequestParam("size") String size,
+            @RequestParam("movement") String movement,
+            @RequestParam("price") float price,
+            @RequestParam("description") String description,
+            @RequestParam("material") String material,
+            @RequestParam("rarity") String rarity,
+            @RequestParam("imageURL") String imageURL,
+            @RequestParam("date") LocalDate date,
+            @RequestParam("availability") String availability,
+            @RequestParam("Status") String status
     ) {
         Artwork artwork = new Artwork();
         artwork.setArtist_id(artistId);
@@ -64,6 +63,17 @@ public class ArtworkController {
     @GetMapping("/getAll")
     public ResponseEntity<List<Artwork>> getAllArtworks() {
         List<Artwork> artworks = artworkService.getAllArtworks();
+        if(artworks != null){
+            return new ResponseEntity<>(artworks, HttpStatus.OK);
+        }
+        else{
+            return new ResponseEntity<>(null, HttpStatus.I_AM_A_TEAPOT);
+        }
+    }
+
+    @GetMapping("/getAllFeatured")
+    public ResponseEntity<List<Artwork>> getAllFeaturedArtworks() {
+        List<Artwork> artworks = artworkService.getAllFeaturedArtworks();
         if(artworks != null){
             return new ResponseEntity<>(artworks, HttpStatus.OK);
         }
