@@ -12,6 +12,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/artwork")
+@CrossOrigin
 public class ArtworkController {
     private final ArtworkService artworkService;
 
