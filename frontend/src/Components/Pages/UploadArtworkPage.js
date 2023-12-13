@@ -4,6 +4,7 @@ import PhotoCamera from '@mui/icons-material/PhotoCamera';
 import DatePicker from '../DatePicker'
 import dayjs from 'dayjs';
 import axios from "axios";
+import AWS from 'aws-sdk';
 
 function UploadArtworkPage() {
   const [type, setType] = useState('');
@@ -11,18 +12,47 @@ function UploadArtworkPage() {
   const [movement, setMovement] = useState('');
   const [rarity, setRarity] = useState('');
   const [date, setDate] = useState('');
-  const [imageURL, setSelectedFile] = useState(null);
+  const [file, setSelectedFile] = useState(null);
   const [title, setTitle] = useState('')
   const [size, setSize] = useState('')
   const [price, setPrice] = useState('')
   const [artist, setArtist] = useState('')
   const [description, setDescription] = useState('')
+  const [imageURL, setURL] = useState('')
 
+  //insert access keys here
+  AWS.config.update({
+    region: 'eu-north-1',
+    accessKeyId: '',
+    secretAccessKey: ''
+  });
+
+  const s3 = new AWS.S3();
+
+  async function uploadImageToAWS(file) {
+    return new Promise((resolve, reject) => {
+      const params = {
+        Bucket: 'artusb',
+        Key: `images/${file.name}`,
+        Body: file
+      };
+  
+      s3.upload(params, function(err, data) {
+        if (err) {
+          console.error("Error FROM AWS", err);
+          reject(err);
+        } else {
+          console.log("Upload Success", data.Location);
+          resolve(data.Location);
+        }
+      });
+    });
+  }
 
   const handleFileChange = (event) => {
-    setSelectedFile(event.target.value);
-    // Optionally, you can upload the file directly here
+    setSelectedFile(event.target.files[0])
   };
+
   const handleImageSelection = () => {
     document.getElementById('image-upload-input').click();
   };
@@ -59,15 +89,19 @@ function UploadArtworkPage() {
   const handleSizeChange = (event) => {
     setSize(event.target.value);
   };
-  
-  
-  
 
   const uploadArtwork = async () => {
-      // console.log("type: ", type, "material: ", material, "movement: ", movement, "rarity: ", rarity, "date: ", date,
-      // "size: ", size, "date: ", date, "title: ", title, "price: ",price, "artist: ", artist)
-      console.log("file is ", imageURL)
-      const availability = true
+      let fileUrl = ''
+      try {
+        fileUrl = await uploadImageToAWS(file);
+        // Set state or do something with the fileUrl
+      } catch (error) {
+        console.log("error: ", error)
+        return
+        // Handle the error, possibly setting an error message in state
+      }
+      console.log("file is ", fileUrl)
+      const availability = "available"
       const Status = "uploaded"
 
       const formData = new FormData();
@@ -80,18 +114,20 @@ function UploadArtworkPage() {
       formData.append('description', description);
       formData.append('material', material);
       formData.append('rarity', rarity);
-      formData.append('imageURL', imageURL);
+      formData.append('imageURL', fileUrl);
       formData.append('date', date);
       formData.append('availability', availability);
       formData.append('Status', Status);
 
-      console.log("form data: ", formData)
+      for (let [key, value] of formData.entries()) {
+        console.log(key, value);
+      }
 
       try {
         const response = await axios.post('http://localhost:8080/artwork/upload', formData);
         console.log(response.data);
       } catch (error) {
-        console.error('Error uploading image URL:', error);
+        console.error('Error uploading artwork:', error);
       }
   }
   const theme = createTheme({
@@ -177,6 +213,8 @@ function UploadArtworkPage() {
                   style={{ display: 'none' }}
                   onChange={handleFileChange}
                 />
+                {(file &&
+                  <Typography>Uploaded</Typography>)}
                 <Button onClick={handleImageSelection} sx = {{mt:1, ml: 4, pt: 1.8, pb: 1.8, pl: 4, pr: 7.5}}  variant="outlined" component="span" margin="normal" startIcon={<PhotoCamera />}>
                 Choose Image
               </Button></Grid>
