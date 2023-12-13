@@ -22,11 +22,11 @@ public class AuctionController {
     }
 
     @PostMapping("/create")
-    public ResponseEntity<Auction> createAuction(@RequestParam String type,
-                                                 @RequestParam float price,
-                                                 @RequestParam int artworkId,
-                                                 @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm") LocalDateTime startDatetime,
-                                                 @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm") LocalDateTime endDatetime) {
+    public ResponseEntity<Auction> createAuction(@RequestParam("type") String type,
+                                                 @RequestParam("price") float price,
+                                                 @RequestParam("artworkId") int artworkId,
+                                                 @RequestParam("startDatetime") @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm") LocalDateTime startDatetime,
+                                                 @RequestParam("endDatetime") @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm") LocalDateTime endDatetime) {
 
         if(startDatetime.isBefore(LocalDateTime.now())){
             System.out.println("Start datetime must be in the future");
@@ -89,7 +89,7 @@ public class AuctionController {
     }
 
     @PutMapping("/approve")
-    public ResponseEntity<Auction> approveAuction(int auctionId){
+    public ResponseEntity<Auction> approveAuction(@RequestParam("auctionId")  int auctionId){
         Auction result = auctionService.approveAuction(auctionId);
         if(result != null ){
             return new ResponseEntity<>(result, HttpStatus.OK);
@@ -100,7 +100,7 @@ public class AuctionController {
     }
 
     @PutMapping("/decline")
-    public ResponseEntity<Auction> declineAuction(int auctionId){
+    public ResponseEntity<Auction> declineAuction(@RequestParam("auctionId") int auctionId){
         Auction result = auctionService.declineAuction(auctionId);
         if(result != null ){
             return new ResponseEntity<>(result, HttpStatus.OK);
