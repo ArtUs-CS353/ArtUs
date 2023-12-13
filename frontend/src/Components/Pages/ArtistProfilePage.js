@@ -61,6 +61,7 @@ function ArtistProfilePage() {
       } catch (error) {
         console.error('Error creating auction request:', error);
       }
+      handleClose()
   }
     useEffect(() => {
     const getArtworks = async () => {
@@ -100,18 +101,7 @@ function ArtistProfilePage() {
     console.log("CLOSE IS SEND")
     setAuctionPopup(false)
   }
-  const handleInputChange = (event) => {
-    const value = event.target.value;
-    setInputValue(value);
   
-    if (value < 1500) { // Assuming 10 is your minimum value
-      setIsError(true);
-    } else {
-      setIsError(false);
-    }
-  };
-  const [inputValue, setInputValue] = React.useState('');
-  const [isError, setIsError] = React.useState(false);
   return (
     <Container style={{ overflowX: 'auto', maxWidth: '100%', paddingTop: '20px', paddingBottom:'5px' }}>
       <Grid container spacing={4}>
@@ -144,8 +134,8 @@ function ArtistProfilePage() {
                 label="Type"
                 onChange={handleAuctionTypeSelection}
               >
-                <MenuItem value="Impressionism">Normal</MenuItem>
-                <MenuItem value="Expressionism">Silent</MenuItem>
+                <MenuItem value="Normal">Normal</MenuItem>
+                <MenuItem value="Silent">Silent</MenuItem>
               </Select>
               <br></br>
               <br></br>

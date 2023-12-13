@@ -1,8 +1,14 @@
 import React, {useEffect, useState} from 'react';
 import { Grid, Container, Typography, Card, CardMedia} from '@mui/material';
+import Button from '@mui/material/Button';
 import axios from "axios";
+import Popup from '../Popup';
 function HomePage() {
   const [auctionRequests, setAuctionRequests] = useState([]);
+  const [auctionState, setAuctionState] = useState('')
+  const [popupEnabled, setPopupEnabled] = useState(false)
+  const [exhibitionState, setExhibitionState] = useState(false)
+  const [id,setId] = useState(-1)
 
   const getArtwork = async (id) => {
     try {
@@ -15,6 +21,41 @@ function HomePage() {
       throw error;
     }
 
+  }
+  const sendRequest = async () =>  {
+    console.log("HERE AS REQUEST")
+    if(auctionState === "accepted"){
+        console.log("sending accepted ", id)
+        try {
+          const response = await axios.put(`http://localhost:8080/auction/approve/${id}`);
+          console.log(response.data);
+        } catch (error) {
+          console.error('Error uploading artwork:', error);
+        }
+    }
+    else if(auctionState === "rejected") {
+        console.log("sending rejected")
+        try {
+          const response = await axios.put(`http://localhost:8080/auction/decline/${id}`);
+          console.log(response.data);
+        } catch (error) {
+          console.error('Error uploading artwork:', error);
+        }
+    }
+    handleClose()
+  }
+  const handleAccept = (index) =>{
+    console.log("accept ", auctionRequests[index])
+    setAuctionState('accepted')
+    setId(auctionRequests[index].auction_id)
+    setPopupEnabled(true)
+
+  }
+  const handleReject = (index) =>{
+    console.log('rejected ', auctionRequests[index])
+    setAuctionState('rejected')
+    setId(auctionRequests[index].auction_id)
+    setPopupEnabled(true)
   }
   useEffect(() => {
     const getAuctionsRequests = async () => {
@@ -64,8 +105,19 @@ function HomePage() {
   
     getAuctionsRequests();
   }, []); 
+  function handleClose() {
+    setPopupEnabled(false)
+  }
   return (
     <Container sx={{ mr: 2, ml:8, mt: 5 }}>
+      {(popupEnabled &&
+        <Popup 
+        state={popupEnabled}
+        handleClose={handleClose} 
+        dialogTitle={"Are you sure to make the request " + auctionState  + "?"} 
+        handleRequest={sendRequest}
+        > 
+        </Popup>)}
       {auctionRequests.map((request, index) => (
            <>
            <Grid spacing={4}>
@@ -73,7 +125,8 @@ function HomePage() {
            ,'&:hover': {
             boxShadow: '2px 4px 8px 2px rgba(0, 0, 0.1, 0.3)',
             transition: '0.3s'}
-           }}>
+           }}
+           >
               <CardMedia
                 component="img"
                 sx={{ width: 160 }} // Adjust the width as needed
@@ -86,10 +139,14 @@ function HomePage() {
                 <Typography variant="h8"><span style={{ fontWeight: 'bold' }}>{"Size: "}</span>{request.size}</Typography>
                 <Typography variant="h8"><span style={{ fontWeight: 'bold' }}>{"Auction Type: "}</span>{request.auctionType}</Typography>
                 <Typography variant="h8"><span style={{ fontWeight: 'bold' }}>{"Starting Amount: "}</span> ${request.starting_amount}</Typography>
-                <Typography variant="h8"><span style={{ fontWeight: 'bold' }}>{"Description: "}</span> ${request.description}</Typography>
+                <Typography variant="h8"><span style={{ fontWeight: 'bold' }}>{"Description: "}</span> {request.description}</Typography>
                 <Typography variant="h8"><span style={{ fontWeight: 'bold' }}>{"Start Date: "}</span> {request.start}</Typography>
                 <Typography variant="h8"><span style={{ fontWeight: 'bold' }}>{"End Date: "}</span>{request.end}</Typography>
                 {/* Add more text information here */}
+              </Grid>
+              <Grid container sx = {{mt:8,ml:15}}>
+              <Button onClick={() => handleAccept(index)}>ACCEPT</Button>
+              <Button onClick={() => handleReject(index)}>REJECT</Button>
               </Grid>
             </Card>
            </Grid>
