@@ -89,8 +89,8 @@ public class AuctionController {
         }
     }
 
-    @PutMapping("/approve")
-    public ResponseEntity<Auction> approveAuction(@RequestParam("auctionId")  int auctionId){
+    @PutMapping("/approve/{auctionId}")
+    public ResponseEntity<Auction> approveAuction(@PathVariable int auctionId){
         Auction result = auctionService.approveAuction(auctionId);
         if(result != null ){
             return new ResponseEntity<>(result, HttpStatus.OK);
@@ -100,8 +100,8 @@ public class AuctionController {
         }
     }
 
-    @PutMapping("/decline")
-    public ResponseEntity<Auction> declineAuction(@RequestParam("auctionId") int auctionId){
+    @PutMapping("/decline/{auctionId}")
+    public ResponseEntity<Auction> declineAuction(@PathVariable int auctionId){
         Auction result = auctionService.declineAuction(auctionId);
         if(result != null ){
             return new ResponseEntity<>(result, HttpStatus.OK);
