@@ -75,6 +75,9 @@ export default function PrimarySearchAppBar() {
     const handleNavbarTrigger = () => {
         setIsNavbarVisible(!isNavbarVisible);
     };
+    const goToProfile = () => {
+      navigate(`/artistProfile`);
+    }
 
     const handleNavigation = (page) => {
         if(page === "Upload Artwork"){
@@ -166,7 +169,7 @@ export default function PrimarySearchAppBar() {
             <IconButton
               color="inherit"
               onClick={() => navigate('/artistProfile')}>
-              <AccountCircle />
+              <AccountCircle onClick={goToProfile}/>
             </IconButton>
           </Box>
           </NavbarWrapper>

@@ -23,8 +23,8 @@ function UploadArtworkPage() {
   //insert access keys here
   AWS.config.update({
     region: 'eu-north-1',
-    accessKeyId: '',
-    secretAccessKey: ''
+    accessKeyId: 'AKIAZU7ICXJIF7NVZ5MO',
+    secretAccessKey: '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'
   });
 
   const s3 = new AWS.S3();
