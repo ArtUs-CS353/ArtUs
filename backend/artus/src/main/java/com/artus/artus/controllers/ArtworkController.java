@@ -11,6 +11,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 @RestController
+@CrossOrigin
 @RequestMapping("/artwork")
 public class ArtworkController {
     private final ArtworkService artworkService;
