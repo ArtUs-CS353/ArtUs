@@ -60,7 +60,7 @@ function DetailsPage({popup,context}) {
       </Grid>
       <Grid item xs={12} sx={{ pl: 5 }} md={6}>
         {/* if the artwork is on auction */}
-        {artwork.Status == "onAuction" && (
+        {artwork.Status === "auction" && (
           <Typography gutterBottom variant="h5" component="div">
             {artwork.remaining + " left"}
           </Typography>

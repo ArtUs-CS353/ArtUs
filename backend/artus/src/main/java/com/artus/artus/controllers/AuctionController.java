@@ -11,6 +11,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
+@CrossOrigin
 @RequestMapping("/auction")
 public class AuctionController {
 
@@ -25,9 +26,9 @@ public class AuctionController {
     public ResponseEntity<Auction> createAuction(@RequestParam("type") String type,
                                                  @RequestParam("price") float price,
                                                  @RequestParam("artworkId") int artworkId,
-                                                 @RequestParam("startDatetime") @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm") LocalDateTime startDatetime,
-                                                 @RequestParam("endDatetime") @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm") LocalDateTime endDatetime) {
-
+                                                 @RequestParam("startDate") @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm") LocalDateTime startDatetime,
+                                                 @RequestParam("endDate") @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm") LocalDateTime endDatetime) {
+      
         if(startDatetime.isBefore(LocalDateTime.now())){
             System.out.println("Start datetime must be in the future");
             return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);

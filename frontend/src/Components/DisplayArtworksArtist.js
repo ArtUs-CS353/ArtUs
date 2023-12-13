@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import { Typography, Card, CardMedia, CardContent, CardActionArea, Button } from '@mui/material';
+import { Typography, Card, CardMedia, CardContent, CardActionArea, Button, Grid } from '@mui/material';
 
-function DisplayArtworkArtist({ artwork, type, func }) {
+function DisplayArtworkArtist({ artwork, type, func, funcAuction }) {
   const [isMouseOver, setIsMouseOver] = useState(false);
 
   const handleMouseEnter = () => {
@@ -36,15 +36,16 @@ function DisplayArtworkArtist({ artwork, type, func }) {
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
     >
-      <CardActionArea onClick={() => func(artwork)}>
+      <CardActionArea>
+        <Grid>
         <CardMedia
           component="img"
           height="300"
           width="200"
-          image={artwork.image}
+          image={artwork.imageURL}
           alt={artwork.title}
         />
-        <CardContent>
+        <CardContent onClick={() => func(artwork)}>
           {type === 'artwork' && (
             <>
               <Typography gutterBottom variant="h5" component="div">
@@ -56,17 +57,18 @@ function DisplayArtworkArtist({ artwork, type, func }) {
             </>
           )}
         </CardContent>
-        {isMouseOver && artwork.status !== 'onAuction' && (
+        </Grid>
+        {isMouseOver && artwork.status !== 'auction' && (
           <Button
             variant="contained"
             size="small"
-            onClick={() => func(artwork)}
+            onClick={() => funcAuction(artwork)}
             sx={{...buttonStyles}}
           >
             Create Auction Request
           </Button>
         )}
-        {isMouseOver && artwork.status === 'onAuction' && (
+        {isMouseOver && artwork.status === 'auction' && (
           <Button
             variant="contained"
             size="small"
