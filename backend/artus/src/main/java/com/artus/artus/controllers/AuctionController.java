@@ -28,7 +28,7 @@ public class AuctionController {
                                                  @RequestParam("artworkId") int artworkId,
                                                  @RequestParam("startDate") @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm") LocalDateTime startDatetime,
                                                  @RequestParam("endDate") @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm") LocalDateTime endDatetime) {
-
+      
         if(startDatetime.isBefore(LocalDateTime.now())){
             System.out.println("Start datetime must be in the future");
             return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
@@ -90,7 +90,7 @@ public class AuctionController {
     }
 
     @PutMapping("/approve")
-    public ResponseEntity<Auction> approveAuction(int auctionId){
+    public ResponseEntity<Auction> approveAuction(@RequestParam("auctionId")  int auctionId){
         Auction result = auctionService.approveAuction(auctionId);
         if(result != null ){
             return new ResponseEntity<>(result, HttpStatus.OK);
@@ -101,7 +101,7 @@ public class AuctionController {
     }
 
     @PutMapping("/decline")
-    public ResponseEntity<Auction> declineAuction(int auctionId){
+    public ResponseEntity<Auction> declineAuction(@RequestParam("auctionId") int auctionId){
         Auction result = auctionService.declineAuction(auctionId);
         if(result != null ){
             return new ResponseEntity<>(result, HttpStatus.OK);

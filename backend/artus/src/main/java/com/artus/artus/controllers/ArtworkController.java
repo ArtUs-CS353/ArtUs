@@ -84,7 +84,7 @@ public class ArtworkController {
     }
 
     @GetMapping("/artist/{artistId}")
-    public ResponseEntity<List<Artwork>> getArtworksByArtistId(@PathVariable int artistId) {
+    public ResponseEntity<List<Artwork>> getArtworksByArtistId(@PathVariable @RequestParam("artistId") int artistId) {
         List<Artwork> artworks = artworkService.getAllArtworksOfArtist(artistId);
         if(artworks != null){
             return new ResponseEntity<>(artworks, HttpStatus.OK);
@@ -95,7 +95,7 @@ public class ArtworkController {
     }
 
     @GetMapping("/{artworkId}")
-    public ResponseEntity<Artwork> getArtwork(@PathVariable int artworkId) {
+    public ResponseEntity<Artwork> getArtwork(@PathVariable @RequestParam("artworkId")  int artworkId) {
         Artwork artwork = artworkService.getArtwork(artworkId);
         if(artwork != null){
             return new ResponseEntity<>(artwork, HttpStatus.OK);
@@ -106,7 +106,7 @@ public class ArtworkController {
     }
 
     @GetMapping("/title/{title}")
-    public ResponseEntity<List<Artwork>> searchArtworkWithTitle(@PathVariable String title){
+    public ResponseEntity<List<Artwork>> searchArtworkWithTitle(@PathVariable @RequestParam("title") String title){
         List<Artwork> artworkList = artworkService.searchArtworkWithTitle(title);
         if(artworkList != null)
             return new ResponseEntity<>(artworkService.searchArtworkWithTitle(title),HttpStatus.OK);

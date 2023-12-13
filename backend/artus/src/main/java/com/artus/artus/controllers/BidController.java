@@ -20,7 +20,7 @@ public class BidController {
     }
 
     @GetMapping("/getHighestBid")
-    public ResponseEntity<Bid> getHighestBid(int auctionId){
+    public ResponseEntity<Bid> getHighestBid(@RequestParam("auctionId") int auctionId){
         Bid bid = bidService.getBidWithHighestPrice(auctionId);
         if(bid != null)
             return new ResponseEntity<>(bid, HttpStatus.OK);
@@ -30,7 +30,9 @@ public class BidController {
     }
 
     @PostMapping("/bidForAuction")
-    public ResponseEntity<Bid> bidForAuction(int user_id, int auction_id, double price){
+    public ResponseEntity<Bid> bidForAuction(@RequestParam("user_id") int user_id,
+                                             @RequestParam("auction_id") int auction_id,
+                                             @RequestParam("price") double price){
         String type = auctionService.getAuctionType(auction_id);
         System.out.println("\n\nAuction type:" + type);
         System.out.println("\n\nBid price:" + price);
@@ -59,7 +61,7 @@ public class BidController {
     }
 
     @PutMapping("/acceptBid")
-    public ResponseEntity<Bid> acceptBid(int bidId){
+    public ResponseEntity<Bid> acceptBid(@RequestParam("bidId") int bidId){
         Bid result = bidService.acceptBid(bidId);
         if(result != null)
             return new ResponseEntity<>(result, HttpStatus.OK);
@@ -69,7 +71,7 @@ public class BidController {
     }
 
     @PutMapping("/rejectBid")
-    public ResponseEntity<Bid> rejectBid(int bidId){
+    public ResponseEntity<Bid> rejectBid(@RequestParam("bidId") int bidId){
         Bid result = bidService.rejectBid(bidId);
         if(result != null)
             return new ResponseEntity<>(result, HttpStatus.OK);
