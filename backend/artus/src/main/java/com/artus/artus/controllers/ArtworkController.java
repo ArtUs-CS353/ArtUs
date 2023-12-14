@@ -1,5 +1,6 @@
 package com.artus.artus.controllers;
 import com.artus.artus.models.Artwork;
+import com.artus.artus.models.Auction;
 import com.artus.artus.services.ArtworkService;
 import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -93,7 +94,16 @@ public class ArtworkController {
             return new ResponseEntity<>(null, HttpStatus.I_AM_A_TEAPOT);
         }
     }
-
+    @GetMapping("/auction/{artworkId}")
+    public ResponseEntity<Auction> getArtworkAuction(@PathVariable int artworkId) {
+        Auction auction = artworkService.getArtworkAuction(artworkId);
+        if(auction != null){
+            return new ResponseEntity<>(auction, HttpStatus.OK);
+        }
+        else{
+            return new ResponseEntity<>(null, HttpStatus.I_AM_A_TEAPOT);
+        }
+    }
     @GetMapping("/{artworkId}")
     public ResponseEntity<Artwork> getArtwork(@PathVariable int artworkId) {
         Artwork artwork = artworkService.getArtwork(artworkId);

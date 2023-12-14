@@ -1,7 +1,9 @@
 package com.artus.artus.services;
 
 import com.artus.artus.mappers.ArtworkMapper;
+import com.artus.artus.mappers.AuctionMapper;
 import com.artus.artus.models.Artwork;
+import com.artus.artus.models.Auction;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
@@ -15,11 +17,14 @@ import java.util.stream.Collectors;
 public class ArtworkService {
     private final JdbcTemplate jdbcTemplate;
     private final ArtworkMapper artworkMapper;
+    private final AuctionMapper auctionMapper;
+
 
     @Autowired
-    public ArtworkService(JdbcTemplate jdbcTemplate, ArtworkMapper artworkMapper) {
+    public ArtworkService(JdbcTemplate jdbcTemplate, ArtworkMapper artworkMapper, AuctionMapper auctionMapper) {
         this.jdbcTemplate = jdbcTemplate;
         this.artworkMapper = artworkMapper;
+        this.auctionMapper = auctionMapper;
     }
 
     public boolean createArtwork(Artwork artwork) {
@@ -55,6 +60,19 @@ public class ArtworkService {
         try{
             String sql = "SELECT * FROM Artwork WHERE artist_id = ?";
             return jdbcTemplate.query(sql, artworkMapper, artistId);
+        }
+        catch(Exception e){
+            // Handle exceptions, log errors, etc.
+            e.printStackTrace();
+            // If the insertion fails, return false
+            return null;
+        }
+    }
+
+    public Auction getArtworkAuction(int artworkId) {
+        try{
+            String sql = "SELECT * FROM Auction WHERE artwork_id = ?";
+            return jdbcTemplate.queryForObject(sql, auctionMapper, artworkId);
         }
         catch(Exception e){
             // Handle exceptions, log errors, etc.
