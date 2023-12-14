@@ -103,6 +103,7 @@ private final AuctionMapper auctionMapper;
 
     public String getAuctionType(int auctionId){
         String sql1 = "SELECT * FROM Auction WHERE auction_id =?";
+        System.out.println("type is " + jdbcTemplate.queryForObject(sql1, auctionMapper, auctionId).getType());
         return jdbcTemplate.queryForObject(sql1, auctionMapper, auctionId).getType();
     }
 

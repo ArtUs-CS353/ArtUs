@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.*;
 
 
 @RestController
+@CrossOrigin
 @RequestMapping("/bid")
 public class BidController {
     private final BidService bidService;
@@ -39,11 +40,11 @@ public class BidController {
         System.out.println("\n\nAuction starting amount:" + auctionService.getAuctionStartingAmount(auction_id));
         System.out.println(type.equals("Close"));
 
-        if(type.equals("close") && auctionService.getAuctionStartingAmount(auction_id) > price){
+        if(type.equals("Silent") && auctionService.getAuctionStartingAmount(auction_id) > price){
             System.out.println("Price must be higher than the starting amount");
             return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
         }
-        if(type.equals("open") && bidService.getHighestBid(auction_id) >= price){
+        if(type.equals("Normal") && bidService.getHighestBid(auction_id) >= price){
             System.out.println("Price must be higher than the previous highest bid and starting amount");
             return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
         }

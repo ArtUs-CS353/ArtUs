@@ -7,12 +7,14 @@ import { useNavigate } from 'react-router-dom';
 import axios from "axios";
 
 
-function DetailsPage({popup,context}) {
+function DetailsPage({popup,context, setId}) {
   const artworks = ArtworkData;
   const [artwork, setArtwork] = useState(null);
   const navigate = useNavigate();
   let { id } = useParams();
   console.log("id is ", id)
+  setId(id)
+  
 
   useEffect(() => {
     const getRecommendedArtworks = async () => {
@@ -35,6 +37,7 @@ function DetailsPage({popup,context}) {
     console.log("back pressed")
     navigate(`/explore`);
   }
+  
   return (
     <Container>
       <IconButton

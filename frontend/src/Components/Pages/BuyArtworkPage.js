@@ -1,12 +1,14 @@
-import React from 'react';
+import React, { useState }  from 'react';
 import DetailsPage from './DetailsPage';
 import {Typography,Button} from '@mui/material';
 function BuyArtworkPage() {
+  const [id,setId] = useState(-1)
   function handleBuy(){
-    console.log("BUY CLICKED")
+    console.log("BUY CLICKED ", id)
   }
   return (
     <DetailsPage 
+     setId={setId}
      context={  <>
       <hr style={{ width: '50%', marginRight: '50%' }}></hr>
       <Typography gutterBottom variant="h5" component="div">
