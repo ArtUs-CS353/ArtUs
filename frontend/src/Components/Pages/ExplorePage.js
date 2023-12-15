@@ -41,12 +41,12 @@ function ExplorePage() {
   };
 
   function handleArtworkClick(artwork){
-    if (artwork.status == "auction"){
+    if (artwork.status === "auction"){
       //navigate to auction page
       console.log("GOING TO AUCTION PAGE")
       navigate(`/auction/${artwork.artwork_id}`);
     }
-    else if (artwork.status == "sale") {
+    else if (artwork.status === "sale") {
       //navigate to buy page
       console.log("GOING TO BUY PAGE")
       navigate(`/buy/${artwork.artwork_id}`);

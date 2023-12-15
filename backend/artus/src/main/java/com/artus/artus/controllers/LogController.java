@@ -12,8 +12,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import org.springframework.util.MultiValueMap;
 
 @RestController
+@CrossOrigin
 @RequestMapping()
 public class LogController {
     private final RegisterService registerService;
@@ -88,19 +90,26 @@ public class LogController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<LoginResponseDTO> login(@RequestParam String email, @RequestParam String password){
+    public ResponseEntity<LoginResponseDTO> login(@RequestBody MultiValueMap<String, String> formData) {
         LoginResponseDTO loginResponseDTO = new LoginResponseDTO();
+
+        String email = formData.getFirst("email");
+        String password = formData.getFirst("password");
 
         User user = new User();
         user.setEmail(email);
         user.setPassword(password);
 
+        System.out.println("Received login request - Email: " + user.getEmail() + ", Password: " + user.getPassword());
+        
         User returnedUser = loginService.login(user);
+
+        System.out.println("Received login request - Email: " + user.getEmail() + ", Password: " + user.getPassword());
 
         if(returnedUser == null){
             loginResponseDTO.setMessage("User with email: " + email + " does not exist!");
             return new ResponseEntity<>(loginResponseDTO,HttpStatus.BAD_REQUEST);
-        } else if (returnedUser.getPassword()==null) {
+        } else if (returnedUser.getPassword() != null && returnedUser.getPassword().equals(password)) {
             loginResponseDTO.setMessage("Incorrect password.");
             return new ResponseEntity<>(loginResponseDTO,HttpStatus.BAD_REQUEST);
         }else {
