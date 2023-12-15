@@ -6,7 +6,7 @@ import dayjs from 'dayjs';
 import axios from "axios";
 import AWS from 'aws-sdk';
 
-function UploadArtworkPage() {
+function UploadArtworkPage({userId, userType}) {
   const [type, setType] = useState('');
   const [material, setMaterial] = useState('');
   const [movement, setMovement] = useState('');
@@ -19,6 +19,7 @@ function UploadArtworkPage() {
   const [artist, setArtist] = useState('')
   const [description, setDescription] = useState('')
   const [imageURL, setURL] = useState('')
+  const [artistId, setArtistId] = useState(-1)
 
   //insert access keys here
   AWS.config.update({
@@ -105,7 +106,12 @@ function UploadArtworkPage() {
       const Status = "uploaded"
 
       const formData = new FormData();
-      formData.append('artistId', 1); 
+      if(userType == 2){
+        setArtistId(userId)
+      }
+      // else the selected artist's id , it is already set 
+
+      formData.append('artistId', artistId); 
       formData.append('title', title);
       formData.append('type', type);
       formData.append('size', size);
@@ -222,7 +228,9 @@ function UploadArtworkPage() {
           </Grid>
 
           <Grid item xs={12} md={6}>
+            {(userType == 3 &&
             <TextField onChange={handleArtistChange} fullWidth label="Artist Name" variant="outlined" margin="normal" />
+              )}
             <FormControl fullWidth margin="normal">
                 <InputLabel id="material-select-label">Material</InputLabel>
                 <Select

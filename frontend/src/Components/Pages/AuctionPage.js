@@ -5,6 +5,11 @@ import Popup from '../Popup';
 import axios from "axios";
 function AuctionPage() {
   const [highestBid, setHighestBid] = useState(0.0)
+  const [state, setState] = React.useState(false);
+  const [inputValue, setInputValue] = React.useState(0.0);
+  const [isError, setIsError] = React.useState(false);
+  const [id, setId] = React.useState(-1);
+  const [auctionId, setAuctionId] = React.useState(-1)
   function handlePlaceBid(){
     console.log("PLACE BID CLICKED")
     setState(true)
@@ -33,12 +38,23 @@ function AuctionPage() {
     const value = event.target.value;
     setInputValue(value);
   
-    if (value < highestBid) { // Assuming 10 is your minimum value
+    if (value < highestBid) {
       setIsError(true);
     } else {
       setIsError(false);
     }
   };
+  const getStartingAmount = async () =>  {
+    try {
+      const response = await axios.get(`http://localhost:8080/artwork/auction${id}`);
+      console.log(response.data);
+      const highestBid = response.data
+      
+      setHighestBid(highestBid)
+    } catch (error) {
+      console.error('Error fetching auction:', error);
+    }
+  }
   useEffect(() => {
     const getHighestBid = async () =>  {
       try {
@@ -55,11 +71,6 @@ function AuctionPage() {
   }
   getHighestBid();
   }, []); 
-  
-  const [state, setState] = React.useState(false);
-  const [inputValue, setInputValue] = React.useState(0.0);
-  const [isError, setIsError] = React.useState(false);
-  const [id, setId] = React.useState(-1);
 
   return (
     <DetailsPage 

@@ -12,7 +12,7 @@ import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import axios from 'axios';
 
-function LoginPage() {
+function LoginPage({setLoggedIn, setUserType, setUserId}) {
   const navigate = useNavigate();
 
   const handleSubmit = async (event) => {
@@ -33,6 +33,9 @@ function LoginPage() {
       console.log(response.data);
 
       if (response) {
+        setLoggedIn(true)
+        setUserType(response.data.role)
+        setUserId(response.data.userId)
         navigate('/explore');
       }
     } catch (error) {
