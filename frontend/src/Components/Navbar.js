@@ -15,8 +15,6 @@ import MailIcon from '@mui/icons-material/Mail';
 import NotificationsIcon from '@mui/icons-material/Notifications';
 import { useNavigate } from 'react-router-dom';
 
-const pages = ['Explore', 'Buy', 'Upload Artwork'];
-
 const Search = styled('div')(({ theme }) => ({
   position: 'relative',
   borderRadius: theme.shape.borderRadius,
@@ -67,16 +65,24 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
   },
 }));
 
-export default function PrimarySearchAppBar() {
+export default function Navbar({userType}) {
     const [isNavbarVisible, setIsNavbarVisible] = React.useState(true);
 
+    console.log("user type: ", userType)
+    const pages = (userType == 2  || userType == 3)? ['Explore', 'Upload Artwork']:  ['Explore'];
     const navigate = useNavigate();
 
     const handleNavbarTrigger = () => {
         setIsNavbarVisible(!isNavbarVisible);
     };
     const goToProfile = () => {
-      navigate(`/artistProfile`);
+      if(userType == 2){
+        navigate(`/artistProfile`);
+      }
+      // else{
+      //   navigate(`/collectorProfile`);
+      // }
+     
     }
 
     const handleNavigation = (page) => {
@@ -166,11 +172,15 @@ export default function PrimarySearchAppBar() {
                 <NotificationsIcon />
               </Badge>
             </IconButton>
-            <IconButton
-              color="inherit"
-              onClick={() => navigate('/artistProfile')}>
-              <AccountCircle onClick={goToProfile}/>
-            </IconButton>
+            {(userType == 2 || userType == 3) &&
+            <>
+                  <IconButton
+                  color="inherit">
+                  <AccountCircle onClick={goToProfile}/>
+                </IconButton>
+            </>
+            }
+            
           </Box>
           </NavbarWrapper>
             )
