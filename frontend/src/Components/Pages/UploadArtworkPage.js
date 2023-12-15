@@ -1,4 +1,4 @@
-import React, { useState }  from 'react';
+import React, { useState, useEffect }  from 'react';
 import {Typography, Container, TextField, Select, MenuItem, Button, Grid, Card, ThemeProvider, createTheme, InputLabel, FormControl, Box } from '@mui/material';
 import PhotoCamera from '@mui/icons-material/PhotoCamera';
 import DatePicker from '../DatePicker'
@@ -16,10 +16,10 @@ function UploadArtworkPage({userId, userType}) {
   const [title, setTitle] = useState('')
   const [size, setSize] = useState('')
   const [price, setPrice] = useState('')
-  const [artist, setArtist] = useState('')
   const [description, setDescription] = useState('')
-  const [imageURL, setURL] = useState('')
   const [artistId, setArtistId] = useState(-1)
+  const [selectedArtist, setArtist] = useState('')
+  const [artists, setArtists] = useState([])
 
   //insert access keys here
   AWS.config.update({
@@ -72,7 +72,6 @@ function UploadArtworkPage({userId, userType}) {
     setRarity(event.target.value);
   };
   const handleDateSelection = (newDate) =>{
-    console.log("geldi date as", newDate )
     setDate(newDate);
   };
   const handleTitleChange = (event) => {
@@ -82,7 +81,12 @@ function UploadArtworkPage({userId, userType}) {
     setDescription(event.target.value);
   };
   const handleArtistChange = (event) => {
-    setArtist(event.target.value);
+    const artistName = event.target.value
+    setArtist(event.target.value)
+    const artist = artists.find(artist => (artist.user_name + " " + artist.user_surname) === artistName);
+    if (artist) {
+      setArtistId(artist.user_id)
+    }
   };
   const handlePriceChange = (event) => {
     setPrice(event.target.value);
@@ -136,6 +140,21 @@ function UploadArtworkPage({userId, userType}) {
         console.error('Error uploading artwork:', error);
       }
   }
+  useEffect(() => {
+    const getArtists = async () => {
+      try {
+        const response = await axios.get(`http://localhost:8080/artists/allArtists`);
+        const artists = response.data;
+        console.log("ARTISTS ARE: ", artists)
+        setArtists(artists)
+      } catch (error) {
+        console.error("Failed to fetch recommended artwork: ", error);
+        throw error;
+      }
+    };
+  
+    getArtists();
+  }, []); 
   const theme = createTheme({
     palette: {
       primary: {
@@ -229,7 +248,21 @@ function UploadArtworkPage({userId, userType}) {
 
           <Grid item xs={12} md={6}>
             {(userType == 3 &&
-            <TextField onChange={handleArtistChange} fullWidth label="Artist Name" variant="outlined" margin="normal" />
+            <>
+              <FormControl fullWidth margin="normal">
+              <InputLabel id="artist-select-label">Artists</InputLabel>
+              <Select
+                labelId="artist-select-label"
+                id="artist-select"
+                value={selectedArtist}
+                label="Artist"
+                onChange={handleArtistChange}
+              >
+                {artists.map((artist, index) => (
+                <MenuItem value={artist.user_name + " " + artist.user_surname}>{artist.user_name + " " + artist.user_surname}</MenuItem>))}
+              </Select>
+            </FormControl>
+            </>
               )}
             <FormControl fullWidth margin="normal">
                 <InputLabel id="material-select-label">Material</InputLabel>
