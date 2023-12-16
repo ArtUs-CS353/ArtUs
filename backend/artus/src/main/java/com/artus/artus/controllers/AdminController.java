@@ -8,6 +8,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @CrossOrigin
@@ -28,6 +29,22 @@ public class AdminController {
     @ResponseBody
     public List<Artwork> getMostFavoriteArtworks(){
         return reportService.getMostFavoriteArtworks();
+    }
+
+    @GetMapping("/topSellingArtists")
+    public ResponseEntity<List<Map<String,Integer>>> getTopSellingArtists()
+    {
+        return new ResponseEntity<>(reportService.getTopSellingArtists(),HttpStatus.OK);
+    }
+
+    @GetMapping("/topCollectors")
+    public ResponseEntity<List<Map<Map<String,Integer>,Integer>>> getTopCollectors(){
+        return new ResponseEntity<>(reportService.getTopCollectors(),HttpStatus.OK);
+    }
+
+    @GetMapping("/highestBids")
+    public ResponseEntity<List<Map<Map<String,Integer>,Integer>>> getHighestBids(){
+        return new ResponseEntity<>(reportService.getTopBids(),HttpStatus.OK);
     }
 
     

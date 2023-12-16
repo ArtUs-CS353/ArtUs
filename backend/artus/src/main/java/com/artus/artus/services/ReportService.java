@@ -54,5 +54,52 @@ public class ReportService {
         });
     }
 
+    public List<Map<Map<String,Integer>,Integer>> getTopCollectors(){
+        String sql = "WITH TopArtworkOwners AS (SELECT o.user_id, COUNT(o.artwork_id) AS owned_artworks_count" +
+                "    FROM Owns o GROUP BY o.user_id ORDER BY owned_artworks_count DESC)\n" +
+                " SELECT * FROM User U JOIN TopArtworkOwners T ON U.user_id = T.user_id WHERE U.user_role = 4;";
+        return jdbcTemplate.query(sql, new RowMapper<Map<Map<String, Integer>, Integer>>() {
+            @Override
+            public Map<Map<String, Integer>, Integer> mapRow(ResultSet rs, int rowNum) throws SQLException {
+                String name = rs.getString("user_name");
+                String surname = rs.getString("user_surname");
+                String returnedName = name + " " + surname;
+                Integer owned_artworks_count = rs.getInt("owned_artworks_count");
+                Integer id = rs.getInt("user_id");
+
+                Map<String,Integer> mapInside = new HashMap<>();
+                mapInside.put(returnedName,id);
+                Map<Map<String,Integer>,Integer> map = new HashMap<>();
+                map.put(mapInside,owned_artworks_count);
+
+                return map;
+            }
+        });
+    }
+
+    public List<Map<Map<String,Integer>,Integer>> getTopBids(){
+        String sql = "WITH HighestBids AS ( SELECT auction_id, MAX(price) AS highestBid FROM Bid GROUP BY auction_id ORDER BY highestBid DESC)" +
+                "SELECT * " +
+                "FROM HighestBids HB, Auction AU, Artwork AR WHERE HB.auction_id = AU.auction_id AND AU.artwork_id = AR.artwork_id";
+        return jdbcTemplate.query(sql, new RowMapper<Map<Map<String, Integer>, Integer>>() {
+            @Override
+            public Map<Map<String, Integer>, Integer> mapRow(ResultSet rs, int rowNum) throws SQLException {
+                String title = rs.getString("title");
+                Integer highestBid = rs.getInt("highestBid");
+                Integer id = rs.getInt("artwork_id");
+
+                Map<String,Integer> mapInside = new HashMap<>();
+                mapInside.put(title,id);
+                Map<Map<String,Integer>,Integer> map = new HashMap<>();
+                map.put(mapInside,highestBid);
+
+                return map;
+            }
+        });
+
+    }
+
+
+
     
 }
