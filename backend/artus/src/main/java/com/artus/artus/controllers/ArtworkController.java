@@ -23,7 +23,7 @@ public class ArtworkController {
     }
 
     @PostMapping("/upload")
-    @Operation(summary = "To add new user to database", description = "Write user service")
+    @Operation(summary = "To add new artwork to database")
     public ResponseEntity<Artwork> uploadArtworkAdmin(
             @RequestParam("artistId") int artistId,
             @RequestParam("title") String title,
@@ -36,8 +36,7 @@ public class ArtworkController {
             @RequestParam("rarity") String rarity,
             @RequestParam("imageURL") String imageURL,
             @RequestParam("date") LocalDate date,
-            @RequestParam("availability") String availability,
-            @RequestParam("Status") String status
+            @RequestParam("availability") String availability
     ) {
         Artwork artwork = new Artwork();
         artwork.setArtist_id(artistId);
@@ -52,7 +51,7 @@ public class ArtworkController {
         artwork.setPrice(price);
         artwork.setDate(date);
         artwork.setAvailability(availability);
-        artwork.setStatus(status);
+        artwork.setStatus("waiting");
         boolean result = artworkService.createArtwork(artwork);
 
         if(result)
@@ -138,5 +137,27 @@ public class ArtworkController {
     @GetMapping("/explorePage")
     public ResponseEntity<List<Artwork>> getExplorePage(){
         return new ResponseEntity<>(artworkService.getExplorePage(),HttpStatus.OK);
+    }
+
+    @PutMapping("/approve/{artworkId}")
+    public ResponseEntity<Artwork> approveArtwork(@PathVariable int artworkId){
+        Artwork result = artworkService.approveArtwork(artworkId);
+        if(result != null ){
+            return new ResponseEntity<>(result, HttpStatus.OK);
+        }
+        else{
+            return new ResponseEntity<>(null, HttpStatus.I_AM_A_TEAPOT);
+        }
+    }
+
+    @PutMapping("/decline/{artworkId}")
+    public ResponseEntity<Artwork> declineArtwork(@PathVariable int artworkId){
+        Artwork result = artworkService.declineArtwork(artworkId);
+        if(result != null ){
+            return new ResponseEntity<>(result, HttpStatus.OK);
+        }
+        else{
+            return new ResponseEntity<>(null, HttpStatus.I_AM_A_TEAPOT);
+        }
     }
 }

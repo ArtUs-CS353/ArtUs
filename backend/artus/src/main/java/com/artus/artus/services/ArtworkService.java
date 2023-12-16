@@ -184,12 +184,46 @@ public class ArtworkService {
         mainSQL = mainSQL + " true ";
 
         return jdbcTemplate.query(mainSQL,artworkMapper,allParams.toArray());
-
     }
 
     public List<Artwork> getExplorePage(){
         String sql = "select * from most_favorite_artworks;";
         return jdbcTemplate.query(sql,new ArtworkMapper());
+    }
+
+    public Artwork approveArtwork(int artworkId) {
+        try {
+            String sql = "UPDATE Artwork SET status = 'approved' WHERE artwork_id = ?";
+            jdbcTemplate.update(sql, artworkId);
+            sql = "SELECT * FROM Artwork WHERE artwork_id = ?";
+            Artwork artwork = jdbcTemplate.queryForObject(sql, artworkMapper, artworkId);
+            if(artwork == null){
+                throw new Exception("There is no such artwork");
+            }
+
+            String sql2 = "UPDATE Artwork SET status = 'on sale' WHERE artwork_id = ?";
+            jdbcTemplate.update(sql2, artwork.getArtwork_id());
+            return artwork;
+        } catch (Exception e) {
+            // Handle exceptions, log errors, etc.
+            e.printStackTrace();
+            // If the update fails, return false
+            return null;
+        }
+    }
+
+    public Artwork declineArtwork(int artworkId) {
+        try {
+            String sql = "UPDATE Artwork SET status = 'declined' WHERE artwork_id = ?";
+            jdbcTemplate.update(sql, artworkId);
+            sql = "SELECT * FROM Artwork WHERE artwork_id = ?";
+            return jdbcTemplate.queryForObject(sql, artworkMapper, artworkId);
+        } catch (Exception e) {
+            // Handle exceptions, log errors, etc.
+            e.printStackTrace();
+            // If the update fails, return false
+            return null;
+        }
     }
 
     public List<Artwork> getAllFeaturedArtworks() {
