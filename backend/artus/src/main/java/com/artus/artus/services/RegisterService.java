@@ -15,7 +15,7 @@ import java.util.Objects;
 @Service
 public class RegisterService {
     private final JdbcTemplate jdbcTemplate;
-    private HashPasswordHelper hashPasswordHelper = HashPasswordHelper.getInstance();
+    private final HashPasswordHelper hashPasswordHelper = HashPasswordHelper.getInstance();
     @Autowired
     public RegisterService(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
@@ -38,6 +38,11 @@ public class RegisterService {
 
             String insertEnthusiastSql = "INSERT INTO Enthusiast (user_id, address, balance) VALUES (?, ?, ?)";
             jdbcTemplate.update(insertEnthusiastSql, Objects.requireNonNull(user).getUser_id(),enthusiast.getAddress(),0);
+
+            if(enthusiast.getUser_role() == 4){
+                String insertCollector = "INSERT INTO Collector (user_id) VALUES (?);";
+                jdbcTemplate.update(insertCollector, Objects.requireNonNull(user).getUser_id());
+            }
 
             String insertPreferenceSql = "INSERT INTO User_Preference (user_id, preference_name) VALUES (?, ?)";
             for (String preference: preferences) {
