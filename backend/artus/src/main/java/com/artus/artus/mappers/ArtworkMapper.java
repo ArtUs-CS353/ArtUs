@@ -1,14 +1,13 @@
 package com.artus.artus.mappers;
 
 import com.artus.artus.models.Artwork;
-import org.springframework.context.annotation.Bean;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Component;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDate;
-import java.util.Date;
+
 @Component
 public class ArtworkMapper implements RowMapper<Artwork> {
     @Override
@@ -28,6 +27,7 @@ public class ArtworkMapper implements RowMapper<Artwork> {
         float price = rs.getFloat("price");
         String status = rs.getString("status");
         String availability = rs.getString("availability");
+        int favorite_count = rs.getInt("favorite_count");
 
         Artwork artwork = new Artwork();
         artwork.setArtwork_id(artwork_id);
@@ -45,6 +45,7 @@ public class ArtworkMapper implements RowMapper<Artwork> {
         artwork.setPrice(price);
         artwork.setStatus(status);
         artwork.setAvailability(availability);
+        artwork.setFavorite_count(favorite_count);
 
         return artwork;
     }
