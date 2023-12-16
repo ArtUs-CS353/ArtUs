@@ -1,4 +1,3 @@
-// App.js
 import React, { useState } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Navbar from './Components/Navbar';
@@ -11,6 +10,8 @@ import AuctionPage from './Components/Pages/AuctionPage';
 import ArtistProfile from './Components/Pages/ArtistProfilePage';
 import DetailsArtistPage from './Components/Pages/DetailsArtistPage';
 import LoginPage from './Components/Pages/LoginPage';
+import RegisterPage from './Components/Pages/RegisterPage';
+import PreferencesPage from './Components/Pages/PreferencesPage';
 
 function App() {
   //const showNavbar = !['/login'].includes(window.location.pathname);
@@ -22,6 +23,8 @@ function App() {
       {(loggedIn && <Navbar userType = {userType}/>)}
       <Routes>
         <Route path="/" element={<LoginPage setLoggedIn = {setLoggedIn} setUserType={setUserType} setUserId={setUserId} />} />
+        <Route path="/register" element={<RegisterPage />} />
+        <Route path="/preferences" element={<PreferencesPage />} />
         <Route path="/explore" element={<Explore userId = {userId}/>} />
         <Route path="/buy" element={<BuyArtwork userId = {userId}/>} />
         <Route path="/uploadArtwork" element={<UploadArtwork userId = {userId} userType={userType}/>} />

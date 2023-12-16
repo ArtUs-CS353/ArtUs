@@ -1,45 +1,49 @@
-import React from 'react';
-import { useNavigate } from 'react-router-dom';
-import Avatar from '@mui/material/Avatar';
+import React, { useState } from 'react';
+import { useNavigate, Link } from 'react-router-dom';
 import Button from '@mui/material/Button';
 import CssBaseline from '@mui/material/CssBaseline';
 import TextField from '@mui/material/TextField';
-import Link from '@mui/material/Link';
 import Paper from '@mui/material/Paper';
 import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
-import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import axios from 'axios';
+import image1 from './loginReg1.png';
+import logo from './logo.png';
 
-function LoginPage({setLoggedIn, setUserType, setUserId}) {
+function LoginPage({ setLoggedIn, setUserType, setUserId }) {
   const navigate = useNavigate();
+  const [error, setError] = useState('');
 
   const handleSubmit = async (event) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
 
-
     try {
-      const response = await axios.post('http://localhost:8080/login', {
-        email: data.get('email'),
-        password: data.get('password'),
-      }, {
-        headers: {
-          'Content-Type': 'application/x-www-form-urlencoded',
+      const response = await axios.post(
+        'http://localhost:8080/login',
+        {
+          email: data.get('email'),
+          password: data.get('password'),
         },
-      });
+        {
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+          },
+        }
+      );
 
       console.log(response.data);
 
       if (response) {
-        setLoggedIn(true)
-        setUserType(response.data.role)
-        setUserId(response.data.userId)
+        setLoggedIn(true);
+        setUserType(response.data.role);
+        setUserId(response.data.userId);
         navigate('/explore');
       }
     } catch (error) {
       console.error('Error during login:', error);
+      setError('Invalid email or password. Please try again.'); // Set the error message
     }
   };
 
@@ -48,19 +52,24 @@ function LoginPage({setLoggedIn, setUserType, setUserId}) {
       <CssBaseline />
       <Grid
         item
-        xs={false}
-        sm={4}
-        md={7}
+        xs={12}
+        sm={6}
+        md={6}
         sx={{
-          backgroundImage: 'url(https://source.unsplash.com/random?wallpapers)',
+          backgroundImage: `url(${image1})`,
           backgroundRepeat: 'no-repeat',
-          backgroundColor: (t) =>
-            t.palette.mode === 'light' ? t.palette.grey[50] : t.palette.grey[900],
           backgroundSize: 'cover',
           backgroundPosition: 'center',
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          justifyContent: 'center',
+          padding: 4,
+          height: '100%',
         }}
-      />
-      <Grid item xs={12} sm={8} md={5} component={Paper} elevation={6} square>
+      >
+      </Grid>
+      <Grid item xs={12} sm={6} md={6} component={Paper} elevation={6} square>
         <Box
           sx={{
             my: 8,
@@ -70,14 +79,20 @@ function LoginPage({setLoggedIn, setUserType, setUserId}) {
             alignItems: 'center',
           }}
         >
-          <Avatar sx={{ m: 1, bgcolor: 'secondary.main' }}>
-            <LockOutlinedIcon />
-          </Avatar>
+          {error && (
+            <Typography variant="body2" color="error" mb={2}>
+              {error}
+            </Typography>
+          )}
+          <br />
+          <br />
+          <img src={logo} alt="Logo" style={{ width: '100px', height: '55px', marginBottom: '16px' }} />
+          <br />
           <Typography component="h1" variant="h5">
             Login to your Account
           </Typography>
           <Grid item>
-            <Link variant="body2">
+            <Link to="/register" variant="body2" sx={{ fontSize: 'small' }}>
               Don't have an account?
             </Link>
           </Grid>
@@ -102,17 +117,7 @@ function LoginPage({setLoggedIn, setUserType, setUserId}) {
               id="password"
               autoComplete="current-password"
             />
-            <Grid item>
-              <Link variant="body2">
-                Forgot password?
-              </Link>
-            </Grid>
-            <Button
-              type="submit"
-              fullWidth
-              variant="contained"
-              sx={{ mt: 3, mb: 2 }}
-            >
+            <Button type="submit" fullWidth variant="contained" sx={{ mt: 3, mb: 2 }}>
               Login
             </Button>
           </Box>
@@ -123,4 +128,3 @@ function LoginPage({setLoggedIn, setUserType, setUserId}) {
 }
 
 export default LoginPage;
-
