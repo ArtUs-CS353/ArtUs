@@ -69,7 +69,7 @@ export default function Navbar({userType}) {
     const [isNavbarVisible, setIsNavbarVisible] = React.useState(true);
 
     console.log("user type: ", userType)
-    const pages = (userType == 2  || userType == 3)? ['Explore', 'Upload Artwork']:  ['Explore'];
+    const pages = (userType == 2  || userType == 4)? ['Explore', 'Upload Artwork']:  ['Explore'];
     const navigate = useNavigate();
 
     const handleNavbarTrigger = () => {
@@ -172,7 +172,7 @@ export default function Navbar({userType}) {
                 <NotificationsIcon />
               </Badge>
             </IconButton>
-            {(userType == 2 || userType == 3) &&
+            {(userType == 2 || userType == 4) &&
             <>
                   <IconButton
                   color="inherit">
