@@ -169,4 +169,14 @@ public class ArtworkController {
             return new ResponseEntity<>(true,HttpStatus.OK);
         return new ResponseEntity<>(false,HttpStatus.BAD_REQUEST);
     }
+
+    @PostMapping("/{artworkID}/addToExhibition")
+    public ResponseEntity<Boolean> addArtworkToExhibition(@PathVariable int artworkID, @RequestParam int exhibitionId){
+        boolean result = artworkService.addArtworkToExhibition(artworkID, exhibitionId);
+        if(result){
+            return new ResponseEntity<>(true, HttpStatus.OK);
+        }else{
+            return new ResponseEntity<>(false, HttpStatus.I_AM_A_TEAPOT);
+        }
+    }
 }

@@ -2,6 +2,7 @@ package com.artus.artus.services;
 import com.artus.artus.mappers.AuctionMapper;
 import com.artus.artus.mappers.BidMapper;
 import com.artus.artus.models.Bid;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 
@@ -86,7 +87,15 @@ public class BidService {
             String sql1 = "SELECT * FROM Bid WHERE auction_id = ? ORDER BY price DESC LIMIT 1;";
             Bid highestBid = jdbcTemplate.queryForObject(sql1, bidMapper, auctionId);
             return highestBid;
-        } catch (Exception e) {
+        }
+        catch (EmptyResultDataAccessException e){
+            Bid nullBid = new Bid();
+            nullBid.setUser_id(-1);
+            nullBid.setAuction_id(auctionId);
+            nullBid.setStatus("none");
+            return nullBid;
+        }
+        catch (Exception e) {
             // Handle exceptions, log errors, etc.
             e.printStackTrace();
             // If the update fails, return false

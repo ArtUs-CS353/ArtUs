@@ -1,6 +1,5 @@
 package com.artus.artus.services;
 import com.artus.artus.mappers.ExhibitionMapper;
-import com.artus.artus.models.Auction;
 import com.artus.artus.models.Exhibition;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -85,4 +84,15 @@ private final ExhibitionMapper exhibitionMapper;
         }
     }
 
+    public List<Integer> getAllArtworks(int exhibitionId) {
+        try{
+            String sql = "SELECT artwork_id FROM Includes where exhibition_id =?";
+            return jdbcTemplate.queryForList(sql, Integer.class, exhibitionId);
+        } catch (Exception e) {
+            // Handle exceptions, log errors, etc.
+            e.printStackTrace();
+            // If the update fails, return false
+            return null;
+        }
+    }
 }

@@ -279,4 +279,17 @@ public class ArtworkService {
 
         return true;
     }
+
+    public boolean addArtworkToExhibition(int artworkId, int exhibitionId) {
+        try{
+            String add = "Insert into Includes(exhibition_id,artwork_id) values (?,?);";
+            jdbcTemplate.update(add,exhibitionId, artworkId);
+            return true;
+        }catch (Exception e) {
+            // Handle exceptions, log errors, etc.
+            e.printStackTrace();
+            // If the insertion fails, return false
+            return false;
+        }
+    }
 }

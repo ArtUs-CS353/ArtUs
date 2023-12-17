@@ -78,6 +78,28 @@ public class AuctionController {
         }
     }
 
+    @GetMapping("/getAllApprovedFutureAuctions")
+    public ResponseEntity<List<Auction>> getAllApprovedFutureAuctions(){
+        List<Auction> auctions = auctionService.getAllApprovedFutureAuctions();
+        if(auctions != null ){
+            return new ResponseEntity<>(auctions, HttpStatus.OK);
+        }
+        else{
+            return new ResponseEntity<>(null, HttpStatus.I_AM_A_TEAPOT);
+        }
+    }
+
+    @GetMapping("/getAllApprovedCurrentAuctions")
+    public ResponseEntity<List<Auction>> getAllApprovedCurrentAuctions(){
+        List<Auction> auctions = auctionService.getAllApprovedCurrentAuctions();
+        if(auctions != null ){
+            return new ResponseEntity<>(auctions, HttpStatus.OK);
+        }
+        else{
+            return new ResponseEntity<>(null, HttpStatus.I_AM_A_TEAPOT);
+        }
+    }
+
     @GetMapping("/getAllDeclinedAuctions")
     public ResponseEntity<List<Auction>> getAllDeclinedAuctions(){
         List<Auction> auctions = auctionService.getAllDeclinedAuctions();

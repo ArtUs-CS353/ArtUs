@@ -30,6 +30,17 @@ public class BidController {
         }
     }
 
+    @GetMapping("/getHighestBidPrice/{auctionId}")
+    public ResponseEntity<Double> getHighestBidPrice(@PathVariable int auctionId){
+        double bid = bidService.getHighestBid(auctionId);
+        if(bid >= 0)
+            return new ResponseEntity<>(bid, HttpStatus.OK);
+        else{
+            return new ResponseEntity<>(null, HttpStatus.I_AM_A_TEAPOT);
+        }
+    }
+
+
     @PostMapping("/bidForAuction")
     public ResponseEntity<Bid> bidForAuction(@RequestParam("user_id") int user_id,
                                              @RequestParam("auction_id") int auction_id,
