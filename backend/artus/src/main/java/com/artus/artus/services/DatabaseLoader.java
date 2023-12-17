@@ -24,16 +24,16 @@ public class DatabaseLoader {
     private void initUserTable(){
         try{
             jdbcTemplate.execute("INSERT INTO User (user_name, user_surname, user_role, email, password, contact_info) VALUE " +
-                    "( 'Robert', 'Nava', 2, 'robert.nava@artist.com', 'password123', '123-456-7890'), " +
-                    "( 'Issy', 'Wood', 2, 'issy.wood@artist.com', 'securepass', '987-654-3210'), " +
-                    "( 'Anna', 'Park', 2, 'alice.johnson@artist.com', '112354', '555-123-4567')," +
-                    "( 'Louis', 'Fratino', 2, 'louis.fratino@artist.com', 'frration', '505-123-4567')," +
-                    "( 'Pablo', 'Picasso', 2, 'pablo.picasso@artist.com', 'bestartistever1', '505-106-8574')," +
-                    "( 'Leonardo da', 'Vinci', 2, 'leo.vinci@artist.com', 'noonartist1', '505-106-8674')," +
-                    "( 'Judy', 'Chicago', 2, 'judy@artist.com', 'textile', '505-106-5974')," +
-                    "( 'Lee', 'Ufan', 2, 'leesin@artist.com', 'korean', '505-106-5974')," +
-                    "( 'Fausto', 'Melotti', 2, 'melotti@artist.com', 'ceramic', '505-106-9874')," +
-                    "( 'Philip', 'Colbert', 2, 'colbert@artist.com', 'nftisnotcoin', '505-106-4541');");
+                    "( 'Robert', 'Nava', 2, 'robert.nava@artist.com', 'wrong-password', '123-456-7890'), " +
+                    "( 'Issy', 'Wood', 2, 'issy.wood@artist.com', 'wrong-password', '987-654-3210'), " +
+                    "( 'Anna', 'Park', 2, 'alice.johnson@artist.com', 'wrong-password', '555-123-4567')," +
+                    "( 'Louis', 'Fratino', 2, 'louis.fratino@artist.com', 'wrong-password', '505-123-4567')," +
+                    "( 'Pablo', 'Picasso', 2, 'pablo.picasso@artist.com', 'wrong-password', '505-106-8574')," +
+                    "( 'Leonardo da', 'Vinci', 2, 'leo.vinci@artist.com', 'wrong-password', '505-106-8674')," +
+                    "( 'Judy', 'Chicago', 2, 'judy@artist.com', 'wrong-password', '505-106-5974')," +
+                    "( 'Lee', 'Ufan', 2, 'leesin@artist.com', 'wrong-password', '505-106-5974')," +
+                    "( 'Fausto', 'Melotti', 2, 'melotti@artist.com', 'wrong-password', '505-106-9874')," +
+                    "( 'Philip', 'Colbert', 2, 'colbert@artist.com', 'wrong-password', '505-106-4541');");
         }catch (Exception e){
             System.out.println("Error occurred while inserting into User table:"+e.getMessage());
         }
@@ -58,14 +58,14 @@ public class DatabaseLoader {
 
     private void initArtworkTable(){
         try {
-            jdbcTemplate.execute("INSERT INTO Artwork (artwork_id, artist_id, title, description, type, material, size, rarity, imageURL, movement, date, is_featuring, price, status, availability) VALUES" +
-                    "(1, 1, 'Untitled', 'Hand-signed by artist, Hand Signed Lower Right, Includes a Certificate of Authenticity', 'Drawing, Collage or other Work on Paper', 'Mixed Media on Paper', '22.9 × 30.5 cm','Unique','https://d7hftxdivxxvm.cloudfront.net?height=667&quality=85&resize_to=fit&src=https%3A%2F%2Fd32dm0rphc51dk.cloudfront.net%2FOK0GVkyEWSSFJFz2TOqf0Q%2Fnormalized.jpg&width=800', '','2019-01-01',  FALSE, 15000.00, 'auction', 'available')," +
-                    "(2, 1, 'Veszhuu A Party in Vegas Wolf Spider or a Owl', 'Hand-signed by artist, Back of Painting, Includes a Certificate of Authenticity', 'Painting', 'Mixed Media on Canvas', '152.4 × 109.2 cm', 'Unique', 'https://d7hftxdivxxvm.cloudfront.net?height=800&quality=85&resize_to=fit&src=https%3A%2F%2Fd32dm0rphc51dk.cloudfront.net%2FWMT6K8I6v3qxQwVl-s_T2Q%2Fmain.jpg&width=800', '', '2015-01-01', TRUE, 55000.00, 'sale', 'available')," +
-                    "(3, 1, 'Artist Plate Project', 'Signed in plate, Plate signed, Part of a limited edition set, Includes a Certificate of Authenticity', 'Ephemera or Merchandise', 'Ceramic', '26.7 × 26.7 cm', 'Limited edition', 'https://d7hftxdivxxvm.cloudfront.net?height=800&quality=85&resize_to=fit&src=https%3A%2F%2Fd32dm0rphc51dk.cloudfront.net%2F4EvVyQNvM9TqrBJviww7lg%2Fmain.jpg&width=800', '', '2023-01-01', false, 750, 'auction', 'available')," +
-                    "(4, 2, 'Cool (From Love Angel Music Baby)', 'Hand-signed by artist, Edition of 100', 'Print', 'Quality giclée printed cover fixed to a custom dyed linen wrapped vinyl jacket in Gucci-designed packaging', '29.2 × 29.2 cm', 'Limited edition', 'https://d7hftxdivxxvm.cloudfront.net?height=800&quality=85&resize_to=fit&src=https%3A%2F%2Fd32dm0rphc51dk.cloudfront.net%2FkiPyT7i2y-WmbRiPa4-HOg%2Fmain.jpg&width=789', '', '2023-01-01', false, 4500, 'auction', 'available')," +
-                    "(5, 2, 'Pig, Chinese Zodiac animal series', 'Not signed', 'Painting', 'Oil on clothing', '', 'Unique', 'https://d7hftxdivxxvm.cloudfront.net?height=800&quality=85&resize_to=fit&src=https%3A%2F%2Fd32dm0rphc51dk.cloudfront.net%2FGd2DDi2J7xCCmEMa8Y-ifQ%2Fnormalized.jpg&width=600', '', '2020-01-01', false, 0, 'on loan', 'not available')," +
-                    "(6, 3, 'Eyes Up Here', 'Not signed, Frame Not included', 'Drawing, Collage or other Work on Paper', 'Ink, acrylic, charcoal, and paper on panel', '62.2 × 121.9 × 4.4 cm', 'Unique', 'https://d7hftxdivxxvm.cloudfront.net?height=533&quality=85&resize_to=fit&src=https%3A%2F%2Fd32dm0rphc51dk.cloudfront.net%2FOFV3FKaLVo2d_VMjYwoCOA%2Fnormalized.jpg&width=800', '', '2022-01-01', false, 0, 'sold', 'not available')," +
-                    "(7, 4, 'Anemones and Shells', 'Hand-signed by artist, Signed and numbered on front Frame not included', 'Print', 'Etching with aquatint and drypoint, printed on Hahnemuhle White 300gsm paper', '60 × 45.1 cm', 'Limited edition', 'https://d7hftxdivxxvm.cloudfront.net?height=800&quality=85&resize_to=fit&src=https%3A%2F%2Fd32dm0rphc51dk.cloudfront.net%2FCBDl-w3EQaq7QnDgJOK3wA%2Fnormalized.jpg&width=641', '', '2021-01-01', false, 7500., 'sale', 'available');\n");
+            jdbcTemplate.execute("INSERT INTO Artwork (artwork_id, artist_id, title, description, type, material, size, rarity, imageURL, movement, date, is_featuring, price, status, availability,favorite_count) VALUES" +
+                    "(1, 1, 'Untitled', 'Hand-signed by artist, Hand Signed Lower Right, Includes a Certificate of Authenticity', 'Drawing, Collage or other Work on Paper', 'Mixed Media on Paper', '22.9 × 30.5 cm','Unique','https://d7hftxdivxxvm.cloudfront.net?height=667&quality=85&resize_to=fit&src=https%3A%2F%2Fd32dm0rphc51dk.cloudfront.net%2FOK0GVkyEWSSFJFz2TOqf0Q%2Fnormalized.jpg&width=800', '','2019-01-01',  FALSE, 15000.00, 'auction', 'available',0)," +
+                    "(2, 1, 'Veszhuu A Party in Vegas Wolf Spider or a Owl', 'Hand-signed by artist, Back of Painting, Includes a Certificate of Authenticity', 'Painting', 'Mixed Media on Canvas', '152.4 × 109.2 cm', 'Unique', 'https://d7hftxdivxxvm.cloudfront.net?height=800&quality=85&resize_to=fit&src=https%3A%2F%2Fd32dm0rphc51dk.cloudfront.net%2FWMT6K8I6v3qxQwVl-s_T2Q%2Fmain.jpg&width=800', '', '2015-01-01', TRUE, 55000.00, 'sale', 'available',0)," +
+                    "(3, 1, 'Artist Plate Project', 'Signed in plate, Plate signed, Part of a limited edition set, Includes a Certificate of Authenticity', 'Ephemera or Merchandise', 'Ceramic', '26.7 × 26.7 cm', 'Limited edition', 'https://d7hftxdivxxvm.cloudfront.net?height=800&quality=85&resize_to=fit&src=https%3A%2F%2Fd32dm0rphc51dk.cloudfront.net%2F4EvVyQNvM9TqrBJviww7lg%2Fmain.jpg&width=800', '', '2023-01-01', false, 750, 'auction', 'available',0)," +
+                    "(4, 2, 'Cool (From Love Angel Music Baby)', 'Hand-signed by artist, Edition of 100', 'Print', 'Quality giclée printed cover fixed to a custom dyed linen wrapped vinyl jacket in Gucci-designed packaging', '29.2 × 29.2 cm', 'Limited edition', 'https://d7hftxdivxxvm.cloudfront.net?height=800&quality=85&resize_to=fit&src=https%3A%2F%2Fd32dm0rphc51dk.cloudfront.net%2FkiPyT7i2y-WmbRiPa4-HOg%2Fmain.jpg&width=789', '', '2023-01-01', false, 4500, 'auction', 'available',0)," +
+                    "(5, 2, 'Pig, Chinese Zodiac animal series', 'Not signed', 'Painting', 'Oil on clothing', '', 'Unique', 'https://d7hftxdivxxvm.cloudfront.net?height=800&quality=85&resize_to=fit&src=https%3A%2F%2Fd32dm0rphc51dk.cloudfront.net%2FGd2DDi2J7xCCmEMa8Y-ifQ%2Fnormalized.jpg&width=600', '', '2020-01-01', false, 0, 'on loan', 'not available',0)," +
+                    "(6, 3, 'Eyes Up Here', 'Not signed, Frame Not included', 'Drawing, Collage or other Work on Paper', 'Ink, acrylic, charcoal, and paper on panel', '62.2 × 121.9 × 4.4 cm', 'Unique', 'https://d7hftxdivxxvm.cloudfront.net?height=533&quality=85&resize_to=fit&src=https%3A%2F%2Fd32dm0rphc51dk.cloudfront.net%2FOFV3FKaLVo2d_VMjYwoCOA%2Fnormalized.jpg&width=800', '', '2022-01-01', false, 0, 'sold', 'not available',0)," +
+                    "(7, 4, 'Anemones and Shells', 'Hand-signed by artist, Signed and numbered on front Frame not included', 'Print', 'Etching with aquatint and drypoint, printed on Hahnemuhle White 300gsm paper', '60 × 45.1 cm', 'Limited edition', 'https://d7hftxdivxxvm.cloudfront.net?height=800&quality=85&resize_to=fit&src=https%3A%2F%2Fd32dm0rphc51dk.cloudfront.net%2FCBDl-w3EQaq7QnDgJOK3wA%2Fnormalized.jpg&width=641', '', '2021-01-01', false, 7500., 'sale', 'available',0);\n");
         }catch (Exception e){
             System.out.println("Error occurred while inserting into Artwork table:"+e.getMessage());
         }

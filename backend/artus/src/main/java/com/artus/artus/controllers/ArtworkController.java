@@ -160,4 +160,13 @@ public class ArtworkController {
             return new ResponseEntity<>(null, HttpStatus.I_AM_A_TEAPOT);
         }
     }
+
+    @PostMapping("/{artworkID}/direct-purchase")
+    public ResponseEntity<Boolean> purchaseArtwork(@PathVariable int artworkID,
+                                                  @RequestParam("user_id") int user_id){
+
+        if(artworkService.purchaseArtwork(artworkID,user_id))
+            return new ResponseEntity<>(true,HttpStatus.OK);
+        return new ResponseEntity<>(false,HttpStatus.BAD_REQUEST);
+    }
 }

@@ -10,7 +10,7 @@ import Popup from '../Popup';
 import DateAndTimePicker from '../DateTimePicker'
 import dayjs from 'dayjs';
 
-function ArtistProfilePage() {
+function ArtistProfilePage({userId}) {
   const settings = {
     infinite: false,
     speed: 500,
@@ -27,11 +27,9 @@ function ArtistProfilePage() {
   const [amount,setAmount] = useState(0.0)
   const [artworkId, setId] = useState(-1)
   const handleStartDateSelection = (newDate) =>{
-    console.log("geldi date as", newDate )
     setStartDate(newDate);
   };
   const handleEndDateSelection = (newDate) =>{
-    console.log("geldi date as", newDate )
     setEndDate(newDate);
   };
   const handleStartingAmountChange = (event) => {
@@ -66,7 +64,7 @@ function ArtistProfilePage() {
     useEffect(() => {
     const getArtworks = async () => {
       try {
-        const response = await axios.get(`http://localhost:8080/artwork/artist/${1}`);
+        const response = await axios.get(`http://localhost:8080/artwork/artist/${userId}`);
         const artworks = response.data;
         console.log("ARTWORKS: ", artworks)
         const artworksWithArtists = await Promise.all(artworks.map(async (artwork) => {

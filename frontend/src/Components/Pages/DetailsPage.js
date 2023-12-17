@@ -12,8 +12,11 @@ function DetailsPage({popup,context, setId}) {
   const [artwork, setArtwork] = useState(null);
   const navigate = useNavigate();
   let { id } = useParams();
-  console.log("id is ", id)
-  setId(id)
+  if(setId){
+    console.log("HERE AS ID DETAILS ", id)
+    setId(id)
+  
+  }
   
 
   useEffect(() => {

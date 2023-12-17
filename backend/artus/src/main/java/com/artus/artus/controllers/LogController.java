@@ -6,13 +6,15 @@ import com.artus.artus.models.LoginResponseDTO;
 import com.artus.artus.models.User;
 import com.artus.artus.services.LoginService;
 import com.artus.artus.services.RegisterService;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.net.URLDecoder;
 import java.util.List;
-import org.springframework.util.MultiValueMap;
 
 @RestController
 @CrossOrigin
@@ -35,17 +37,38 @@ public class LogController {
                                                       @RequestParam("contactInfo") String contactInfo,
                                                       @RequestParam("address") String address,
                                                       @RequestParam("role") int role,
-                                                      @RequestParam("Preferences") String[] preferences
+                                                      @RequestParam("Preferences") String preferencesJSON
     ){
-        Enthusiast enthusiast = new Enthusiast();
-        enthusiast.setContact_info(contactInfo);
-        enthusiast.setEmail(email);
-        enthusiast.setPassword(password);
-        enthusiast.setUser_name(userName);
-        enthusiast.setUser_surname(userSurname);
-        enthusiast.setAddress(address);
-        enthusiast.setUser_role(role);
-        return new ResponseEntity<>(registerService.registerEnthusiast(enthusiast,preferences), HttpStatus.OK);
+        try {
+            String decodedPreferences = URLDecoder.decode(preferencesJSON, "UTF-8");
+            System.out.println(decodedPreferences);
+
+
+            ObjectMapper objectMapper = new ObjectMapper();
+            String[] preferences = objectMapper.readValue(decodedPreferences, String[].class);
+
+            
+
+            Enthusiast enthusiast = new Enthusiast();
+            enthusiast.setContact_info(contactInfo);
+            enthusiast.setEmail(email);
+            enthusiast.setPassword(password);
+            enthusiast.setUser_name(userName);
+            enthusiast.setUser_surname(userSurname);
+            enthusiast.setAddress(address);
+            enthusiast.setUser_role(role);
+
+            System.out.println(enthusiast.getContact_info() + " " + enthusiast.getEmail() + " " + enthusiast.getPassword()
+            + " " + enthusiast.getUser_name() + " " + enthusiast.getUser_surname() + " " 
+            + enthusiast.getAddress() + " " + enthusiast.getUser_role());
+
+
+            return new ResponseEntity<>(registerService.registerEnthusiast(enthusiast, preferences), HttpStatus.OK);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ResponseEntity<>("Error processing preferences", HttpStatus.BAD_REQUEST);
+        }
     }
 
     @GetMapping("/register/getTypes")
@@ -90,11 +113,8 @@ public class LogController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<LoginResponseDTO> login(@RequestBody MultiValueMap<String, String> formData) {
+    public ResponseEntity<LoginResponseDTO> login(@RequestParam String email, @RequestParam String password) {
         LoginResponseDTO loginResponseDTO = new LoginResponseDTO();
-
-        String email = formData.getFirst("email");
-        String password = formData.getFirst("password");
 
         User user = new User();
         user.setEmail(email);
@@ -109,7 +129,7 @@ public class LogController {
         if(returnedUser == null){
             loginResponseDTO.setMessage("User with email: " + email + " does not exist!");
             return new ResponseEntity<>(loginResponseDTO,HttpStatus.BAD_REQUEST);
-        } else if (returnedUser.getPassword() != null && returnedUser.getPassword().equals(password)) {
+        } else if (returnedUser.getPassword() == null) {
             loginResponseDTO.setMessage("Incorrect password.");
             return new ResponseEntity<>(loginResponseDTO,HttpStatus.BAD_REQUEST);
         }else {

@@ -5,8 +5,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.Date;
 
 @Getter
 @Setter
@@ -27,4 +25,5 @@ public class Artwork {
     private float price;
     private String status;
     private String availability;
+    private int favorite_count;
 }
