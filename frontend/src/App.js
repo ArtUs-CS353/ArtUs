@@ -27,10 +27,10 @@ function App() {
         <Route path="/register" element={<RegisterPage />} />
         <Route path="/preferences" element={<PreferencesPage />} />
         <Route path="/explore" element={<Explore userId = {userId}/>} />
-        <Route path="/buy" element={<BuyArtwork userId = {userId}/>} />
+        <Route path="/buy/:id" element={<BuyArtwork userId = {userId}/>} />
         <Route path="/uploadArtwork" element={<UploadArtwork userId = {userId} userType={userType}/>} />
-        <Route path="/details" element={<DetailsPage userId = {userId}/>} />
-        <Route path="/auction" element={<AuctionPage userId = {userId} />} />
+        <Route path="/details/:id" element={<DetailsPage userId = {userId}/>} />
+        <Route path="/auction/:id" element={<AuctionPage userId = {userId} />} />
         <Route path="/artistProfile" element={<ArtistProfile userId = {userId}/>} />
         <Route path="/detailsArtist" element={<DetailsArtistPage userId = {userId}/>} />
         <Route path="/request" element={<HomePage userId = {userId}/>} />
