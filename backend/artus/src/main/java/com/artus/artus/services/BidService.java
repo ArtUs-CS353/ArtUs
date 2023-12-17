@@ -11,14 +11,12 @@ import java.time.LocalDateTime;
 public class BidService {
     private final JdbcTemplate jdbcTemplate;
     private final BidMapper bidMapper;
-    private final AuctionMapper auctionMapper;
     private final AuctionService auctionService;
 
 
-    public BidService(JdbcTemplate jdbcTemplate, BidMapper bidMapper, AuctionMapper auctionMapper, AuctionService auctionService) {
+    public BidService(JdbcTemplate jdbcTemplate, BidMapper bidMapper, AuctionService auctionService) {
         this.jdbcTemplate = jdbcTemplate;
         this.bidMapper = bidMapper;
-        this.auctionMapper = auctionMapper;
         this.auctionService = auctionService;
     }
 
