@@ -12,6 +12,7 @@ import DetailsArtistPage from './Components/Pages/DetailsArtistPage';
 import LoginPage from './Components/Pages/LoginPage';
 import RegisterPage from './Components/Pages/RegisterPage';
 import PreferencesPage from './Components/Pages/PreferencesPage';
+import CreateArtist from './Components/Pages/CreateArtist';
 
 function App() {
   //const showNavbar = !['/login'].includes(window.location.pathname);
@@ -33,6 +34,7 @@ function App() {
         <Route path="/artistProfile" element={<ArtistProfile userId = {userId}/>} />
         <Route path="/detailsArtist" element={<DetailsArtistPage userId = {userId}/>} />
         <Route path="/request" element={<HomePage userId = {userId}/>} />
+        <Route path="/createArtist" element={<CreateArtist userId = {userId} userType={userType} />} />
       </Routes>
     </Router>
   );
