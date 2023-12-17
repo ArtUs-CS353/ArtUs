@@ -20,8 +20,8 @@ public class BidController {
         this.auctionService = auctionService;
     }
 
-    @GetMapping("/getHighestBid")
-    public ResponseEntity<Bid> getHighestBid(@RequestParam("auctionId") int auctionId){
+    @GetMapping("/getHighestBid/{auctionId}")
+    public ResponseEntity<Bid> getHighestBid(@PathVariable int auctionId){
         Bid bid = bidService.getBidWithHighestPrice(auctionId);
         if(bid != null)
             return new ResponseEntity<>(bid, HttpStatus.OK);
@@ -29,6 +29,17 @@ public class BidController {
             return new ResponseEntity<>(null, HttpStatus.I_AM_A_TEAPOT);
         }
     }
+
+    @GetMapping("/getHighestBidPrice/{auctionId}")
+    public ResponseEntity<Double> getHighestBidPrice(@PathVariable int auctionId){
+        double bid = bidService.getHighestBid(auctionId);
+        if(bid >= 0)
+            return new ResponseEntity<>(bid, HttpStatus.OK);
+        else{
+            return new ResponseEntity<>(null, HttpStatus.I_AM_A_TEAPOT);
+        }
+    }
+
 
     @PostMapping("/bidForAuction")
     public ResponseEntity<Bid> bidForAuction(@RequestParam("user_id") int user_id,

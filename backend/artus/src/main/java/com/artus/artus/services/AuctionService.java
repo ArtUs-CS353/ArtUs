@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -43,6 +44,32 @@ private final AuctionMapper auctionMapper;
             return null;
         }
     }
+
+    public List<Auction> getAllApprovedFutureAuctions() {
+        try{
+            String sql = "SELECT * FROM Auction WHERE start_date > ? AND status = 'approved'";
+            return jdbcTemplate.query(sql, auctionMapper, LocalDateTime.now());
+        } catch (Exception e) {
+            // Handle exceptions, log errors, etc.
+            e.printStackTrace();
+            // If the update fails, return false
+            return null;
+        }
+    }
+
+    public List<Auction> getAllApprovedCurrentAuctions() {
+        try{
+            LocalDateTime currentTime = LocalDateTime.now();
+            String sql = "SELECT * FROM Auction WHERE start_date <= ? AND end_date > ? AND status = 'approved'";
+            return jdbcTemplate.query(sql, auctionMapper, currentTime, currentTime);
+        } catch (Exception e) {
+            // Handle exceptions, log errors, etc.
+            e.printStackTrace();
+            // If the update fails, return false
+            return null;
+        }
+    }
+
 
     public List<Auction> getAllApprovedAuctions() {
         try{
@@ -150,4 +177,6 @@ private final AuctionMapper auctionMapper;
             // If the update fails, return false
         }
     }
+
+
 }
