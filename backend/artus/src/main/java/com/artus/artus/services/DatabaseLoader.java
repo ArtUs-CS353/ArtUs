@@ -24,16 +24,16 @@ public class DatabaseLoader {
     private void initUserTable(){
         try{
             jdbcTemplate.execute("INSERT INTO User (user_name, user_surname, user_role, email, password, contact_info) VALUE " +
-                    "( 'Robert', 'Nava', 2, 'robert.nava@artist.com', 'password123', '123-456-7890'), " +
-                    "( 'Issy', 'Wood', 2, 'issy.wood@artist.com', 'securepass', '987-654-3210'), " +
-                    "( 'Anna', 'Park', 2, 'alice.johnson@artist.com', '112354', '555-123-4567')," +
-                    "( 'Louis', 'Fratino', 2, 'louis.fratino@artist.com', 'frration', '505-123-4567')," +
-                    "( 'Pablo', 'Picasso', 2, 'pablo.picasso@artist.com', 'bestartistever1', '505-106-8574')," +
-                    "( 'Leonardo da', 'Vinci', 2, 'leo.vinci@artist.com', 'noonartist1', '505-106-8674')," +
-                    "( 'Judy', 'Chicago', 2, 'judy@artist.com', 'textile', '505-106-5974')," +
-                    "( 'Lee', 'Ufan', 2, 'leesin@artist.com', 'korean', '505-106-5974')," +
-                    "( 'Fausto', 'Melotti', 2, 'melotti@artist.com', 'ceramic', '505-106-9874')," +
-                    "( 'Philip', 'Colbert', 2, 'colbert@artist.com', 'nftisnotcoin', '505-106-4541');");
+                    "( 'Robert', 'Nava', 2, 'robert.nava@artist.com', 'wrong-password', '123-456-7890'), " +
+                    "( 'Issy', 'Wood', 2, 'issy.wood@artist.com', 'wrong-password', '987-654-3210'), " +
+                    "( 'Anna', 'Park', 2, 'alice.johnson@artist.com', 'wrong-password', '555-123-4567')," +
+                    "( 'Louis', 'Fratino', 2, 'louis.fratino@artist.com', 'wrong-password', '505-123-4567')," +
+                    "( 'Pablo', 'Picasso', 2, 'pablo.picasso@artist.com', 'wrong-password', '505-106-8574')," +
+                    "( 'Leonardo da', 'Vinci', 2, 'leo.vinci@artist.com', 'wrong-password', '505-106-8674')," +
+                    "( 'Judy', 'Chicago', 2, 'judy@artist.com', 'wrong-password', '505-106-5974')," +
+                    "( 'Lee', 'Ufan', 2, 'leesin@artist.com', 'wrong-password', '505-106-5974')," +
+                    "( 'Fausto', 'Melotti', 2, 'melotti@artist.com', 'wrong-password', '505-106-9874')," +
+                    "( 'Philip', 'Colbert', 2, 'colbert@artist.com', 'wrong-password', '505-106-4541');");
         }catch (Exception e){
             System.out.println("Error occurred while inserting into User table:"+e.getMessage());
         }

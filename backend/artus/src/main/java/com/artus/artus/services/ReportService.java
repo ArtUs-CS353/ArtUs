@@ -58,22 +58,19 @@ public class ReportService {
         String sql = "WITH TopArtworkOwners AS (SELECT o.user_id, COUNT(o.artwork_id) AS owned_artworks_count" +
                 "    FROM Owns o GROUP BY o.user_id ORDER BY owned_artworks_count DESC)\n" +
                 " SELECT * FROM User U JOIN TopArtworkOwners T ON U.user_id = T.user_id WHERE U.user_role = 4;";
-        return jdbcTemplate.query(sql, new RowMapper<Map<Map<String, Integer>, Integer>>() {
-            @Override
-            public Map<Map<String, Integer>, Integer> mapRow(ResultSet rs, int rowNum) throws SQLException {
-                String name = rs.getString("user_name");
-                String surname = rs.getString("user_surname");
-                String returnedName = name + " " + surname;
-                Integer owned_artworks_count = rs.getInt("owned_artworks_count");
-                Integer id = rs.getInt("user_id");
+        return jdbcTemplate.query(sql, (rs, rowNum) -> {
+            String name = rs.getString("user_name");
+            String surname = rs.getString("user_surname");
+            String returnedName = name + " " + surname;
+            Integer owned_artworks_count = rs.getInt("owned_artworks_count");
+            Integer id = rs.getInt("user_id");
 
-                Map<String,Integer> mapInside = new HashMap<>();
-                mapInside.put(returnedName,id);
-                Map<Map<String,Integer>,Integer> map = new HashMap<>();
-                map.put(mapInside,owned_artworks_count);
+            Map<String,Integer> mapInside = new HashMap<>();
+            mapInside.put(returnedName,id);
+            Map<Map<String,Integer>,Integer> map = new HashMap<>();
+            map.put(mapInside,owned_artworks_count);
 
-                return map;
-            }
+            return map;
         });
     }
 

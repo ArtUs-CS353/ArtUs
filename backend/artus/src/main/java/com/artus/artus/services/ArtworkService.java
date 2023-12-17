@@ -204,4 +204,45 @@ public class ArtworkService {
 
         }
     }
+
+    public boolean purchaseArtwork(int artwork_id, int user_id){
+        String purchaseSql = "INSERT INTO Purchase(user_id, artwork_id, purchase_date , price)" +
+                "VALUES (?, ?  ,curdate() , ?);";
+
+        String priceSQL = "Select price from artwork where artwork_id = ?;";
+        double price = jdbcTemplate.queryForObject(priceSQL,double.class,artwork_id);
+
+        try{
+            jdbcTemplate.update(purchaseSql,user_id,artwork_id,price);
+        }catch (Exception e){
+            System.out.println(e.getMessage());
+            return false;
+        }
+
+        int ownerID;
+        String previousOwnerSql = "Select user_id from Owns where artwork_id = ?;";
+        String artistIDSQL = "Select artist_id from artwork where artwork_id = ?;";
+        try{
+            ownerID = jdbcTemplate.queryForObject(previousOwnerSql, Integer.class,artwork_id);
+
+            String updateOwnerBalance = "UPDATE Enthusiast SET balance = balance + (SELECT price FROM Artwork WHERE artwork_id = ?) WHERE user_id = ?;";
+            jdbcTemplate.update(updateOwnerBalance,artwork_id,ownerID);
+        }catch (Exception e){
+            ownerID = jdbcTemplate.queryForObject(artistIDSQL,Integer.class,artwork_id);
+            String updateArtistBalance = "UPDATE Artist SET balance = balance + (SELECT price FROM Artwork WHERE artwork_id = ?) WHERE user_id = ?;";
+            jdbcTemplate.update(updateArtistBalance,artwork_id,ownerID);
+        }
+
+        try{
+            String deleteLastOwner = "Delete FROM Owns where artwork_id = ?";
+            jdbcTemplate.update(deleteLastOwner,artwork_id);
+        }catch (Exception e){
+            System.out.println(e.getMessage());
+        }
+
+        String insertNewOwner = "Insert into Owns(artwork_id,user_id) values (?,?);";
+        jdbcTemplate.update(insertNewOwner,artwork_id,user_id);
+
+        return true;
+    }
 }
