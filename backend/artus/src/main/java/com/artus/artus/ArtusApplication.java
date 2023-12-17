@@ -48,7 +48,7 @@ public class ArtusApplication implements CommandLineRunner{
 
 
 		try {
-			jdbcTemplate.execute("create view Most_Favorite_Artworks AS WITH temp(artwork_id,favorite_count) AS (SELECT artwork_id, COUNT(*) FROM Favorite GROUP BY artwork_id) SELECT * FROM Artwork A, temp T, User U WHERE T.artwork_id = A.artwork_id AND A.artist_id = U.user_id AND A.is_featuring = TRUE ORDER BY T.favorite_count DESC;");
+			jdbcTemplate.execute("create view Most_Favorite_Artworks AS WITH temp(artwork_id,favorite_count) AS (SELECT artwork_id, COUNT(*) FROM Favorite GROUP BY artwork_id) SELECT A.* FROM Artwork A, temp T, User U WHERE T.artwork_id = A.artwork_id AND A.artist_id = U.user_id AND A.is_featuring = TRUE ORDER BY T.favorite_count DESC;");
 			jdbcTemplate.execute("ALTER TABLE User ADD CONSTRAINT unique_email UNIQUE (email);");
 			jdbcTemplate.execute("ALTER TABLE Artist ADD CONSTRAINT check_follower_count CHECK (follower_count >= 0);");
 			jdbcTemplate.execute("ALTER TABLE Auction ADD CONSTRAINT check_starting_amount CHECK (starting_amount >= 0);");
