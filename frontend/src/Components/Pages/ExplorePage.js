@@ -27,6 +27,8 @@ function ExplorePage() {
   const [featuredArtworks, setFeaturedArtworks] = useState([]);
   const [recommendedArtworks, setRecommendedArtworks] = useState([]);
   const [featuringArtists, setFeaturingArtists] = useState([]);
+  const [exhibitions, setExhibitions] = useState([]);
+  const [workshops, setWorkshops] = useState([]);
 
 
   const getFeaturingArtists = async () => {
@@ -126,6 +128,38 @@ function ExplorePage() {
   
     getFeaturingArtworks();
   }, []); 
+
+  useEffect(() => {
+    const getExhibitions = async () => {
+      try {
+        const response = await axios.get(`http://localhost:8080/exhibition/getAllExhibitions`);
+        const exhibitions = response.data;
+        console.log("EXHIBITIONS: ", exhibitions)
+        setExhibitions(exhibitions)
+      } catch (error) {
+        console.error("Failed to fetch recommended artwork: ", error);
+        throw error;
+      }
+    };
+  
+    getExhibitions();
+  }, []); 
+
+  // useEffect(() => {
+  //   const getWorkshops = async () => {
+  //     try {
+  //       const response = await axios.get(`http://localhost:8080/workshops/getAllWorkshops`);
+  //       const workshops = response.data;
+  //       console.log("workshops: ", workshops)
+  //       setWorkshops(workshops)
+  //     } catch (error) {
+  //       console.error("Failed to fetch workshops: ", error);
+  //       throw error;
+  //     }
+  //   };
+  
+  //   getWorkshops();
+  // }, []); 
   return (
     <Container>
       <Typography sx = {{mt: 2}} variant="h5" gutterBottom >
@@ -153,9 +187,9 @@ function ExplorePage() {
           Online Exhibitions
         </Typography>
         <Slider {...settings}>
-        {artists.map((artist, index) => (
+        {exhibitions.map((exhibition, index) => (
            <div key={index}>
-            <DisplayImages type = "artist" artwork={artist} func = {handleArtistClick}/>
+            <DisplayImages type = "exhibition" artwork={exhibition} func = {handleArtistClick}/>
            </div>
       ))}
        </Slider>
@@ -164,9 +198,9 @@ function ExplorePage() {
           Workshops
         </Typography>
         <Slider {...settings}>
-        {artists.map((artist, index) => (
+        {workshops.map((workshops, index) => (
            <div key={index}>
-            <DisplayImages type = "artist" artwork={artist} func = {handleArtistClick}/>
+            <DisplayImages type = "artist" artwork={workshops} func = {handleArtistClick}/>
            </div>
       ))}
        </Slider>
