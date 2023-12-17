@@ -2,11 +2,12 @@ package com.artus.artus.mappers;
 
 import com.artus.artus.models.Exhibition;
 import org.springframework.jdbc.core.RowMapper;
+import org.springframework.stereotype.Component;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
-
+@Component
 public class ExhibitionMapper implements RowMapper<Exhibition> {
     @Override
     public Exhibition mapRow(ResultSet rs, int rowNum) throws SQLException {
