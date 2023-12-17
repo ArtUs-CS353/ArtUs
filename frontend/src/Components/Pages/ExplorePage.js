@@ -149,6 +149,28 @@ function ExplorePage() {
       ))}
        </Slider>
 
+       <Typography sx = {{mt: 5}} variant="h5" gutterBottom >
+          Online Exhibitions
+        </Typography>
+        <Slider {...settings}>
+        {artists.map((artist, index) => (
+           <div key={index}>
+            <DisplayImages type = "artist" artwork={artist} func = {handleArtistClick}/>
+           </div>
+      ))}
+       </Slider>
+
+       <Typography sx = {{mt: 5}} variant="h5" gutterBottom >
+          Workshops
+        </Typography>
+        <Slider {...settings}>
+        {artists.map((artist, index) => (
+           <div key={index}>
+            <DisplayImages type = "artist" artwork={artist} func = {handleArtistClick}/>
+           </div>
+      ))}
+       </Slider>
+
         <Typography sx = {{mt: 2}} variant="h5" gutterBottom >
           For You
         </Typography>

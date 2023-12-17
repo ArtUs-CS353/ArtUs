@@ -21,11 +21,11 @@ function UploadArtworkPage({userId, userType}) {
   const [size, setSize] = useState('')
   const [price, setPrice] = useState('')
   const [description, setDescription] = useState('')
-  const [artistId, setArtistId] = useState(-1)
+  const [artistId, setArtistId] = useState(userId)
   const [selectedArtist, setArtist] = useState('')
   const [artists, setArtists] = useState([])
   const [createNewVisible, setVisible] = useState(false);
-  const isSubmitDisabled = !type || !material || !movement || !rarity || !date || !file || !title || !size || !price || !description || !selectedArtist || selectedArtist == 'Other' ; 
+  const isSubmitDisabled = !type || !material || !movement || !rarity || !date || !file || !title || !size || !description || (userType == 4 ? (!selectedArtist || selectedArtist == 'Other'): (false)) ; 
   const fileUrl = file ? URL.createObjectURL(file) : '';
   function handleClose() {
     console.log("CLOSE IS SEND")
@@ -122,21 +122,22 @@ function UploadArtworkPage({userId, userType}) {
   };
 
   const uploadArtwork = async () => {
-      let fileUrl = ''
-      try {
-        fileUrl = await uploadImageToAWS(file);
-        // Set state or do something with the fileUrl
-      } catch (error) {
-        console.log("error: ", error)
-        return
-        // Handle the error, possibly setting an error message in state
-      }
+      let fileUrl = 'https://artusb.s3.eu-north-1.amazonaws.com/images/WhatsApp%20Image%202023-10-29%20at%2011.41.38.jpeg'
+      // try {
+      //   fileUrl = await uploadImageToAWS(file);
+      //   // Set state or do something with the fileUrl
+      // } catch (error) {
+      //   console.log("error: ", error)
+      //   return
+      //   // Handle the error, possibly setting an error message in state
+      // }
       console.log("file is ", fileUrl)
       const availability = "available"
       const Status = "uploaded"
 
       const formData = new FormData();
       if(userType == 2){
+        console.log("here with ", userId)
         setArtistId(userId)
       }
       // else the selected artist's id , it is already set 
