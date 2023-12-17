@@ -20,8 +20,8 @@ public class BidController {
         this.auctionService = auctionService;
     }
 
-    @GetMapping("/getHighestBid")
-    public ResponseEntity<Bid> getHighestBid(@RequestParam("auctionId") int auctionId){
+    @GetMapping("/getHighestBid/{auctionId}")
+    public ResponseEntity<Bid> getHighestBid(@PathVariable int auctionId){
         Bid bid = bidService.getBidWithHighestPrice(auctionId);
         if(bid != null)
             return new ResponseEntity<>(bid, HttpStatus.OK);

@@ -78,7 +78,7 @@ private final AuctionMapper auctionMapper;
                 throw new Exception("There is no such auction");
             }
 
-            String sql2 = "UPDATE Artwork SET status = 'on auction' WHERE artwork_id = ?";
+            String sql2 = "UPDATE Artwork SET status = 'auction' WHERE artwork_id = ?";
             jdbcTemplate.update(sql2, auction.getArtwork_id());
             return auction;
         } catch (Exception e) {

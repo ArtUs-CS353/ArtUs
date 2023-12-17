@@ -24,7 +24,7 @@ function AuctionPage() {
     console.log("sending bid request ", id)
     const formData = new FormData();
       formData.append('user_id', 1); 
-      formData.append('auction_id', id);
+      formData.append('auction_id', 2);
       formData.append('price', inputValue);
     try {
 
@@ -50,6 +50,8 @@ function AuctionPage() {
       try {
 
         const auction = await getAuction()
+        console.log("AUCTON IS ", auction)
+        console.log( "ITS ID is ", auction.auction_id)
 
         const response = await axios.get(`http://localhost:8080/bid/getHighestBid/${auction.auction_id}`);
 
@@ -80,6 +82,7 @@ function AuctionPage() {
       const auction = response.data
       setAuction(auction)
       console.log("AUCTION IS ", auction)
+      return auction
     } catch (error) {
       console.error('Error fetching highest bid:', error);
     }
