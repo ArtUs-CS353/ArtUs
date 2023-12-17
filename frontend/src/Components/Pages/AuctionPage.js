@@ -10,6 +10,7 @@ function AuctionPage() {
   const [isError, setIsError] = React.useState(false);
   const [id, setId] = React.useState(-1);
   const [auctionId, setAuctionId] = React.useState(-1)
+  
   function handlePlaceBid(){
     console.log("PLACE BID CLICKED")
     setState(true)

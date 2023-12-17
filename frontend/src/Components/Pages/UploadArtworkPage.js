@@ -5,8 +5,12 @@ import DatePicker from '../DatePicker'
 import dayjs from 'dayjs';
 import axios from "axios";
 import AWS from 'aws-sdk';
+import Popup from '../Popup';
+import { useNavigate } from 'react-router-dom';
+import CloudDownloadIcon from '@mui/icons-material/CloudDownload';
 
 function UploadArtworkPage({userId, userType}) {
+  const navigate = useNavigate();
   const [type, setType] = useState('');
   const [material, setMaterial] = useState('');
   const [movement, setMovement] = useState('');
@@ -20,6 +24,19 @@ function UploadArtworkPage({userId, userType}) {
   const [artistId, setArtistId] = useState(-1)
   const [selectedArtist, setArtist] = useState('')
   const [artists, setArtists] = useState([])
+  const [createNewVisible, setVisible] = useState(false);
+  const isSubmitDisabled = !type || !material || !movement || !rarity || !date || !file || !title || !size || !price || !description || !selectedArtist || selectedArtist == 'Other' ; 
+  const fileUrl = file ? URL.createObjectURL(file) : '';
+  function handleClose() {
+    console.log("CLOSE IS SEND")
+    setVisible(false)
+  }
+  function goToArtistCreationPage(){
+
+    console.log("sending  request ")
+    navigate(`/createArtist`);
+    handleClose()
+  }
 
   //insert access keys here
   AWS.config.update({
@@ -51,6 +68,7 @@ function UploadArtworkPage({userId, userType}) {
   }
 
   const handleFileChange = (event) => {
+    console.log("image is ", event.target.files[0])
     setSelectedFile(event.target.files[0])
   };
 
@@ -82,11 +100,19 @@ function UploadArtworkPage({userId, userType}) {
   };
   const handleArtistChange = (event) => {
     const artistName = event.target.value
+    console.log("artist ", event.target.value)
     setArtist(event.target.value)
-    const artist = artists.find(artist => (artist.user_name + " " + artist.user_surname) === artistName);
-    if (artist) {
-      setArtistId(artist.user_id)
+    if(artistName === "Other"){
+      console.log("create nex")
+      setVisible(true)
     }
+    else{
+      const artist = artists.find(artist => (artist.user_name + " " + artist.user_surname) === artistName);
+      if (artist) {
+        setArtistId(artist.user_id)
+      }
+    }
+    
   };
   const handlePriceChange = (event) => {
     setPrice(event.target.value);
@@ -155,6 +181,7 @@ function UploadArtworkPage({userId, userType}) {
   
     getArtists();
   }, []); 
+
   const theme = createTheme({
     palette: {
       primary: {
@@ -180,6 +207,21 @@ function UploadArtworkPage({userId, userType}) {
   return (
     <ThemeProvider theme={theme}>
         <Container sx={{pt: 5, pb: 2}}>
+          {(createNewVisible === true &&
+             <Popup state={createNewVisible}
+             handleClose={handleClose} 
+             handleRequest={goToArtistCreationPage}
+             dialogTitle={"WARNING"} 
+             buttonName={"YES"}
+             textField= 
+             {<>
+              <Typography sx={{color:"red"}} variant="h5">You cannot upload an artwork with Other option!</Typography>
+              <br></br>
+             <Typography variant='h6' >Do you want to send a request to create a new artist?</Typography>
+              </>}>
+
+             </Popup>)}
+          
       <Card variant="outlined" sx={{ marginTop: 2, padding: 2, backgroundColor: theme.palette.window.default, boxShadow: 1}}>
         <Typography variant="h5" gutterBottom>
           Upload Artwork
@@ -233,13 +275,12 @@ function UploadArtworkPage({userId, userType}) {
               <Grid item xs={6}><DatePicker handleSelection = {handleDateSelection} maxDate={dayjs()} /></Grid>
               <Grid item xs={6}>
               <input
+                  accept="image/*" 
                   type="file"
                   id="image-upload-input"
                   style={{ display: 'none' }}
                   onChange={handleFileChange}
                 />
-                {(file &&
-                  <Typography>Uploaded</Typography>)}
                 <Button onClick={handleImageSelection} sx = {{mt:1, ml: 4, pt: 1.8, pb: 1.8, pl: 4, pr: 7.5}}  variant="outlined" component="span" margin="normal" startIcon={<PhotoCamera />}>
                 Choose Image
               </Button></Grid>
@@ -247,7 +288,7 @@ function UploadArtworkPage({userId, userType}) {
           </Grid>
 
           <Grid item xs={12} md={6}>
-            {(userType == 3 &&
+            {(userType == 4 &&
             <>
               <FormControl fullWidth margin="normal">
               <InputLabel id="artist-select-label">Artists</InputLabel>
@@ -260,8 +301,12 @@ function UploadArtworkPage({userId, userType}) {
               >
                 {artists.map((artist, index) => (
                 <MenuItem value={artist.user_name + " " + artist.user_surname}>{artist.user_name + " " + artist.user_surname}</MenuItem>))}
+                 <MenuItem value="Other">
+                    <em>Other</em>
+                  </MenuItem>
               </Select>
             </FormControl>
+           
             </>
               )}
             <FormControl fullWidth margin="normal">
@@ -302,9 +347,31 @@ function UploadArtworkPage({userId, userType}) {
                 </Select>
               </FormControl>
               <TextField onChange={handleDescriptionChange} fullWidth label="Description" variant="outlined" margin="normal" multiline rows={4.5} />
-              <Button onClick={uploadArtwork} sx =  {{mt: 2}} variant="contained" color="primary">
+             <Grid container spacing={2}>
+             <Grid  item xs={6}>
+              {(file &&
+              <>
+                  <Typography gutterTop>Uploaded image: {file ? file.name : 'No file uploaded'}</Typography>
+                  {file && (
+                    <Button
+                      variant="contained"
+                      color="primary"
+                      href={fileUrl}
+                      download={file.name}
+                      startIcon={<CloudDownloadIcon />}
+                    >
+                      Download Image
+                    </Button>
+                  )}
+                  </>)}
+              </Grid>
+             <Grid  item xs={6}>
+             <Button onClick={uploadArtwork} sx =  {{mt: 3, ml: 12}} variant="contained" color="primary" disabled={isSubmitDisabled}>
               Submit Artwork
             </Button>
+             </Grid>
+             </Grid>
+            
           </Grid>
         </Grid>
       </Card>

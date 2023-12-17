@@ -6,7 +6,7 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 
-export default function Popup({state, handleClose,handleRequest, dialogTitle, textField}) {
+export default function Popup({state, handleClose,handleRequest, dialogTitle, textField, buttonName}) {
 
   return (
     <React.Fragment>
@@ -17,7 +17,7 @@ export default function Popup({state, handleClose,handleRequest, dialogTitle, te
         </DialogContent>
         <DialogActions>
           <Button onClick={handleClose}>Close</Button>
-          <Button onClick={handleRequest}>Send</Button>
+          <Button onClick={handleRequest}>{buttonName ? buttonName : "Send"}</Button>
         </DialogActions>
       </Dialog>
     </React.Fragment>
