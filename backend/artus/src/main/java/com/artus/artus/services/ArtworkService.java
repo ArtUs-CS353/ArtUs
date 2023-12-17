@@ -300,6 +300,7 @@ public class ArtworkService {
             return true;
         }catch (Exception e){
             System.out.println(e.getMessage());
+            return false;
         }
     }
     public boolean addArtworkToExhibition(int artworkId, int exhibitionId) {
