@@ -68,7 +68,7 @@ public class BidController {
     }
 
     @PutMapping("/acceptBid")
-    public ResponseEntity<Bid> acceptBid(@RequestParam("bidId") int bidId){
+    public ResponseEntity<Bid> acceptBid(@PathVariable("bidId") int bidId){
         Bid result = bidService.acceptBid(bidId);
         if(result != null)
             return new ResponseEntity<>(result, HttpStatus.OK);
@@ -78,7 +78,7 @@ public class BidController {
     }
 
     @PutMapping("/rejectBid")
-    public ResponseEntity<Bid> rejectBid(@RequestParam("bidId") int bidId){
+    public ResponseEntity<Bid> rejectBid(@PathVariable("bidId") int bidId){
         Bid result = bidService.rejectBid(bidId);
         if(result != null)
             return new ResponseEntity<>(result, HttpStatus.OK);
