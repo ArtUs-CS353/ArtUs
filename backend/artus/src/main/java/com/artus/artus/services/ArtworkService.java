@@ -108,7 +108,7 @@ public class ArtworkService {
         }
     }
 
-    public List<Artwork> filterArtworks(List<String> types, List<String> materials, List<String> rarities, Integer minPrice, Integer maxPrice, LocalDate startDate, LocalDate endDate){
+    public List<Artwork> filterArtworks(List<String> types, List<String> materials, List<String> rarities, Integer minPrice, Integer maxPrice, LocalDate startDate, LocalDate endDate,List<String> status){
         String mainSQL = "SELECT * FROM Artwork WHERE ";
         List<Object> allParams = new ArrayList<>();
 
@@ -180,6 +180,20 @@ public class ArtworkService {
             mainSQL = mainSQL + sqlBuilderforRarities;
             mainSQL = mainSQL + " AND ";
             allParams.addAll(rarities.stream().map(rarity -> "%" + rarity + "%").collect(Collectors.toList()));
+        }
+        if(status != null){
+            StringBuilder sqlBuilderForStatus = new StringBuilder();
+            sqlBuilderForStatus.append(" ( ");
+            for (int i = 0; i < status.size(); i++) {
+                if (i > 0) {
+                    sqlBuilderForStatus.append(" OR ");
+                }
+                sqlBuilderForStatus.append("status LIKE ?");
+            }
+            sqlBuilderForStatus.append(" ) ");
+            mainSQL = mainSQL + sqlBuilderForStatus;
+            mainSQL = mainSQL + " AND ";
+            allParams.addAll(status.stream().map(status1 -> "%" + status1 + "%").collect(Collectors.toList()));
         }
         mainSQL = mainSQL + " true ";
 

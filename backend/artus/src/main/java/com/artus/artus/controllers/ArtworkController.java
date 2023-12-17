@@ -130,9 +130,10 @@ public class ArtworkController {
                                                         @RequestParam(value = "min_price" , required = false) Integer minPrice,
                                                         @RequestParam(value = "max_price" , required = false) Integer maxPrice,
                                                         @RequestParam(value = "start_date" , required = false) LocalDate startDatetime,
-                                                        @RequestParam(value = "end_date", required = false) LocalDate endDatetime)
+                                                        @RequestParam(value = "end_date", required = false) LocalDate endDatetime,
+                                                        @RequestParam(value = "status", required = false) List<String> status)
     {
-        return new ResponseEntity<>(artworkService.filterArtworks(types,material,rarities,minPrice,maxPrice,startDatetime,endDatetime),HttpStatus.OK);
+        return new ResponseEntity<>(artworkService.filterArtworks(types,material,rarities,minPrice,maxPrice,startDatetime,endDatetime,status),HttpStatus.OK);
     }
 
     @GetMapping("/explorePage")
