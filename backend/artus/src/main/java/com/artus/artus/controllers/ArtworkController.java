@@ -139,6 +139,11 @@ public class ArtworkController {
         return new ResponseEntity<>(artworkService.getExplorePage(),HttpStatus.OK);
     }
 
+
+    @GetMapping("/explorePage/{user_id}")
+    public ResponseEntity<List<Artwork>> getExplorePageAccordingToUser(@PathVariable int user_id){
+        return new ResponseEntity<>(artworkService.getExplorePageAccordingToUserPreferences(user_id),HttpStatus.OK);
+    }
     @PutMapping("/approve/{artworkId}")
     public ResponseEntity<Artwork> approveArtwork(@PathVariable int artworkId){
         Artwork result = artworkService.approveArtwork(artworkId);
@@ -159,6 +164,7 @@ public class ArtworkController {
         else{
             return new ResponseEntity<>(null, HttpStatus.I_AM_A_TEAPOT);
         }
+
     }
 
     @PostMapping("/{artworkID}/direct-purchase")
@@ -170,6 +176,13 @@ public class ArtworkController {
         return new ResponseEntity<>(false,HttpStatus.BAD_REQUEST);
     }
 
+
+    @PostMapping("/{artwork_id}/putForSale")
+    public ResponseEntity<Boolean> putForSale(@PathVariable int artwork_id){
+        if(artworkService.putForSale(artwork_id))
+            return new ResponseEntity<>(true,HttpStatus.OK);
+        return new ResponseEntity<>(false,HttpStatus.BAD_REQUEST);
+    }
     @PostMapping("/{artworkID}/addToExhibition")
     public ResponseEntity<Boolean> addArtworkToExhibition(@PathVariable int artworkID, @RequestParam int exhibitionId){
         boolean result = artworkService.addArtworkToExhibition(artworkID, exhibitionId);
