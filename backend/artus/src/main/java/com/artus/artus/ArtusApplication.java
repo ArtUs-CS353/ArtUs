@@ -21,14 +21,14 @@ public class ArtusApplication implements CommandLineRunner{
 		jdbcTemplate.execute("create table if not exists User(user_id int NOT NULL AUTO_INCREMENT, user_name VARCHAR(50), user_surname VARCHAR(50),user_role int, email VARCHAR(30), password VARCHAR(255), contact_info VARCHAR(100), primary key (user_id));");
 		jdbcTemplate.execute("create table if not exists Enthusiast( user_id INT, address varchar(200), balance NUMERIC(11,2), primary key(user_id), foreign key (user_id) REFERENCES User (user_id));");
 		jdbcTemplate.execute("create table if not exists Collector( user_id INT, primary key(user_id), foreign key (user_id) REFERENCES Enthusiast(user_id));");
-		jdbcTemplate.execute("create table if not exists Admin(user_id INT, role VARCHAR(20), foreign key (user_id) REFERENCES User (user_id));");
+		jdbcTemplate.execute("create table if not exists Admin(user_id INT, role int, foreign key (user_id) REFERENCES User (user_id));");
 		jdbcTemplate.execute("create table if not exists Artist(user_id INT,  profile_details VARCHAR(100), follower_count INT, is_featuring boolean, biography VARCHAR(1500), balance NUMERIC(11,2), primary key (user_id), foreign key (user_id) REFERENCES User (user_id)) ;");
 		jdbcTemplate.execute("create table if not exists ArtistRequest(request_id INT NOT NULL AUTO_INCREMENT,  user_name VARCHAR(50), user_surname VARCHAR(50), profile_details VARCHAR(100), biography VARCHAR(1500), primary key (request_id));");
 		jdbcTemplate.execute("create table if not exists Preference(preference_name VARCHAR(50), primary key (preference_name));");
 		jdbcTemplate.execute("create table if not exists User_Preference(user_id INT, preference_name VARCHAR(50),primary key (user_id, preference_name),foreign key (user_id) references Enthusiast (user_id),foreign key (preference_name) references Preference(preference_name));");
 		jdbcTemplate.execute("create table if not exists Artwork (artwork_id INT NOT NULL AUTO_INCREMENT, artist_id INT, title VARCHAR(50), description VARCHAR(300), type VARCHAR(50), material VARCHAR(150), size VARCHAR(30), rarity VARCHAR(30), imageURL varchar(300), movement varchar(10), date DATE, is_featuring boolean,price NUMERIC(30), status varchar(20),availability varchar(20),favorite_count INT, primary key (artwork_id), foreign key (artist_id ) REFERENCES Artist(user_id));");
 		jdbcTemplate.execute("create table if not exists Auction(auction_id int NOT NULL AUTO_INCREMENT, artwork_id int,start_date datetime, end_date datetime, type varchar(20), starting_amount double,status varchar(10), primary key (auction_id));");
-		jdbcTemplate.execute("create table if not exists Purchase(user_id int, artwork_id int, purchase_id int NOT NULL AUTO_INCREMENT, purchase_date date, price double, receipt BLOB, primary key (purchase_id), foreign key (artwork_id) references Artwork(artwork_id), foreign key (user_id) references Enthusiast(user_id));");
+		jdbcTemplate.execute("create table if not exists Purchase(user_id int,seller_id int, artwork_id int, purchase_id int NOT NULL AUTO_INCREMENT, purchase_date datetime, price double, receipt BLOB, primary key (purchase_id), foreign key (artwork_id) references Artwork(artwork_id), foreign key (user_id) references Enthusiast(user_id));");
 		jdbcTemplate.execute("create table if not exists Notification(user_id int, notification_id int NOT NULL AUTO_INCREMENT, type varchar(50), content varchar(100), primary key (notification_id), foreign key (user_id) references User(user_id));");
 		jdbcTemplate.execute("create table if not exists Bid(user_id int,auction_id int,bid_id int NOT NULL AUTO_INCREMENT,price double,time_stamp datetime, status varchar(50), primary key (bid_id),foreign key (user_id) references User(user_id),foreign key (auction_id) references Auction(auction_id));");
 		jdbcTemplate.execute("create table if not exists Follow(enthusiast_id int, artist_id int, primary key (enthusiast_id, artist_id),foreign key (enthusiast_id) references Enthusiast(user_id), foreign key (artist_id) references Artist(user_id));");
@@ -49,7 +49,7 @@ public class ArtusApplication implements CommandLineRunner{
 
 		try {
 			jdbcTemplate.execute("create view Most_Favorite_Artworks AS WITH temp(artwork_id,favorite_count) AS (SELECT artwork_id, COUNT(*) FROM Favorite GROUP BY artwork_id) SELECT * FROM Artwork A, temp T, User U WHERE T.artwork_id = A.artwork_id AND A.artist_id = U.user_id AND A.is_featuring = TRUE ORDER BY T.favorite_count DESC;");
-			jdbcTemplate.execute("ALTER TABLE User ADD CONSTRAINT unique_email UNIQUE (email);\n");
+			jdbcTemplate.execute("ALTER TABLE User ADD CONSTRAINT unique_email UNIQUE (email);");
 			jdbcTemplate.execute("ALTER TABLE Artist ADD CONSTRAINT check_follower_count CHECK (follower_count >= 0);");
 			jdbcTemplate.execute("ALTER TABLE Auction ADD CONSTRAINT check_starting_amount CHECK (starting_amount >= 0);");
 			jdbcTemplate.execute("ALTER TABLE Purchase ADD CONSTRAINT check_purchase_amount CHECK (price > 0);");

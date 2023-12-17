@@ -11,7 +11,7 @@ public class AdminMapper implements RowMapper<Admin> {
         int user_id =rs.getInt("user_id");
         String user_name = rs.getString("user_name");
         String user_surname = rs.getString("user_surname");
-        String role = rs.getString("role");
+        int role = rs.getInt("role");
         String email = rs.getString("email");
         String password = rs.getString("password");
         String contact_info = rs.getString("contact_info");
