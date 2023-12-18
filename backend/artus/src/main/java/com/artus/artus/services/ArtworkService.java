@@ -203,7 +203,7 @@ public class ArtworkService {
     }
 
     public List<Artwork> getExplorePage(){
-        String sql = "select * from artwork order by favorite_count DESC;";
+        String sql = "select * from Artwork order by favorite_count DESC;";
         return jdbcTemplate.query(sql,new ArtworkMapper());
     }
 
