@@ -3,7 +3,7 @@ import { Grid, Container, Typography, Card, CardMedia} from '@mui/material';
 import Button from '@mui/material/Button';
 import axios from "axios";
 import Popup from '../Popup';
-function HomePage() {
+function Requests() {
   const [auctionRequests, setAuctionRequests] = useState([]);
   const [auctionState, setAuctionState] = useState('')
   const [popupEnabled, setPopupEnabled] = useState(false)
@@ -158,4 +158,4 @@ function HomePage() {
   );
 }
 
-export default HomePage;
+export default Requests;

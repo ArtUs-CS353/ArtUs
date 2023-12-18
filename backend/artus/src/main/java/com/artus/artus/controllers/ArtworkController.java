@@ -184,7 +184,7 @@ public class ArtworkController {
         return new ResponseEntity<>(false,HttpStatus.BAD_REQUEST);
     }
     @PostMapping("/{artworkID}/addToExhibition")
-    public ResponseEntity<Boolean> addArtworkToExhibition(@PathVariable int artworkID, @RequestParam int exhibitionId){
+    public ResponseEntity<Boolean> addArtworkToExhibition(@PathVariable int artworkID, @RequestParam("exhibitionId") int exhibitionId){
         boolean result = artworkService.addArtworkToExhibition(artworkID, exhibitionId);
         if(result){
             return new ResponseEntity<>(true, HttpStatus.OK);
