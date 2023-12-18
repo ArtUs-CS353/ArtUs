@@ -69,7 +69,7 @@ export default function Navbar({userType}) {
     const [isNavbarVisible, setIsNavbarVisible] = React.useState(true);
 
     console.log("user type: ", userType)
-    const pages = (userType == 2  || userType == 4)? ['Explore', 'Upload Artwork', 'Create Event']:  (userType == 3 ? ['Explore'] : ['Create Exhibition', 'Requests', 'Manage Accounts']);
+    const pages = (userType == 2  || userType == 4)? ['Explore', 'Upload Artwork', 'Create Event']:  (userType == 3 ? ['Explore', 'BALANCE'] : ['Create Exhibition', 'Requests', 'Manage Accounts']);
     const navigate = useNavigate();
 
     const handleNavbarTrigger = () => {

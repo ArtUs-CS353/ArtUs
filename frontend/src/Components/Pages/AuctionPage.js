@@ -27,7 +27,6 @@ function AuctionPage({userId}) {
       formData.append('auction_id', auction.auction_id);
       formData.append('price', inputValue);
     try {
-
       const response = await axios.post('http://localhost:8080/bid/bidForAuction', formData);
       console.log(response.data);
     } catch (error) {
