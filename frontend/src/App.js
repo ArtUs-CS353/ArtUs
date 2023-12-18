@@ -17,6 +17,7 @@ import ManageAccounts from './Components/Pages/ManageAccounts';
 import CreateExhibition from './Components/Pages/CreateExhibition';
 import Exhibition from './Components/Pages/Exhibition';
 import CreateEvent from './Components/Pages/CreateEvent';
+import Balance from './Components/Pages/Balance';
 
 function App() {
   //const showNavbar = !['/login'].includes(window.location.pathname);
@@ -43,6 +44,7 @@ function App() {
         <Route path="/createEvent" element={<CreateEvent userId = {userId}/>} />
         <Route path="/exhibition/:id" element={<Exhibition/>} />
         <Route path="/createArtist" element={<CreateArtist userId = {userId} userType={userType} />} />
+        <Route path="/balance" element={<Balance userId = {userId} userType={userType} />} />
       </Routes>
     </Router>
   );
