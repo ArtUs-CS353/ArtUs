@@ -105,6 +105,60 @@ function Requests() {
   
     getAuctionsRequests();
   }, []); 
+
+  useEffect(() => {
+    const getExhibitionRequests = async () => {
+      try {
+        //includes table comes
+        //find artwork according to artwork_id inside it
+        //find the exhibition according to exhibition_id inside it
+        const response = await axios.get(`http://localhost:8080/auction/getAllWaitingAuctions`);
+        const auctions = response.data;
+        console.log("AUCTIONS: ", auctions)
+        const requestsWithURL = await Promise.all(auctions.map(async (auction) => {
+          const sDate = new Date(auction.start_date);
+          const start = sDate.toLocaleString('en-US', {
+              year: 'numeric',
+              month: 'long',
+              day: 'numeric',
+              hour: '2-digit',
+              minute: '2-digit',
+              second: '2-digit'
+          });
+          const eDate = new Date(auction.end_date);
+          const end = eDate.toLocaleString('en-US', {
+              year: 'numeric',
+              month: 'long',
+              day: 'numeric',
+              hour: '2-digit',
+              minute: '2-digit',
+              second: '2-digit'
+          });
+          const artwork = await getArtwork(auction.artwork_id);
+          return {
+            ...auction,
+            imageURL: artwork.imageURL,
+            auctionType: auction.type,
+            start: start,
+            end: end,
+            title: artwork.title,
+            size: artwork.size,
+            material: artwork.material,
+            description: artwork.description
+          };
+        }));
+        console.log("updated list : ", requestsWithURL)
+        setAuctionRequests(requestsWithURL)
+      } catch (error) {
+        console.error("Failed to fetch artworks: ", error);
+        throw error;
+      }
+    };
+  
+    getExhibitionRequests();
+  }, []); 
+
+
   function handleClose() {
     setPopupEnabled(false)
   }
@@ -118,6 +172,7 @@ function Requests() {
         handleRequest={sendRequest}
         > 
         </Popup>)}
+        <Typography gutterBottom variant='h5'>Auction Requests</Typography>
       {auctionRequests.map((request, index) => (
            <>
            <Grid spacing={4}>
@@ -154,6 +209,7 @@ function Requests() {
           </>
          
         ))}
+         <Typography gutterBottom variant='h5'>Exhibition Requests</Typography>
     </Container>
   );
 }

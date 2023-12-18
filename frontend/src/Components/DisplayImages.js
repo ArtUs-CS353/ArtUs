@@ -34,7 +34,7 @@ function DisplayImages({artwork, type, func}){
                     {artwork.status === "auction" && (
                       <Typography variant="body1" sx={{fontWeight: 'bold', color:"purple"}}>On Auction</Typography>
                     )}
-                    {artwork.price > 0 && (
+                    {artwork.status === "sale" && (
                     <Typography variant="body1">${artwork.price}</Typography>
                     )}
                 </>
