@@ -9,5 +9,5 @@ import lombok.Setter;
 @NoArgsConstructor
 public class Admin extends User{
     private int user_id;
-    private String role;
+    private int role;
 }

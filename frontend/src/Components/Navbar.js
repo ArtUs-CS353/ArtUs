@@ -69,7 +69,7 @@ export default function Navbar({userType}) {
     const [isNavbarVisible, setIsNavbarVisible] = React.useState(true);
 
     console.log("user type: ", userType)
-    const pages = (userType == 2  || userType == 4)? ['Explore', 'Upload Artwork']:  ['Explore'];
+    const pages = (userType == 2  || userType == 4)? ['Explore', 'Upload Artwork', 'Create Event']:  (userType == 3 ? ['Explore', 'BALANCE'] : ['Create Exhibition', 'Requests', 'Manage Accounts']);
     const navigate = useNavigate();
 
     const handleNavbarTrigger = () => {
@@ -88,6 +88,15 @@ export default function Navbar({userType}) {
     const handleNavigation = (page) => {
         if(page === "Upload Artwork"){
             navigate(`/uploadArtwork`);
+        }
+        else if( page === "Create Exhibition"){
+          navigate(`/createExhibition`);
+        }
+        else if( page === "Manage Accounts") {
+          navigate("/manageAccounts")
+        }
+        else if( page === "Create Event") {
+          navigate("/createEvent")
         }
         else{
             const pageRoute = page.toLowerCase();

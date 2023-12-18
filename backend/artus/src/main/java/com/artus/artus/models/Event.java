@@ -10,11 +10,12 @@ import java.time.LocalDateTime;
 @Setter
 @NoArgsConstructor
 public class Event {
-    private int user_id;
+    private int artist_id;
     private int event_id;
-    private String link;
     private LocalDateTime start_date;
     private LocalDateTime end_date;
     private String poster_URL;
     private String meeting_link;
+    private String status;
+    private String title;
 }

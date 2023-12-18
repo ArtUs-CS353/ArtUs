@@ -14,18 +14,6 @@ function CreateArtist({userId,userType}) {
   const [id,setId] = useState(-1)
   const navigate = useNavigate();
 
-  const getArtwork = async (id) => {
-    try {
-      const response = await axios.get(`http://localhost:8080/artwork/${id}`);
-      console.log("ARTWORK: ", response.data)
-      const artwork = response.data;
-      return artwork;
-    } catch (error) {
-      console.error("Failed to fetch artist: ", error);
-      throw error;
-    }
-
-  }
   const sendRequest = async () =>  {
     console.log("send ")
     const formData = new FormData();

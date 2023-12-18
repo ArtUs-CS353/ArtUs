@@ -6,14 +6,12 @@ import com.artus.artus.models.LoginResponseDTO;
 import com.artus.artus.models.User;
 import com.artus.artus.services.LoginService;
 import com.artus.artus.services.RegisterService;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.net.URLDecoder;
 import java.util.List;
 
 @RestController
@@ -36,18 +34,18 @@ public class LogController {
                                                       @RequestParam("password") String password,
                                                       @RequestParam("contactInfo") String contactInfo,
                                                       @RequestParam("address") String address,
-                                                      @RequestParam("role") int role,
-                                                      @RequestParam("Preferences") String preferencesJSON
+                                                      @RequestParam("role") int role
+                                                      /*@RequestParam(value = "Preferences", required = false) String preferencesJSON*/
     ){
         try {
-            String decodedPreferences = URLDecoder.decode(preferencesJSON, "UTF-8");
+            /*String decodedPreferences = URLDecoder.decode(preferencesJSON, "UTF-8");
             System.out.println(decodedPreferences);
 
 
             ObjectMapper objectMapper = new ObjectMapper();
             String[] preferences = objectMapper.readValue(decodedPreferences, String[].class);
 
-            
+*/            
 
             Enthusiast enthusiast = new Enthusiast();
             enthusiast.setContact_info(contactInfo);
@@ -63,6 +61,7 @@ public class LogController {
             + enthusiast.getAddress() + " " + enthusiast.getUser_role());
 
 
+            String[] preferences = new String[0];
             return new ResponseEntity<>(registerService.registerEnthusiast(enthusiast, preferences), HttpStatus.OK);
 
         } catch (Exception e) {

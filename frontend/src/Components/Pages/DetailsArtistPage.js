@@ -1,40 +1,57 @@
 import React, { useState, useEffect } from 'react';
 import { ArtworkData } from '../ArtworkData';
-import { Grid, Card, CardMedia, Typography, Container, IconButton, TextField, Button, Box } from '@mui/material';
+import { Grid, Card, CardMedia, Typography, Container, IconButton, TextField, Button, Box , FormControl, InputLabel, MenuItem, Select} from '@mui/material';
 import { useParams } from 'react-router-dom';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { useNavigate } from 'react-router-dom';
+import axios from "axios";
+import Popup from '../Popup';
 
 function DetailsArtistPage({ popup, context }) {
   const artworks = ArtworkData;
   const navigate = useNavigate();
   let { id } = useParams();
+  console.log("ID IS HEREEE ", id)
+  const [artworkId, setArtworkId] = useState(id)
+
+  console.log("artwork id is ", artworkId)
   const [userDescription, setUserDescription] = useState('');
   const [userPrice, setUserPrice] = useState('');
+  const [artwork, setArtwork] = useState(null)
+  const [popupEnabled, setPopupEnabled] = useState(false)
+  const [selectedExhibition, setExhibition] = useState('')
+  const [currentExhibitions, setCurrentExhibitions] = useState([])
+  const [exhibitionId, setExhibitionId] = useState(-1)
 
-  var isFound = false;
-  var i = 0;
-  for (; i < artworks.length && isFound === false; i++) {
-    if (artworks[i].artwork_id == id) {
-      isFound = true;
-    }
-  }
 
   function handleGoBack() {
     console.log("back pressed");
     navigate(`/artistProfile`);
   }
 
-  i = i - 1;
-  console.log("isFound at ", i);
-
-  useEffect(() => {
-    setUserDescription(artworks[i].description || '');
-    setUserPrice(artworks[i].price || '');
-  }, [artworks, i]);
 
   const handleDescriptionChange = (event) => {
     setUserDescription(event.target.value);
+  };
+
+
+    
+  const handleExhibitionChange = (event) => {
+    const exhibitionName = event.target.value
+    console.log("exhibition ", event.target.value)
+    if(exhibitionName === "None"){
+      console.log("create nex")
+      setExhibition('')
+      setExhibitionId(-1)
+    }
+    else{
+      setExhibition(exhibitionName)
+      const exhibition = currentExhibitions.find(exhibition => (exhibition.exhibition_name) === exhibitionName);
+      if (exhibition) {
+        setExhibitionId(exhibition.exhibition_id)
+      }
+    }
+    
   };
 
   const handlePriceChange = (event) => {
@@ -42,23 +59,85 @@ function DetailsArtistPage({ popup, context }) {
   };
 
   const handleSaveDescription = () => {
-    artworks[i].description = userDescription;
+    artwork.description = userDescription;
     console.log("Updated ArtworkData:", artworks);
   };
 
   const handleSavePrice = () => {
-    artworks[i].price = userPrice;
+    artwork.price = userPrice;
     console.log("Updated ArtworkData:", artworks);
   };
 
-  const handleAddToExhibition = () => {
-    console.log("Add this artwork to exhibition");
+  const handleAddToExhibition = async() => {
+    console.log("Add this artwork to exhibition ", {id}.id);
+    setPopupEnabled(true)
   };
 
   const handleDeleteArtwork = () => {
     console.log("Delete artwork");
   };
+  function handleClose() {
+    setPopupEnabled(false)
+  }
+  const sendRequest = async () =>  {
+    console.log("send ", exhibitionId)
+    const formData = new FormData();
+    formData.append('exhibitionId', exhibitionId); 
+    try {
+        const response = await axios.post(`http://localhost:8080/artwork/${artworkId}/addToExhibition`, null, {
+          params: { exhibitionId: 1 }
+        });
+        console.log(response.data);
+      } catch (error) {
+        console.error('Error sending artist request:', error);
+      }
+    handleClose()
+  }
 
+    useEffect(() => {
+    const getArtwork = async () => {
+      try {
+
+        console.log("getting with id ", id)
+        
+        const response = await axios.get(`http://localhost:8080/artwork/${artworkId}`);
+        const artwork = response.data;
+        console.log("ARTWORK IS: ", artwork, " ", artwork.status)
+        setArtwork(artwork)
+        setUserDescription(artwork.description || '');
+        setUserPrice(artwork.price || '');
+      } catch (error) {
+        console.error("Failed to fetch recommended artwork: ", error);
+        throw error;
+      }
+    };
+  
+    getArtwork();
+  }, []); 
+
+  useEffect(() => {
+    const getExhibitions = async () => {
+      try {
+        
+        const response = await axios.get(`http://localhost:8080/exhibition/getAllExhibitions`);
+        const exhibitions = response.data;
+        console.log("EXHIBITION IS: ", exhibitions)
+        setCurrentExhibitions(exhibitions)
+      } catch (error) {
+        console.error("Failed to fetch exhibition: ", error);
+        throw error;
+      }
+    };
+  
+    getExhibitions();
+  }, []); 
+  if (!artwork) {
+    return (
+      <Container>
+        <Typography>Loading...</Typography>
+      </Container>
+    );
+  }
   return (
     <Container>
       <IconButton
@@ -69,28 +148,56 @@ function DetailsArtistPage({ popup, context }) {
       >
         <ArrowBackIcon></ArrowBackIcon>
       </IconButton>
+      {(popupEnabled &&
+        <Popup 
+        state={popupEnabled}
+        isSendDisabled={exhibitionId == -1 ? true :  false}
+        handleClose={handleClose} 
+        dialogTitle={"Which exhibition do you want to send this piece to?"} 
+        textField={ <>
+          <FormControl fullWidth margin="normal">
+          <InputLabel id="exhibition-select-label">Exhibitions</InputLabel>
+          <Select
+            labelId="exhibition-select-label"
+            id="exhibition-select"
+            value={selectedExhibition}
+            label="Exhibition"
+            onChange={handleExhibitionChange}
+          >
+             <MenuItem value="None">
+                    <em>None</em>
+                  </MenuItem>
+            {currentExhibitions.map((exhibition, index) => (
+            <MenuItem value={exhibition.exhibition_name}>{exhibition.exhibition_name}</MenuItem>))}
+          </Select>
+        </FormControl>
+       
+        </>}
+        handleRequest={sendRequest}
+        > 
+        </Popup>)}
       <Grid container spacing={3} sx={{ mt: 1, ml: 8 }}>
         <Grid item xs={12} sx={{ boxShadow: "#2C3333", pb: 2, borderRadius: 7 }} md={6}>
           <Card sx={{ mr: 2 }}>
             <CardMedia
               component="img"
               height="550"
-              image={artworks[i].image}
+              image={artwork.imageURL}
             />
           </Card>
         </Grid>
         <Grid item xs={12} sx={{ pl: 5 }} md={6}>
-          {artworks[i].status === "onAuction" && (
+          {artwork.status === "auction" && (
             <Typography gutterBottom variant="h5" component="div">
-              {artworks[i].remaining + " left"}
+              {artwork.remaining + " left"}
             </Typography>
           )}
           <Typography gutterBottom variant="h4" component="div">
-            {artworks[i].title}
+            {artwork.title}
           </Typography>
           <Typography sx={{ width: "45%", color: "grey" }} gutterBottom variant="h7" component="div">
-            {artworks[i].material + " " + artworks[i].type + ", " + artworks[i].year}<br />
-            {artworks[i].size}<br />
+            {artwork.material + " " + artwork.type + ", " + artwork.year}<br />
+            {artwork.size}<br />
           </Typography>
           <TextField
             id="userDescription"
@@ -127,10 +234,10 @@ function DetailsArtistPage({ popup, context }) {
           <Button variant="contained" onClick={handleDeleteArtwork}>
             Delete artwork
           </Button>
-          {artworks[i].status === "onAuction" && (
+          {artwork.status === "auction" && (
             context
           )}
-          {artworks[i].status === "onSale" && (
+          {artwork.status === "sale" && (
             context
           )}
         </Grid>
