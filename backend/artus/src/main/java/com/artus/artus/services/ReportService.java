@@ -5,11 +5,9 @@ import com.artus.artus.mappers.ArtworkMapper;
 import com.artus.artus.models.Artist;
 import com.artus.artus.models.Artwork;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Service;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -78,20 +76,17 @@ public class ReportService {
         String sql = "WITH HighestBids AS ( SELECT auction_id, MAX(price) AS highestBid FROM Bid GROUP BY auction_id ORDER BY highestBid DESC)" +
                 "SELECT * " +
                 "FROM HighestBids HB, Auction AU, Artwork AR WHERE HB.auction_id = AU.auction_id AND AU.artwork_id = AR.artwork_id";
-        return jdbcTemplate.query(sql, new RowMapper<Map<Map<String, Integer>, Integer>>() {
-            @Override
-            public Map<Map<String, Integer>, Integer> mapRow(ResultSet rs, int rowNum) throws SQLException {
-                String title = rs.getString("title");
-                Integer highestBid = rs.getInt("highestBid");
-                Integer id = rs.getInt("artwork_id");
+        return jdbcTemplate.query(sql, (rs, rowNum) -> {
+            String title = rs.getString("title");
+            Integer highestBid = rs.getInt("highestBid");
+            Integer id = rs.getInt("artwork_id");
 
-                Map<String,Integer> mapInside = new HashMap<>();
-                mapInside.put(title,id);
-                Map<Map<String,Integer>,Integer> map = new HashMap<>();
-                map.put(mapInside,highestBid);
+            Map<String,Integer> mapInside = new HashMap<>();
+            mapInside.put(title,id);
+            Map<Map<String,Integer>,Integer> map = new HashMap<>();
+            map.put(mapInside,highestBid);
 
-                return map;
-            }
+            return map;
         });
 
     }

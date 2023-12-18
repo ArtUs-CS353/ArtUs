@@ -43,4 +43,9 @@ public class ArtistService {
         String sql = "Select * from Artist A, USER U where A.user_id = U.user_id AND A.is_featuring = true order by A.follower_count DESC;";
         return jdbcTemplate.query(sql,new ArtistMapper());
     }
+
+    public boolean checkArtistByID(int id){
+        String sql = "SELECT EXISTS (SELECT * FROM Artist A WHERE A.user_id = ?)";
+        return jdbcTemplate.queryForObject(sql, Boolean.class, id);
+    }
 }

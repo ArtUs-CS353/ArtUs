@@ -178,8 +178,8 @@ public class ArtworkController {
 
 
     @PostMapping("/{artwork_id}/putForSale")
-    public ResponseEntity<Boolean> putForSale(@PathVariable int artwork_id){
-        if(artworkService.putForSale(artwork_id))
+    public ResponseEntity<Boolean> putForSale(@PathVariable int artwork_id,@RequestParam("price") int price){
+        if(artworkService.putForSale(artwork_id,price))
             return new ResponseEntity<>(true,HttpStatus.OK);
         return new ResponseEntity<>(false,HttpStatus.BAD_REQUEST);
     }

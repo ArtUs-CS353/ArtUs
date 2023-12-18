@@ -9,6 +9,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -258,7 +259,7 @@ public class ArtworkService {
 
     public boolean purchaseArtwork(int artwork_id, int user_id){
         String purchaseSql = "INSERT INTO Purchase(user_id,seller_id, artwork_id, purchase_date , price)" +
-                "VALUES (?,?, ?  ,curdate() , ?);";
+                "VALUES (?,?, ?  ,? , ?);";
 
         String priceSQL = "Select price from artwork where artwork_id = ?;";
         double price = jdbcTemplate.queryForObject(priceSQL,double.class,artwork_id);
@@ -274,13 +275,14 @@ public class ArtworkService {
             String deleteLastOwner = "Delete FROM Owns where artwork_id = ?";
             jdbcTemplate.update(deleteLastOwner,artwork_id);
         }catch (Exception e){
+            System.out.println("Error while finding last owner: " + e.getMessage());
             ownerID = jdbcTemplate.queryForObject(artistIDSQL,Integer.class,artwork_id);
             String updateArtistBalance = "UPDATE Artist SET balance = balance + (SELECT price FROM Artwork WHERE artwork_id = ?) WHERE user_id = ?;";
             jdbcTemplate.update(updateArtistBalance,artwork_id,ownerID);
         }
 
         try{
-            jdbcTemplate.update(purchaseSql,user_id,ownerID,artwork_id,price);
+            jdbcTemplate.update(purchaseSql,user_id,ownerID,artwork_id, LocalDateTime.now(),price);
         }catch (Exception e){
             System.out.println(e.getMessage());
             return false;
@@ -293,10 +295,10 @@ public class ArtworkService {
     }
 
 
-    public boolean putForSale(int artwork_id){
-        String sql = "Update Artwork Set availability = 'available', status = 'sale' where artwork_id = ?;";
+    public boolean putForSale(int artwork_id, int price){
+        String sql = "Update Artwork Set availability = 'available', status = 'sale', price = ? where artwork_id = ?;";
         try {
-            jdbcTemplate.update(sql,artwork_id);
+            jdbcTemplate.update(sql,price,artwork_id);
             return true;
         }catch (Exception e){
             System.out.println(e.getMessage());
@@ -315,4 +317,27 @@ public class ArtworkService {
             return false;
         }
     }
-}
+
+    public List<String> getPurchaseHistory(int user_id){
+        String sql = "Select A.title, P.purchase_date, P.price from Purchase P, Artwork A where A.artwork_id = P.artwork_id AND P.user_id = ?;";
+        return jdbcTemplate.query(sql, (rs,rowNum) ->{
+            String title = rs.getString("title");
+            String date = rs.getString("purchase_date");
+            double price = rs.getFloat("price");
+
+            return "You have purchased Artwork '"+ title + "' at "+date+" for "+ price;
+        },user_id);
+
+    }
+
+    public List<String> getSellHistory(int user_id){
+        String sql = "Select A.title, P.purchase_date, P.price from Purchase P, Artwork A where A.artwork_id = P.artwork_id AND P.seller_id = ?;";
+        return jdbcTemplate.query(sql, (rs,rowNum) ->{
+            String title = rs.getString("title");
+            String date = rs.getString("purchase_date");
+            double price = rs.getFloat("price");
+
+            return "You have sold Artwork '"+ title + "' at "+date+" for "+ price;
+        },user_id);
+    }
+ }
