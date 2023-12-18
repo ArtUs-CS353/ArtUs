@@ -381,4 +381,17 @@ public class ArtworkService {
             return "You have sold Artwork '"+ title + "' at "+date+" for "+ price;
         },user_id);
     }
+
+    public Boolean deleteArtwork(int artworkId) {
+        try{
+            String delete = "DELETE FROM Artwork  where artwork_id =?";
+            jdbcTemplate.update(delete, artworkId);
+            return true;
+        }catch (Exception e) {
+            // Handle exceptions, log errors, etc.
+            e.printStackTrace();
+            // If the insertion fails, return false
+            return false;
+        }
+    }
 }

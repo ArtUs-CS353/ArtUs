@@ -100,6 +100,17 @@ public class ArtworkController {
         }
     }
 
+    @DeleteMapping ("/delete/{artworkId}")
+    public ResponseEntity<Boolean>deleteArtwork (@PathVariable int artworkId){
+        Boolean result = artworkService.deleteArtwork(artworkId);
+        if(result){
+            return new ResponseEntity<>(true, HttpStatus.OK);
+        }
+        else{
+            return new ResponseEntity<>(false, HttpStatus.I_AM_A_TEAPOT);
+        }
+    }
+
     @GetMapping("/getAll")
     public ResponseEntity<List<Artwork>> getAllArtworks() {
         List<Artwork> artworks = artworkService.getAllArtworks();
