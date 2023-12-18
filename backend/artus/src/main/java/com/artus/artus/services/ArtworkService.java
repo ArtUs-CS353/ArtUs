@@ -9,6 +9,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -198,12 +199,63 @@ public class ArtworkService {
         mainSQL = mainSQL + " true ";
 
         return jdbcTemplate.query(mainSQL,artworkMapper,allParams.toArray());
-
     }
 
     public List<Artwork> getExplorePage(){
-        String sql = "select * from most_favorite_artworks;";
+        String sql = "select * from artwork order by favorite_count DESC;";
         return jdbcTemplate.query(sql,new ArtworkMapper());
+    }
+
+
+    public List<Artwork> getExplorePageAccordingToUserPreferences(int user_id){
+        String sql = "SELECT A.*," +
+                "       SUM(CASE WHEN A.material = UP.preference_name THEN 1 ELSE 0 END) +" +
+                "       SUM(CASE WHEN A.movement = UP.preference_name THEN 1 ELSE 0 END) +" +
+                "       SUM(CASE WHEN A.type = UP.preference_name THEN 1 ELSE 0 END) +" +
+                "       SUM(CASE WHEN A.rarity = UP.preference_name THEN 1 ELSE 0 END) AS total_preference_match_count" +
+                " FROM Artwork A" +
+                " LEFT JOIN (SELECT preference_name FROM User_Preference WHERE user_id = ?) UP " +
+                "ON A.material LIKE concat('%' ,UP.preference_name,'%') OR " +
+                "   A.movement = UP.preference_name OR " +
+                "   A.type = UP.preference_name OR " +
+                "   A.rarity = UP.preference_name " +
+                "GROUP BY A.artwork_id " +
+                "ORDER BY total_preference_match_count DESC, A.artwork_id;";
+        return jdbcTemplate.query(sql,new ArtworkMapper(),user_id);
+    } 
+    public Artwork approveArtwork(int artworkId) {
+        try {
+            String sql = "UPDATE Artwork SET status = 'approved' WHERE artwork_id = ?";
+            jdbcTemplate.update(sql, artworkId);
+            sql = "SELECT * FROM Artwork WHERE artwork_id = ?";
+            Artwork artwork = jdbcTemplate.queryForObject(sql, artworkMapper, artworkId);
+            if(artwork == null){
+                throw new Exception("There is no such artwork");
+            }
+
+            String sql2 = "UPDATE Artwork SET status = 'on sale' WHERE artwork_id = ?";
+            jdbcTemplate.update(sql2, artwork.getArtwork_id());
+            return artwork;
+        } catch (Exception e) {
+            // Handle exceptions, log errors, etc.
+            e.printStackTrace();
+            // If the update fails, return false
+            return null;
+        }
+    }
+
+    public Artwork declineArtwork(int artworkId) {
+        try {
+            String sql = "UPDATE Artwork SET status = 'declined' WHERE artwork_id = ?";
+            jdbcTemplate.update(sql, artworkId);
+            sql = "SELECT * FROM Artwork WHERE artwork_id = ?";
+            return jdbcTemplate.queryForObject(sql, artworkMapper, artworkId);
+        } catch (Exception e) {
+            // Handle exceptions, log errors, etc.
+            e.printStackTrace();
+            // If the update fails, return false
+            return null;
+        }
     }
 
     public List<Artwork> getAllFeaturedArtworks() {
@@ -220,18 +272,11 @@ public class ArtworkService {
     }
 
     public boolean purchaseArtwork(int artwork_id, int user_id){
-        String purchaseSql = "INSERT INTO Purchase(user_id, artwork_id, purchase_date , price)" +
-                "VALUES (?, ?  ,curdate() , ?);";
+        String purchaseSql = "INSERT INTO Purchase(user_id,seller_id, artwork_id, purchase_date , price)" +
+                "VALUES (?,?, ?  ,? , ?);";
 
         String priceSQL = "Select price from artwork where artwork_id = ?;";
         double price = jdbcTemplate.queryForObject(priceSQL,double.class,artwork_id);
-
-        try{
-            jdbcTemplate.update(purchaseSql,user_id,artwork_id,price);
-        }catch (Exception e){
-            System.out.println(e.getMessage());
-            return false;
-        }
 
         int ownerID;
         String previousOwnerSql = "Select user_id from Owns where artwork_id = ?;";
@@ -241,17 +286,20 @@ public class ArtworkService {
 
             String updateOwnerBalance = "UPDATE Enthusiast SET balance = balance + (SELECT price FROM Artwork WHERE artwork_id = ?) WHERE user_id = ?;";
             jdbcTemplate.update(updateOwnerBalance,artwork_id,ownerID);
+            String deleteLastOwner = "Delete FROM Owns where artwork_id = ?";
+            jdbcTemplate.update(deleteLastOwner,artwork_id);
         }catch (Exception e){
+            System.out.println("Error while finding last owner: " + e.getMessage());
             ownerID = jdbcTemplate.queryForObject(artistIDSQL,Integer.class,artwork_id);
             String updateArtistBalance = "UPDATE Artist SET balance = balance + (SELECT price FROM Artwork WHERE artwork_id = ?) WHERE user_id = ?;";
             jdbcTemplate.update(updateArtistBalance,artwork_id,ownerID);
         }
 
         try{
-            String deleteLastOwner = "Delete FROM Owns where artwork_id = ?";
-            jdbcTemplate.update(deleteLastOwner,artwork_id);
+            jdbcTemplate.update(purchaseSql,user_id,ownerID,artwork_id, LocalDateTime.now(),price);
         }catch (Exception e){
             System.out.println(e.getMessage());
+            return false;
         }
 
         String insertNewOwner = "Insert into Owns(artwork_id,user_id) values (?,?);";
@@ -259,4 +307,51 @@ public class ArtworkService {
 
         return true;
     }
-}
+
+
+    public boolean putForSale(int artwork_id, int price){
+        String sql = "Update Artwork Set availability = 'available', status = 'sale', price = ? where artwork_id = ?;";
+        try {
+            jdbcTemplate.update(sql,price,artwork_id);
+            return true;
+        }catch (Exception e){
+            System.out.println(e.getMessage());
+            return false;
+        }
+    }
+    public boolean addArtworkToExhibition(int artworkId, int exhibitionId) {
+        try{
+            String add = "Insert into Includes(exhibition_id,artwork_id) values (?,?);";
+            jdbcTemplate.update(add,exhibitionId, artworkId);
+            return true;
+        }catch (Exception e) {
+            // Handle exceptions, log errors, etc.
+            e.printStackTrace();
+            // If the insertion fails, return false
+            return false;
+        }
+    }
+
+    public List<String> getPurchaseHistory(int user_id){
+        String sql = "Select A.title, P.purchase_date, P.price from Purchase P, Artwork A where A.artwork_id = P.artwork_id AND P.user_id = ?;";
+        return jdbcTemplate.query(sql, (rs,rowNum) ->{
+            String title = rs.getString("title");
+            String date = rs.getString("purchase_date");
+            double price = rs.getFloat("price");
+
+            return "You have purchased Artwork '"+ title + "' at "+date+" for "+ price;
+        },user_id);
+
+    }
+
+    public List<String> getSellHistory(int user_id){
+        String sql = "Select A.title, P.purchase_date, P.price from Purchase P, Artwork A where A.artwork_id = P.artwork_id AND P.seller_id = ?;";
+        return jdbcTemplate.query(sql, (rs,rowNum) ->{
+            String title = rs.getString("title");
+            String date = rs.getString("purchase_date");
+            double price = rs.getFloat("price");
+
+            return "You have sold Artwork '"+ title + "' at "+date+" for "+ price;
+        },user_id);
+    }
+ }

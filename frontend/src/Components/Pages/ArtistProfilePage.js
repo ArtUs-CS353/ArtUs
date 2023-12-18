@@ -85,7 +85,9 @@ function ArtistProfilePage({userId}) {
     getArtworks();
   }, []); 
 
-  function handleArtworkClick(artwork) {
+  const handleArtworkClick = (artwork) =>{
+    console.log("HEREEEE")
+    console.log("clicked at ", artwork.artwork_id)
     navigate(`/detailsArtist/${artwork.artwork_id}`);
   }
 

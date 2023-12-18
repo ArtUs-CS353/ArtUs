@@ -12,8 +12,10 @@ function DetailsPage({popup,context, setId}) {
   const [artwork, setArtwork] = useState(null);
   const navigate = useNavigate();
   let { id } = useParams();
-  console.log("id is ", id)
-  setId(id)
+  if(setId){
+    setId(id)
+  
+  }
   
 
   useEffect(() => {
@@ -22,7 +24,6 @@ function DetailsPage({popup,context, setId}) {
         console.log("getting with id ", id)
         const response = await axios.get(`http://localhost:8080/artwork/${id}`);
         const artwork = response.data;
-        console.log("ARTWORK IS: ", artwork, " ", artwork.status)
         setArtwork(artwork)
       } catch (error) {
         console.error("Failed to fetch recommended artwork: ", error);
@@ -37,7 +38,14 @@ function DetailsPage({popup,context, setId}) {
     console.log("back pressed")
     navigate(`/explore`);
   }
-  
+
+  if (!artwork) {
+    return (
+      <Container>
+        <Typography>Loading...</Typography>
+      </Container>
+    );
+  }
   return (
     <Container>
       <IconButton

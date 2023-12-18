@@ -2,6 +2,7 @@ package com.artus.artus.services;
 
 import com.artus.artus.helpers.HashPasswordHelper;
 import com.artus.artus.mappers.UserMapper;
+import com.artus.artus.models.Admin;
 import com.artus.artus.models.Artist;
 import com.artus.artus.models.Enthusiast;
 import com.artus.artus.models.User;
@@ -79,6 +80,32 @@ public class RegisterService {
             System.out.println(e.getMessage());
             return "Error at registration process! Check It.";
         }
+    }
+
+    public String addNewAdmin(Admin admin){
+        try {
+            String checkUser = "SELECT EXISTS (SELECT * FROM USER U WHERE U.email = ?)";
+            boolean existsUser = jdbcTemplate.queryForObject(checkUser, Boolean.class, admin.getEmail());
+            if (existsUser) {
+                return "This email have already registered the system!";
+            }
+            String insertUserSql = "INSERT INTO User (user_name, user_surname, user_role, email, password, contact_info) VALUES (?, ?, ?, ?, ?, ?)";
+            hashPasswordHelper.setPassword(admin.getPassword());
+            String hashedPassword = hashPasswordHelper.Hash();
+            jdbcTemplate.update(insertUserSql,admin.getUser_name(),admin.getUser_surname(),1,admin.getEmail(),hashedPassword,admin.getContact_info());
+
+            String userSql = "SELECT * FROM User U where U.email = ?;";
+            User user = jdbcTemplate.queryForObject(userSql, new UserMapper(),admin.getEmail());
+
+            String insertAdminSql = "INSERT INTO Admin (user_id, role) VALUES (?, ?)";
+            jdbcTemplate.update(insertAdminSql, Objects.requireNonNull(user).getUser_id(),admin.getRole());
+
+            return "Successfully added new admin!";
+        }catch (Exception e){
+            System.out.println(e.getMessage());
+            return "Error at adding new admin process! Check It.";
+        }
+
     }
 
     public List<String> getTypes(){

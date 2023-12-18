@@ -4,7 +4,7 @@ import Navbar from './Components/Navbar';
 import BuyArtwork from './Components/Pages/BuyArtworkPage';
 import Explore from './Components/Pages/ExplorePage';
 import UploadArtwork from './Components/Pages/UploadArtworkPage';
-import HomePage from './Components/Pages/HomePage';
+import Requests from './Components/Pages/Requests';
 import DetailsPage from './Components/Pages/DetailsPage';
 import AuctionPage from './Components/Pages/AuctionPage';
 import ArtistProfile from './Components/Pages/ArtistProfilePage';
@@ -12,6 +12,11 @@ import DetailsArtistPage from './Components/Pages/DetailsArtistPage';
 import LoginPage from './Components/Pages/LoginPage';
 import RegisterPage from './Components/Pages/RegisterPage';
 import PreferencesPage from './Components/Pages/PreferencesPage';
+import CreateArtist from './Components/Pages/CreateArtist';
+import ManageAccounts from './Components/Pages/ManageAccounts';
+import CreateExhibition from './Components/Pages/CreateExhibition';
+import Exhibition from './Components/Pages/Exhibition';
+import CreateEvent from './Components/Pages/CreateEvent';
 
 function App() {
   //const showNavbar = !['/login'].includes(window.location.pathname);
@@ -26,13 +31,18 @@ function App() {
         <Route path="/register" element={<RegisterPage />} />
         <Route path="/preferences" element={<PreferencesPage />} />
         <Route path="/explore" element={<Explore userId = {userId}/>} />
-        <Route path="/buy" element={<BuyArtwork userId = {userId}/>} />
+        <Route path="/buy/:id" element={<BuyArtwork userId = {userId}/>} />
         <Route path="/uploadArtwork" element={<UploadArtwork userId = {userId} userType={userType}/>} />
-        <Route path="/details" element={<DetailsPage userId = {userId}/>} />
-        <Route path="/auction" element={<AuctionPage userId = {userId} />} />
+        <Route path="/details/:id" element={<DetailsPage userId = {userId}/>} />
+        <Route path="/auction/:id" element={<AuctionPage userId = {userId} />} />
         <Route path="/artistProfile" element={<ArtistProfile userId = {userId}/>} />
-        <Route path="/detailsArtist" element={<DetailsArtistPage userId = {userId}/>} />
-        <Route path="/request" element={<HomePage userId = {userId}/>} />
+        <Route path="/detailsArtist/:id" element={<DetailsArtistPage userId = {userId}/>} />
+        <Route path="/requests" element={<Requests userId = {userId}/>} />
+        <Route path="/manageAccounts" element={<ManageAccounts/>} />
+        <Route path="/createExhibition" element={<CreateExhibition/>} />
+        <Route path="/createEvent" element={<CreateEvent userId = {userId}/>} />
+        <Route path="/exhibition/:id" element={<Exhibition/>} />
+        <Route path="/createArtist" element={<CreateArtist userId = {userId} userType={userType} />} />
       </Routes>
     </Router>
   );

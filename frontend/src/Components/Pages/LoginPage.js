@@ -39,7 +39,13 @@ function LoginPage({ setLoggedIn, setUserType, setUserId }) {
         setLoggedIn(true);
         setUserType(response.data.role);
         setUserId(response.data.userId);
-        navigate('/explore');
+        if(response.data.role == 1){
+          console.log("navigate admin")
+          navigate('/requests')
+        }
+        else{
+          navigate('/explore');
+        }
       }
     } catch (error) {
       console.error('Error during login:', error);

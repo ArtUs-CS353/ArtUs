@@ -1,15 +1,16 @@
 import React, { useState , useEffect } from 'react';
 import DetailsPage from './DetailsPage';
-import {TextField,Typography,Button} from '@mui/material';
+import {TextField,Typography,Button, Container} from '@mui/material';
 import Popup from '../Popup';
 import axios from "axios";
-function AuctionPage() {
+function AuctionPage({userId}) {
   const [highestBid, setHighestBid] = useState(0.0)
   const [state, setState] = React.useState(false);
   const [inputValue, setInputValue] = React.useState(0.0);
   const [isError, setIsError] = React.useState(false);
   const [id, setId] = React.useState(-1);
-  const [auctionId, setAuctionId] = React.useState(-1)
+  const [auction, setAuction] = React.useState(null)
+  
   function handlePlaceBid(){
     console.log("PLACE BID CLICKED")
     setState(true)
@@ -20,10 +21,10 @@ function AuctionPage() {
   }
   const sendBidRequest = async () => {
 
-    console.log("sending bid request ", id)
+    console.log("sending bid request ", userId)
     const formData = new FormData();
-      formData.append('user_id', 1); 
-      formData.append('auction_id', id);
+      formData.append('user_id', userId); 
+      formData.append('auction_id', auction.auction_id);
       formData.append('price', inputValue);
     try {
 
@@ -38,39 +39,46 @@ function AuctionPage() {
     const value = event.target.value;
     setInputValue(value);
   
-    if (value < highestBid) {
+    if (value <= highestBid) {
       setIsError(true);
     } else {
       setIsError(false);
     }
   };
-  const getStartingAmount = async () =>  {
-    try {
-      const response = await axios.get(`http://localhost:8080/artwork/auction${id}`);
-      console.log(response.data);
-      const highestBid = response.data
-      
-      setHighestBid(highestBid)
-    } catch (error) {
-      console.error('Error fetching auction:', error);
-    }
-  }
   useEffect(() => {
     const getHighestBid = async () =>  {
       try {
-        const response = await axios.get(`http://localhost:8080/bid/getHighestBid`);
-        console.log(response.data);
-        const highestBid = response.data
+
+        const auction = await getAuction()
+
+        const response = await axios.get(`http://localhost:8080/bid/getHighestBid/${auction.auction_id}`);
+        
+        var highestBid = response.data.price
+
         if(highestBid == 0){
           //use auction id to get the auction and set the starting amount
+          highestBid = auction.starting_amount
         }
         setHighestBid(highestBid)
       } catch (error) {
         console.error('Error fetching highest bid:', error);
       }
   }
-  getHighestBid();
-  }, []); 
+  if (id !== -1) {
+    getHighestBid();
+  }
+}, [id]); 
+
+  const getAuction = async () =>  {
+    try {
+      const response = await axios.get(`http://localhost:8080/artwork/auction/${id}`);
+      const auction = response.data
+      setAuction(auction)
+      return auction
+    } catch (error) {
+      console.error('Error fetching highest bid:', error);
+    }
+}
 
   return (
     <DetailsPage 
