@@ -7,6 +7,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Service
 public class BidService {
@@ -102,4 +103,19 @@ public class BidService {
             return null;
         }
     }
+
+    public List<String> getBidHistory(int user_id){
+        String sql = "Select AR.title,B.price,B.time_stamp,Au.end_date,B.status from Bid B, Auction AU, Artwork AR where B.user_id = ? AND B.auction_id = AU.auction_id AND AU.artwork_id = AR.artwork_id;";
+        return jdbcTemplate.query(sql, (rs,rowNum) ->{
+            String title = rs.getString("title");
+            String date = rs.getString("time_stamp");
+            String end_date = rs.getString("end_date");
+            double price = rs.getFloat("price");
+            String status =rs.getString("status");
+
+            return "You have placed bid for'"+ title + "' at "+date+" for "+ price +". Auction ends at "+ end_date + ". Status of the bid: " + status;
+        },user_id);
+    }
+
+
 }

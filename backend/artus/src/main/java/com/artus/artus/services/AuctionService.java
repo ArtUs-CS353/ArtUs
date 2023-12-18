@@ -178,5 +178,20 @@ private final AuctionMapper auctionMapper;
         }
     }
 
+    public List<String> getAuctionHistory(int user_id){
+        String sql = "Select A.title, au.status,au.end_date,au.start_date,au.starting_amount,au.type from auction au, Artwork A where A.artwork_id = au.artwork_id AND A.artist_id = ?;";
+        return jdbcTemplate.query(sql, (rs,rowNum) ->{
+            String title = rs.getString("title");
+            String start_date = rs.getString("start_date");
+            String end_date = rs.getString("end_date");
+            double starting_amount = rs.getFloat("starting_amount");
+            String status = rs.getString("status");
+            String type = rs.getString("type");
+
+
+            return "You have "+type+" auction for Artwork '"+ title + "' starting amount: "+starting_amount+", start date: "+start_date+", end date: "+end_date+", status:"+ status;
+        },user_id);
+    }
+
 
 }

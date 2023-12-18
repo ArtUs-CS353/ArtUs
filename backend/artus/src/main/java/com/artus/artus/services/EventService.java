@@ -119,4 +119,16 @@ private final EventMapper eventMapper;
             return null;
         }
     }
+
+    public List<String> getEventHistory(int user_id){
+        String sql = "Select E.start_date,E.status,E.meeting_link,E.end_date from event E, artist A where E.artist_id = ? AND A.user_id = E.artist_id;";
+        return jdbcTemplate.query(sql, (rs,rowNum) ->{
+            String link = rs.getString("meeting_link");
+            String start_date = rs.getString("start_date");
+            String end_date = rs.getString("end_date");
+            double status = rs.getFloat("status");
+
+            return "You have event! Starts at "+start_date+", ends at "+end_date+". \nMeeting link: "+ link+ "\nStatus: "+ status;
+        },user_id);
+    }
 }
