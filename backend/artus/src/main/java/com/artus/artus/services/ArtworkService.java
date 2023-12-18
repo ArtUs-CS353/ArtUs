@@ -44,6 +44,21 @@ public class ArtworkService {
         }
     }
 
+    public boolean updateArtwork(Artwork artwork) {
+        try{
+            String sql = "UPDATE Artwork set title=? , description=? , type=? ,  material=? , size=? ,  rarity=? ,  imageURL=? ,  movement=? ,  date=? , price=? ,  availability=? where artwork_id=?";
+            jdbcTemplate.update(sql,  artwork.getTitle(), artwork.getDescription(), artwork.getType(), artwork.getMaterial(), artwork.getSize(), artwork.getRarity(), artwork.getImageURL(), artwork.getMovement(), artwork.getDate(),
+                     artwork.getPrice(), artwork.getAvailability(), artwork.getArtwork_id());
+            return true;
+        }
+        catch(Exception e){
+            // Handle exceptions, log errors, etc.
+            e.printStackTrace();
+            // If the insertion fails, return false
+            return false;
+        }
+    }
+
     public List<Artwork> getAllArtworks() {
         try{
             String sql = "SELECT * FROM Artwork";
@@ -366,4 +381,4 @@ public class ArtworkService {
             return "You have sold Artwork '"+ title + "' at "+date+" for "+ price;
         },user_id);
     }
- }
+}
