@@ -1,7 +1,7 @@
 package com.artus.artus.controllers;
 
 import com.artus.artus.models.Artwork;
-import com.artus.artus.models.Collector;
+import com.artus.artus.models.Enthusiast;
 import com.artus.artus.services.EnthusiastService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -25,8 +25,8 @@ public class EnthusiastController {
     }
 
     @GetMapping("{collector_id}")
-    public ResponseEntity<Collector> getCollectorByID(@PathVariable int collector_id){
-        return new ResponseEntity<>(enthusiastService.getCollector(collector_id),HttpStatus.OK);
+    public ResponseEntity<Enthusiast> getCollectorByID(@PathVariable int collector_id){
+        return new ResponseEntity<>(enthusiastService.getEnthusiast(collector_id),HttpStatus.OK);
     }
 
     @PostMapping("/{enthusiast_id}/increase_balance")

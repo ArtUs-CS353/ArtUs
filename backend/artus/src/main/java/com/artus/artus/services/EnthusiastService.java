@@ -1,9 +1,9 @@
 package com.artus.artus.services;
 
 import com.artus.artus.mappers.ArtworkMapper;
-import com.artus.artus.mappers.CollectorMapper;
+import com.artus.artus.mappers.EnthusiastMapper;
 import com.artus.artus.models.Artwork;
-import com.artus.artus.models.Collector;
+import com.artus.artus.models.Enthusiast;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 
@@ -24,9 +24,9 @@ public class EnthusiastService {
         return jdbcTemplate.query(sql,new ArtworkMapper(),id);
     }
 
-    public Collector getCollector(int id){
-        String sql = "Select * from Collector C, User U where C.user_id = ? AND U.user_id = C.user_id;";
-        return jdbcTemplate.query(sql,new CollectorMapper(),id).get(0);
+    public Enthusiast getEnthusiast(int id){
+        String sql = "Select * from Enthusiast E, User U where E.user_id = ? AND U.user_id = E.user_id;";
+        return jdbcTemplate.query(sql,new EnthusiastMapper(),id).get(0);
     }
 
     public boolean increaseBalance(int id,int money){
