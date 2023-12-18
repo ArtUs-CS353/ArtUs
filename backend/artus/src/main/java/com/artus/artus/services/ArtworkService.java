@@ -307,8 +307,34 @@ public class ArtworkService {
     }
     public boolean addArtworkToExhibition(int artworkId, int exhibitionId) {
         try{
-            String add = "Insert into Includes(exhibition_id,artwork_id) values (?,?);";
+            String add = "Insert into Includes(exhibition_id,artwork_id, status) values (?,?, 'waiting');";
             jdbcTemplate.update(add,exhibitionId, artworkId);
+            return true;
+        }catch (Exception e) {
+            // Handle exceptions, log errors, etc.
+            e.printStackTrace();
+            // If the insertion fails, return false
+            return false;
+        }
+    }
+
+    public boolean approveArtworkToExhibition(int artworkId, int exhibitionId) {
+        try{
+            String add = "UPDATE Includes set status='approved' where artwork_id =? AND exhibition_id=?";
+            jdbcTemplate.update(add, artworkId, exhibitionId);
+            return true;
+        }catch (Exception e) {
+            // Handle exceptions, log errors, etc.
+            e.printStackTrace();
+            // If the insertion fails, return false
+            return false;
+        }
+    }
+
+    public boolean declineArtworkToExhibition(int artworkId, int exhibitionId) {
+        try{
+            String add = "UPDATE Includes set status='declined' where artwork_id =? AND exhibition_id=?;;";
+            jdbcTemplate.update(add, artworkId, exhibitionId);
             return true;
         }catch (Exception e) {
             // Handle exceptions, log errors, etc.

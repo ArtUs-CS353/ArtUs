@@ -192,4 +192,24 @@ public class ArtworkController {
             return new ResponseEntity<>(false, HttpStatus.I_AM_A_TEAPOT);
         }
     }
+
+    @PutMapping("/{artworkID}/approveToExhibition")
+    public ResponseEntity<Boolean> approveArtworkToExhibition(@PathVariable int artworkID, @RequestParam int exhibitionId){
+        boolean result = artworkService.approveArtworkToExhibition(artworkID, exhibitionId);
+        if(result){
+            return new ResponseEntity<>(true, HttpStatus.OK);
+        }else{
+            return new ResponseEntity<>(false, HttpStatus.I_AM_A_TEAPOT);
+        }
+    }
+
+    @PutMapping("/{artworkID}/declineToExhibition")
+    public ResponseEntity<Boolean> declineArtworkToExhibition(@PathVariable int artworkID, @RequestParam int exhibitionId){
+        boolean result = artworkService.declineArtworkToExhibition(artworkID, exhibitionId);
+        if(result){
+            return new ResponseEntity<>(true, HttpStatus.OK);
+        }else{
+            return new ResponseEntity<>(false, HttpStatus.I_AM_A_TEAPOT);
+        }
+    }
 }
