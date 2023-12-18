@@ -1,4 +1,5 @@
 package com.artus.artus.controllers;
+import com.artus.artus.models.Artwork;
 import com.artus.artus.models.Exhibition;
 import com.artus.artus.services.ExhibitionService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -100,8 +101,8 @@ public class ExhibitionController {
 
     @GetMapping("/{exhibitionId}/getAllArtworks")
     @Operation(summary = "This method gives list of artwork ids in an exhibition")
-    public ResponseEntity<List<Integer>> getAllArtworks(@PathVariable int exhibitionId){
-        List<Integer> result = exhibitionService.getAllArtworks(exhibitionId);
+    public ResponseEntity<List<Artwork>> getAllArtworks(@PathVariable int exhibitionId){
+        List<Artwork> result = exhibitionService.getAllArtworks(exhibitionId);
         if(result != null){
             return new ResponseEntity<>(result, HttpStatus.OK);
         }else{
