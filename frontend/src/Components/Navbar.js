@@ -83,7 +83,19 @@ export default function Navbar({userType}) {
       //   navigate(`/collectorProfile`);
       // }
      
-    }
+    };
+
+    const navigateToNotifications = () => {
+      if (userType === 2 ) {
+        navigate('/artistNoti');
+      }
+      /*else if (userType === 3 ) {
+        navigate('/enthusiastNoti');
+      }
+      else if (userType === 4 ) {
+        navigate('/collectorNoti');
+      }*/
+    };
 
     const handleNavigation = (page) => {
         if(page === "Upload Artwork"){
@@ -172,15 +184,16 @@ export default function Navbar({userType}) {
                 <MailIcon />
               </Badge>
             </IconButton>
-            <IconButton
-              size="large"
-              aria-label="show 17 new notifications"
-              color="inherit"
-            >
-              <Badge badgeContent={17} color="error">
+            {(userType === 2 || userType === 3 || userType === 4) && (
+              <IconButton
+                size="large"
+                //aria-label="show 17 new notifications"
+                color="inherit"
+                onClick={navigateToNotifications}
+              >
                 <NotificationsIcon />
-              </Badge>
-            </IconButton>
+              </IconButton>
+            )}
             {(userType == 2 || userType == 4) &&
             <>
                   <IconButton
