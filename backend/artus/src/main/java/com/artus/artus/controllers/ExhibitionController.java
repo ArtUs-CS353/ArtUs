@@ -1,6 +1,7 @@
 package com.artus.artus.controllers;
 import com.artus.artus.models.Artwork;
 import com.artus.artus.models.Exhibition;
+import com.artus.artus.models.Includes;
 import com.artus.artus.services.ExhibitionService;
 import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -99,10 +100,20 @@ public class ExhibitionController {
         }
     }
 
-    @GetMapping("/{exhibitionId}/getAllArtworks")
+    @GetMapping("/{exhibitionId}/getAllArtworks/{status}")
     @Operation(summary = "This method gives list of artwork ids in an exhibition")
-    public ResponseEntity<List<Artwork>> getAllArtworks(@PathVariable int exhibitionId){
-        List<Artwork> result = exhibitionService.getAllArtworks(exhibitionId);
+    public ResponseEntity<List<Artwork>> getAllArtworks(@PathVariable int exhibitionId, @PathVariable String status){
+        List<Artwork> result = exhibitionService.getAllArtworks(exhibitionId, status);
+        if(result != null){
+            return new ResponseEntity<>(result, HttpStatus.OK);
+        }else{
+            return new ResponseEntity<>(null, HttpStatus.I_AM_A_TEAPOT);
+        }
+    }
+
+    @GetMapping("/exhibitionInfo/{exhibitionId}")
+    public ResponseEntity<Exhibition> exhibitionInfo(@PathVariable int exhibitionId){
+        Exhibition result = exhibitionService.exhibitionInfo(exhibitionId);
         if(result != null){
             return new ResponseEntity<>(result, HttpStatus.OK);
         }else{

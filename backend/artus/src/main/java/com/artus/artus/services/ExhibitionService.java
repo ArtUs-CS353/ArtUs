@@ -3,6 +3,7 @@ import com.artus.artus.mappers.ArtworkMapper;
 import com.artus.artus.mappers.ExhibitionMapper;
 import com.artus.artus.models.Artwork;
 import com.artus.artus.models.Exhibition;
+import com.artus.artus.models.Includes;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
@@ -90,10 +91,10 @@ private final ExhibitionMapper exhibitionMapper;
         }
     }
 
-    public List<Artwork> getAllArtworks(int exhibitionId) {
+    public List<Artwork> getAllArtworks(int exhibitionId, String status) {
         try{
-            String sql = "SELECT artwork_id FROM Includes where exhibition_id =? and status = 'approved'";
-            List<Integer> idList = jdbcTemplate.queryForList(sql, Integer.class, exhibitionId);
+            String sql = "SELECT artwork_id FROM Includes where exhibition_id =? and status = ?";
+            List<Integer> idList = jdbcTemplate.queryForList(sql, Integer.class, exhibitionId, status);
             List<Artwork> artworks = new ArrayList<Artwork>();
             String artworkSql;
             for(int id: idList){
@@ -108,5 +109,19 @@ private final ExhibitionMapper exhibitionMapper;
             // If the update fails, return false
             return null;
         }
+    }
+
+    public Exhibition exhibitionInfo(int exhibitionId) {
+        try{
+            String sql = "SELECT * FROM Exhibition where exhibition_id =?";
+            Exhibition exhibition = jdbcTemplate.queryForObject(sql, exhibitionMapper, exhibitionId);
+            return exhibition;
+        } catch (Exception e) {
+            // Handle exceptions, log errors, etc.
+            e.printStackTrace();
+            // If the update fails, return false
+            return null;
+        }
+
     }
 }

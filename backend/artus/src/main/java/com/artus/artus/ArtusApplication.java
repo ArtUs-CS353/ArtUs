@@ -59,7 +59,7 @@ public class ArtusApplication implements CommandLineRunner{
 			jdbcTemplate.execute("ALTER TABLE Artwork MODIFY title VARCHAR(50) NOT NULL;");
 			jdbcTemplate.execute("ALTER TABLE User ADD CONSTRAINT chk_password_length CHECK (CHAR_LENGTH(password) >= 6);");
 			jdbcTemplate.execute("ALTER TABLE Enthusiast ADD CONSTRAINT chk_balance CHECK (balance >= 0);");
-			jdbcTemplate.execute("ALTER TABLE Includes ADD CONSTRAINT fk_artwork_id FOREIGN KEY (artwork_id) REFERENCES Artwork(artwork_id)\n ON DELETE CASCADE;\n");
+			jdbcTemplate.execute("ALTER TABLE Includes ADD CONSTRAINT fk_artwork_id FOREIGN KEY (artwork_id) REFERENCES Artwork(artwork_id) ON DELETE CASCADE;\n");
 			jdbcTemplate.execute("CREATE TRIGGER insert_into_preference_type AFTER INSERT ON Type FOR EACH ROW INSERT INTO Preference (preference_name) VALUES (NEW.type_name);");
 			jdbcTemplate.execute("CREATE TRIGGER insert_into_preference_rarity AFTER INSERT ON Rarity FOR EACH ROW INSERT INTO Preference (preference_name) VALUES (NEW.rarity_name);");
 			jdbcTemplate.execute("CREATE TRIGGER insert_into_preference_material AFTER INSERT ON Material FOR EACH ROW INSERT INTO Preference (preference_name) VALUES (NEW.material_name);");
