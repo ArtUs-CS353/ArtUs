@@ -10,6 +10,7 @@ import { useNavigate } from 'react-router-dom';
 import { ArtworkData } from '../ArtworkData';
 import { ArtistData } from '../ArtistData';
 import axios from "axios";
+import DisplayEvents from '../DisplayEvents';
 
 
 function ExplorePage() {
@@ -28,7 +29,7 @@ function ExplorePage() {
   const [recommendedArtworks, setRecommendedArtworks] = useState([]);
   const [featuringArtists, setFeaturingArtists] = useState([]);
   const [exhibitions, setExhibitions] = useState([]);
-  const [workshops, setWorkshops] = useState([]);
+  const [events, setEvents] = useState([]);
 
 
   const getFeaturingArtists = async () => {
@@ -63,6 +64,15 @@ function ExplorePage() {
     console.log("ARTIST CLICKED")
   }
 
+  function handleExhibitionClick(exhibition) {
+    console.log("cliked exh ", exhibition.exhibition_id)
+    navigate(`/exhibition/${exhibition.exhibition_id}`)
+  }
+
+  
+  function handleEventClick(exhibition) {
+    console.log("cliked exh ")
+  }
 
   const getArtist = async (id) => {
     try {
@@ -135,7 +145,31 @@ function ExplorePage() {
         const response = await axios.get(`http://localhost:8080/exhibition/getAllExhibitions`);
         const exhibitions = response.data;
         console.log("EXHIBITIONS: ", exhibitions)
-        setExhibitions(exhibitions)
+        const exhibitionFormatted = await Promise.all(exhibitions.map(async (exhibition) => {
+          const date1 = new Date(exhibition.start_date);
+          const startDate = date1.toLocaleString('en-US', {
+            month: 'long',
+            day: 'numeric',
+            year: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit',
+          });
+          const date2 = new Date(exhibition.end_date);
+          const endDate = date2.toLocaleString('en-US', {
+            month: 'long',
+            day: 'numeric',
+            year: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit',
+          });
+          console.log("start ", startDate)
+          return {
+            ...exhibition,
+            startDate: "Starts: " +startDate,
+            endDate: "Ends: " + endDate
+          };
+        }));
+        setExhibitions(exhibitionFormatted)
       } catch (error) {
         console.error("Failed to fetch recommended artwork: ", error);
         throw error;
@@ -146,19 +180,19 @@ function ExplorePage() {
   }, []); 
 
   // useEffect(() => {
-  //   const getWorkshops = async () => {
+  //   const getEvents = async () => {
   //     try {
-  //       const response = await axios.get(`http://localhost:8080/workshops/getAllWorkshops`);
-  //       const workshops = response.data;
-  //       console.log("workshops: ", workshops)
-  //       setWorkshops(workshops)
+  //       const response = await axios.get(`http://localhost:8080/event/getAllApprovedCurrentEvents`);
+  //       const events = response.data;
+  //       console.log("event: ", events)
+  //       setEvents(events)
   //     } catch (error) {
-  //       console.error("Failed to fetch workshops: ", error);
+  //       console.error("Failed to fetch events: ", error);
   //       throw error;
   //     }
   //   };
   
-  //   getWorkshops();
+  //   getEvents();
   // }, []); 
   return (
     <Container>
@@ -189,18 +223,18 @@ function ExplorePage() {
         <Slider {...settings}>
         {exhibitions.map((exhibition, index) => (
            <div key={index}>
-            <DisplayImages type = "exhibition" artwork={exhibition} func = {handleArtistClick}/>
+            <DisplayEvents event={exhibition} func = {handleExhibitionClick}/>
            </div>
       ))}
        </Slider>
 
        <Typography sx = {{mt: 5}} variant="h5" gutterBottom >
-          Workshops
+          Events
         </Typography>
         <Slider {...settings}>
-        {workshops.map((workshops, index) => (
+        {events.map((workshops, index) => (
            <div key={index}>
-            <DisplayImages type = "artist" artwork={workshops} func = {handleArtistClick}/>
+            <DisplayEvents event={workshops} func = {handleEventClick}/>
            </div>
       ))}
        </Slider>

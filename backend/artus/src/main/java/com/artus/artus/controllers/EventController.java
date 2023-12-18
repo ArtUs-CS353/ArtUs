@@ -26,10 +26,10 @@ public class EventController {
     user_id int, event_id int NOT NULL AUTO_INCREMENT, link varchar(50), start_date datetime, end_date datetime, poster_URL varchar(50), meeting_link varchar(50), status varchar(50)
      */
     public ResponseEntity<Event> createEvent(@RequestParam("user_id") int artistId,
-                                                 @RequestParam("event link") String link,
+                                                 @RequestParam("eventLink") String link,
                                                  @RequestParam("startDate") @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm") LocalDateTime startDatetime,
                                                  @RequestParam("endDate") @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm") LocalDateTime endDatetime,
-                                                 @RequestParam("poster URL") String posterURL) {
+                                                 @RequestParam("posterURL") String posterURL) {
       
         if(startDatetime.isBefore(LocalDateTime.now())){
             System.out.println("Start datetime must be in the future");

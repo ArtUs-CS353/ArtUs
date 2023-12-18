@@ -26,7 +26,7 @@ public class ExhibitionController {
     public ResponseEntity<Exhibition> createExhibition(@RequestParam("title") String title,
                                                        @RequestParam("startDate") @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm") LocalDateTime startDatetime,
                                                        @RequestParam("endDate") @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm") LocalDateTime endDatetime,
-                                                       @RequestParam("poster URL") String posterURL) {
+                                                       @RequestParam("posterURL") String posterURL) {
       
         if(startDatetime.isBefore(LocalDateTime.now())){
             System.out.println("Start datetime must be in the future");
