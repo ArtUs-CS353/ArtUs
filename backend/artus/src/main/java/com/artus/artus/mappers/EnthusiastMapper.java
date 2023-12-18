@@ -15,9 +15,7 @@ public class EnthusiastMapper implements RowMapper<Enthusiast> {
         String user_name = rs.getString("user_name");
         String user_surname = rs.getString("user_surname");
         int user_role = rs.getInt("user_role");
-        String email = rs.getString("email");
-        String password = rs.getString("password");
-        String contact_info = rs.getString("contact_info");
+
 
         Enthusiast enthusiast = new Enthusiast();
         enthusiast.setUser_id(user_id);
@@ -26,9 +24,7 @@ public class EnthusiastMapper implements RowMapper<Enthusiast> {
         enthusiast.setUser_name(user_name);
         enthusiast.setUser_surname(user_surname);
         enthusiast.setUser_role(user_role);
-        enthusiast.setEmail(email);
-        enthusiast.setPassword(password);
-        enthusiast.setContact_info(contact_info);
+
 
         return enthusiast;
     }
