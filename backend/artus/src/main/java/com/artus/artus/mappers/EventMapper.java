@@ -11,23 +11,26 @@ import java.time.LocalDateTime;
 public class EventMapper implements RowMapper<Event> {
     @Override
     public Event mapRow(ResultSet rs, int rowNum) throws SQLException {
-        int user_id = rs.getInt("artist_id");
+        int user_id = rs.getInt("user_id");
         int event_id = rs.getInt("event_id");
         LocalDateTime start_date = rs.getObject("start_date", LocalDateTime.class);
         LocalDateTime end_date = rs.getObject("end_date", LocalDateTime.class);
         String poster_URL = rs.getString("poster_URL");
         String meeting_link = rs.getString("meeting_link");
         String status = rs.getString("status");
+        String title = rs.getString("title");;
 
 
         Event event = new Event();
         event.setArtist_id(user_id);
         event.setEvent_id(event_id);
+
         event.setStart_date(start_date);
         event.setEnd_date(end_date);
         event.setPoster_URL(poster_URL);
         event.setMeeting_link(meeting_link);
         event.setStatus(status);
+        event.setTitle(title);
 
         return event;
     }

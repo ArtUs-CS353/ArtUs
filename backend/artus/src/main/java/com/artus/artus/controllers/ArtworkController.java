@@ -24,7 +24,7 @@ public class ArtworkController {
 
     @PostMapping("/upload")
     @Operation(summary = "To add new artwork to database")
-    public ResponseEntity<Artwork> uploadArtworkAdmin(
+    public ResponseEntity<Artwork> uploadArtwork(
             @RequestParam("artistId") int artistId,
             @RequestParam("title") String title,
             @RequestParam("type") String type,
@@ -58,6 +58,56 @@ public class ArtworkController {
             return new ResponseEntity<>(artwork, HttpStatus.OK);
         else{
             return new ResponseEntity<>(null, HttpStatus.I_AM_A_TEAPOT);
+        }
+    }
+
+    @PostMapping("/update/{artworkId}")
+    @Operation(summary = "Update artwork in database")
+    public ResponseEntity<Artwork> updateArtwork(
+            @PathVariable("artworkId") int artworkId,
+            @RequestParam("title") String title,
+            @RequestParam("type") String type,
+            @RequestParam("size") String size,
+            @RequestParam("movement") String movement,
+            @RequestParam("price") float price,
+            @RequestParam("description") String description,
+            @RequestParam("material") String material,
+            @RequestParam("rarity") String rarity,
+            @RequestParam("imageURL") String imageURL,
+            @RequestParam("date") LocalDate date,
+            @RequestParam("availability") String availability
+    ) {
+        Artwork artwork = new Artwork();
+        artwork.setArtwork_id(artworkId);
+        artwork.setTitle(title);
+        artwork.setDescription(description);
+        artwork.setType(type);
+        artwork.setMaterial(material);
+        artwork.setSize(size);
+        artwork.setRarity(rarity);
+        artwork.setImageURL(imageURL);
+        artwork.setMovement(movement);
+        artwork.setPrice(price);
+        artwork.setDate(date);
+        artwork.setAvailability(availability);
+        artwork.setStatus("waiting");
+        boolean result = artworkService.updateArtwork(artwork);
+
+        if(result)
+            return new ResponseEntity<>(artwork, HttpStatus.OK);
+        else{
+            return new ResponseEntity<>(null, HttpStatus.I_AM_A_TEAPOT);
+        }
+    }
+
+    @DeleteMapping ("/delete/{artworkId}")
+    public ResponseEntity<Boolean>deleteArtwork (@PathVariable int artworkId){
+        Boolean result = artworkService.deleteArtwork(artworkId);
+        if(result){
+            return new ResponseEntity<>(true, HttpStatus.OK);
+        }
+        else{
+            return new ResponseEntity<>(false, HttpStatus.I_AM_A_TEAPOT);
         }
     }
 
@@ -187,6 +237,26 @@ public class ArtworkController {
     @PostMapping("/{artworkID}/addToExhibition")
     public ResponseEntity<Boolean> addArtworkToExhibition(@PathVariable int artworkID, @RequestParam("exhibitionId") int exhibitionId){
         boolean result = artworkService.addArtworkToExhibition(artworkID, exhibitionId);
+        if(result){
+            return new ResponseEntity<>(true, HttpStatus.OK);
+        }else{
+            return new ResponseEntity<>(false, HttpStatus.I_AM_A_TEAPOT);
+        }
+    }
+
+    @PutMapping("/{artworkID}/approveToExhibition")
+    public ResponseEntity<Boolean> approveArtworkToExhibition(@PathVariable int artworkID, @RequestParam int exhibitionId){
+        boolean result = artworkService.approveArtworkToExhibition(artworkID, exhibitionId);
+        if(result){
+            return new ResponseEntity<>(true, HttpStatus.OK);
+        }else{
+            return new ResponseEntity<>(false, HttpStatus.I_AM_A_TEAPOT);
+        }
+    }
+
+    @PutMapping("/{artworkID}/declineToExhibition")
+    public ResponseEntity<Boolean> declineArtworkToExhibition(@PathVariable int artworkID, @RequestParam int exhibitionId){
+        boolean result = artworkService.declineArtworkToExhibition(artworkID, exhibitionId);
         if(result){
             return new ResponseEntity<>(true, HttpStatus.OK);
         }else{

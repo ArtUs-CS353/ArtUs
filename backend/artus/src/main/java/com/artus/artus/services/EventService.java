@@ -21,8 +21,8 @@ private final EventMapper eventMapper;
 
     public boolean createEvent(Event event){
         try{
-            String sql = "INSERT INTO Event (artist_id, meeting_link , start_date , end_date , poster_URL , status) VALUES ( ?, ?, ?, ?, ?, ?, ?)";
-            jdbcTemplate.update(sql,  event.getArtist_id(),event.getMeeting_link(), event.getStart_date(), event.getEnd_date(), event.getPoster_URL(), "waiting");
+            String sql = "INSERT INTO Event (user_id, title, meeting_link , start_date , end_date , poster_URL , status) VALUES ( ?, ?, ?, ?, ?, ?, ?)";
+            jdbcTemplate.update(sql,  event.getArtist_id(), event.getTitle(),event.getMeeting_link(), event.getStart_date(), event.getEnd_date(), event.getPoster_URL(), "waiting");
             return true;
         }
         catch(Exception e){

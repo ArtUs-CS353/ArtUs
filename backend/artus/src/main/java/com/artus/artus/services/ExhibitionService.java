@@ -1,22 +1,28 @@
 package com.artus.artus.services;
+import com.artus.artus.mappers.ArtworkMapper;
 import com.artus.artus.mappers.ExhibitionMapper;
+import com.artus.artus.models.Artwork;
 import com.artus.artus.models.Exhibition;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
 public class ExhibitionService {
 private final JdbcTemplate jdbcTemplate;
 private final ExhibitionMapper exhibitionMapper;
+    private final ArtworkMapper artworkMapper;
+
 
     @Autowired
-    public ExhibitionService(JdbcTemplate jdbcTemplate, ExhibitionMapper exhibitionMapper) {
+    public ExhibitionService(JdbcTemplate jdbcTemplate, ExhibitionMapper exhibitionMapper, ArtworkMapper artworkMapper) {
         this.jdbcTemplate = jdbcTemplate;
         this.exhibitionMapper = exhibitionMapper;
+        this.artworkMapper = artworkMapper;
     }
 
     public boolean createExhibition(Exhibition exhibition){
@@ -84,10 +90,18 @@ private final ExhibitionMapper exhibitionMapper;
         }
     }
 
-    public List<Integer> getAllArtworks(int exhibitionId) {
+    public List<Artwork> getAllArtworks(int exhibitionId) {
         try{
-            String sql = "SELECT artwork_id FROM Includes where exhibition_id =?";
-            return jdbcTemplate.queryForList(sql, Integer.class, exhibitionId);
+            String sql = "SELECT artwork_id FROM Includes where exhibition_id =? and status = 'approved'";
+            List<Integer> idList = jdbcTemplate.queryForList(sql, Integer.class, exhibitionId);
+            List<Artwork> artworks = new ArrayList<Artwork>();
+            String artworkSql;
+            for(int id: idList){
+                artworkSql = "SELECT * FROM Artwork where artwork_id =?";
+                artworks.add( jdbcTemplate.queryForObject(artworkSql, artworkMapper, id));
+            }
+
+            return artworks;
         } catch (Exception e) {
             // Handle exceptions, log errors, etc.
             e.printStackTrace();

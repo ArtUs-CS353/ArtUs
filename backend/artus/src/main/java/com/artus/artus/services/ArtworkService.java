@@ -44,6 +44,21 @@ public class ArtworkService {
         }
     }
 
+    public boolean updateArtwork(Artwork artwork) {
+        try{
+            String sql = "UPDATE Artwork set title=? , description=? , type=? ,  material=? , size=? ,  rarity=? ,  imageURL=? ,  movement=? ,  date=? , price=? ,  availability=? where artwork_id=?";
+            jdbcTemplate.update(sql,  artwork.getTitle(), artwork.getDescription(), artwork.getType(), artwork.getMaterial(), artwork.getSize(), artwork.getRarity(), artwork.getImageURL(), artwork.getMovement(), artwork.getDate(),
+                     artwork.getPrice(), artwork.getAvailability(), artwork.getArtwork_id());
+            return true;
+        }
+        catch(Exception e){
+            // Handle exceptions, log errors, etc.
+            e.printStackTrace();
+            // If the insertion fails, return false
+            return false;
+        }
+    }
+
     public List<Artwork> getAllArtworks() {
         try{
             String sql = "SELECT * FROM Artwork";
@@ -202,7 +217,7 @@ public class ArtworkService {
     }
 
     public List<Artwork> getExplorePage(){
-        String sql = "select * from artwork order by favorite_count DESC;";
+        String sql = "select * from Artwork order by favorite_count DESC;";
         return jdbcTemplate.query(sql,new ArtworkMapper());
     }
 
@@ -275,12 +290,12 @@ public class ArtworkService {
         String purchaseSql = "INSERT INTO Purchase(user_id,seller_id, artwork_id, purchase_date , price)" +
                 "VALUES (?,?, ?  ,? , ?);";
 
-        String priceSQL = "Select price from artwork where artwork_id = ?;";
+        String priceSQL = "Select price from Artwork where artwork_id = ?;";
         double price = jdbcTemplate.queryForObject(priceSQL,double.class,artwork_id);
 
         int ownerID;
         String previousOwnerSql = "Select user_id from Owns where artwork_id = ?;";
-        String artistIDSQL = "Select artist_id from artwork where artwork_id = ?;";
+        String artistIDSQL = "Select artist_id from Artwork where artwork_id = ?;";
         try{
             ownerID = jdbcTemplate.queryForObject(previousOwnerSql, Integer.class,artwork_id);
 
@@ -321,8 +336,34 @@ public class ArtworkService {
     }
     public boolean addArtworkToExhibition(int artworkId, int exhibitionId) {
         try{
-            String add = "Insert into Includes(exhibition_id,artwork_id) values (?,?);";
+            String add = "Insert into Includes(exhibition_id,artwork_id, status) values (?,?, 'waiting');";
             jdbcTemplate.update(add,exhibitionId, artworkId);
+            return true;
+        }catch (Exception e) {
+            // Handle exceptions, log errors, etc.
+            e.printStackTrace();
+            // If the insertion fails, return false
+            return false;
+        }
+    }
+
+    public boolean approveArtworkToExhibition(int artworkId, int exhibitionId) {
+        try{
+            String add = "UPDATE Includes set status='approved' where artwork_id =? AND exhibition_id=?";
+            jdbcTemplate.update(add, artworkId, exhibitionId);
+            return true;
+        }catch (Exception e) {
+            // Handle exceptions, log errors, etc.
+            e.printStackTrace();
+            // If the insertion fails, return false
+            return false;
+        }
+    }
+
+    public boolean declineArtworkToExhibition(int artworkId, int exhibitionId) {
+        try{
+            String add = "UPDATE Includes set status='declined' where artwork_id =? AND exhibition_id=?;;";
+            jdbcTemplate.update(add, artworkId, exhibitionId);
             return true;
         }catch (Exception e) {
             // Handle exceptions, log errors, etc.
@@ -354,4 +395,17 @@ public class ArtworkService {
             return "You have sold Artwork '"+ title + "' at "+date+" for "+ price;
         },user_id);
     }
- }
+
+    public Boolean deleteArtwork(int artworkId) {
+        try{
+            String delete = "DELETE FROM Artwork  where artwork_id =?";
+            jdbcTemplate.update(delete, artworkId);
+            return true;
+        }catch (Exception e) {
+            // Handle exceptions, log errors, etc.
+            e.printStackTrace();
+            // If the insertion fails, return false
+            return false;
+        }
+    }
+}

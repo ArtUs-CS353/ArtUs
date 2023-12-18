@@ -17,4 +17,5 @@ public class Event {
     private String poster_URL;
     private String meeting_link;
     private String status;
+    private String title;
 }
