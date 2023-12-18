@@ -276,12 +276,12 @@ public class ArtworkService {
         String purchaseSql = "INSERT INTO Purchase(user_id,seller_id, artwork_id, purchase_date , price)" +
                 "VALUES (?,?, ?  ,? , ?);";
 
-        String priceSQL = "Select price from artwork where artwork_id = ?;";
+        String priceSQL = "Select price from Artwork where artwork_id = ?;";
         double price = jdbcTemplate.queryForObject(priceSQL,double.class,artwork_id);
 
         int ownerID;
         String previousOwnerSql = "Select user_id from Owns where artwork_id = ?;";
-        String artistIDSQL = "Select artist_id from artwork where artwork_id = ?;";
+        String artistIDSQL = "Select artist_id from Artwork where artwork_id = ?;";
         try{
             ownerID = jdbcTemplate.queryForObject(previousOwnerSql, Integer.class,artwork_id);
 
