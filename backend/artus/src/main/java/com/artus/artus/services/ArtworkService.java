@@ -124,7 +124,7 @@ public class ArtworkService {
         }
     }
 
-    public List<Artwork> filterArtworks(List<String> types, List<String> materials, List<String> rarities, Integer minPrice, Integer maxPrice, LocalDate startDate, LocalDate endDate,List<String> status){
+    public List<Artwork> filterArtworks(List<String> types, List<String> materials, List<String> rarities, Integer minPrice, Integer maxPrice, LocalDate startDate, LocalDate endDate,List<String> status,Boolean isDesc){
         String mainSQL = "SELECT * FROM Artwork WHERE ";
         List<Object> allParams = new ArrayList<>();
 
@@ -212,6 +212,13 @@ public class ArtworkService {
             allParams.addAll(status.stream().map(status1 -> "%" + status1 + "%").collect(Collectors.toList()));
         }
         mainSQL = mainSQL + " true ";
+
+        if(isDesc != null){
+            if(isDesc)
+                mainSQL = mainSQL + " ORDER BY favorite_count DESC,price DESC ";
+            else
+                mainSQL = mainSQL + " ORDER BY favorite_count DESC, price";
+        }
 
         return jdbcTemplate.query(mainSQL,artworkMapper,allParams.toArray());
     }
