@@ -179,21 +179,21 @@ function ExplorePage() {
     getExhibitions();
   }, []); 
 
-  // useEffect(() => {
-  //   const getEvents = async () => {
-  //     try {
-  //       const response = await axios.get(`http://localhost:8080/event/getAllApprovedCurrentEvents`);
-  //       const events = response.data;
-  //       console.log("event: ", events)
-  //       setEvents(events)
-  //     } catch (error) {
-  //       console.error("Failed to fetch events: ", error);
-  //       throw error;
-  //     }
-  //   };
+  useEffect(() => {
+    const getEvents = async () => {
+      try {
+        const response = await axios.get(`http://localhost:8080/event/getAllApprovedFutureEvents`);
+        const events = response.data;
+        console.log("event: ", events)
+        setEvents(events)
+      } catch (error) {
+        console.error("Failed to fetch events: ", error);
+        throw error;
+      }
+    };
   
-  //   getEvents();
-  // }, []); 
+    getEvents();
+  }, []); 
   return (
     <Container>
       <Typography sx = {{mt: 2}} variant="h5" gutterBottom >
@@ -223,7 +223,7 @@ function ExplorePage() {
         <Slider {...settings}>
         {exhibitions.map((exhibition, index) => (
            <div key={index}>
-            <DisplayEvents event={exhibition} func = {handleExhibitionClick}/>
+            <DisplayEvents event={exhibition}  type = {"exhibition"} func = {handleExhibitionClick}/>
            </div>
       ))}
        </Slider>
@@ -234,7 +234,7 @@ function ExplorePage() {
         <Slider {...settings}>
         {events.map((workshops, index) => (
            <div key={index}>
-            <DisplayEvents event={workshops} func = {handleEventClick}/>
+            <DisplayEvents event={workshops} type = {"event"} func = {handleEventClick}/>
            </div>
       ))}
        </Slider>

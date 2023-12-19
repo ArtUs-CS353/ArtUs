@@ -1,5 +1,5 @@
 import React, { useState, useEffect }  from 'react';
-import {Typography, Container, TextField, Select, MenuItem, Button, Grid, Card, ThemeProvider, createTheme, InputLabel, FormControl, Box } from '@mui/material';
+import {Typography, Container, TextField, Select, MenuItem, IconButton, Grid, Card, ThemeProvider, createTheme, InputLabel, FormControl, Box } from '@mui/material';
 import PhotoCamera from '@mui/icons-material/PhotoCamera';
 import DatePicker from '../DatePicker'
 import dayjs from 'dayjs';
@@ -8,8 +8,8 @@ import AWS from 'aws-sdk';
 import Popup from '../Popup';
 import { useParams } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
-import CloudDownloadIcon from '@mui/icons-material/CloudDownload';
 import DisplayImages from '../DisplayImages';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 
 function Exhibition() {
 
@@ -17,6 +17,12 @@ function Exhibition() {
   let { id } = useParams();
   const navigate = useNavigate();
   const [artworks , setArtworks] = useState([])
+  const [exhibitionTitle, setTitle] = useState('')
+
+  function handleGoBack(){
+    console.log("back pressed")
+    navigate(`/explore`);
+  }
 
   const getArtist = async (id) => {
     try {
@@ -29,43 +35,31 @@ function Exhibition() {
     }
   };
 
+
   useEffect(() => {
-    const getArtworks = async () => {
+    const getExhibition = async () => {
       try {
-        const response = await axios.get(`http://localhost:8080/exhibition/${id}/getAllArtworks`);
-        const artworks = response.data;
-        console.log("ARTWORKS: ", artworks)
-        const artworksWithArtists = await Promise.all(artworks.map(async (artwork) => {
-          const artist = await getArtist(artwork.artist_id);
-          const year = new Date(artwork.date).getFullYear();
-          console.log("year: ", year)
-          return {
-            ...artwork,
-            artist: artist.user_name + " " + artist.user_surname,
-            year: year
-          };
-        }));
-        console.log("updated list : ", artworksWithArtists)
-        setArtworks(artworks)
+        const response = await axios.get(`http://localhost:8080/exhibition/exhibitionInfo/${id}`);
+        const exhibition = response.data.exhibition_name;
+        setTitle(exhibition)
       } catch (error) {
-        console.error("Failed to fetch featuring artworks: ", error);
+        console.error("Failed to fetch exhibition: ", error);
         throw error;
       }
     };
-  
-    getArtworks();
+    getExhibition()
+    
   }, []); 
+
 
   useEffect(() => {
     const getArtworks = async () => {
       try {
-        const response = await axios.get(`http://localhost:8080/exhibition/${id}/getAllArtworks`);
+        const response = await axios.get(`http://localhost:8080/exhibition/${id}/getAllArtworks/${"approved"}`);
         const artworks = response.data;
-        console.log("ARTWORKS: ", artworks)
         const artworksWithArtists = await Promise.all(artworks.map(async (artwork) => {
           const artist = await getArtist(artwork.artist_id);
           const year = new Date(artwork.date).getFullYear();
-          console.log("year: ", year)
           return {
             ...artwork,
             artist: artist.user_name + " " + artist.user_surname,
@@ -73,7 +67,7 @@ function Exhibition() {
           };
         }));
         console.log("updated list : ", artworksWithArtists)
-        setArtworks(artworks)
+        setArtworks(artworksWithArtists)
       } catch (error) {
         console.error("Failed to fetch featuring artworks: ", error);
         throw error;
@@ -85,7 +79,7 @@ function Exhibition() {
 
 
   function handleArtworkClick(artwork){
-      navigate(`/details/${artwork.artwork_id}`);
+      navigate(`/exhibitionDetails/${id}/${artwork.artwork_id}`);
   }
 
   const theme = createTheme({
@@ -113,11 +107,19 @@ function Exhibition() {
   return (
     <ThemeProvider theme={theme}>
         <Container sx={{pt: 5, pb: 2}}>
-            <Typography  sx = {{mt: 2}} variant="h4" gutterBottom>Exhibition {id}</Typography>
+        <IconButton
+        size="medium"
+        aria-label="back"
+        sx={{mt:2}}
+        onClick={handleGoBack}
+      >
+        <ArrowBackIcon />
+      </IconButton>
+            <Typography  sx = {{mt: 2}} variant="h4" gutterBottom>Exhibition <span style={{ fontWeight: 'bold' }} >{exhibitionTitle}</span></Typography>
         <Grid container spacing={4}>
       {artworks.map((artwork, index) => (
         <Grid item xs={12} sm={6} md={4} key={index}>
-           <DisplayImages type = "artwork" artwork={artwork} func = {handleArtworkClick}/>
+           <DisplayImages type = "exhibition" artwork={artwork} func = {handleArtworkClick}/>
         </Grid>
          ))}
          </Grid>

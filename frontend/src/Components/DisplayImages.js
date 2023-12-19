@@ -23,6 +23,17 @@ function DisplayImages({artwork, type, func}){
                   </Typography>
                 )}
 
+                {type === "exhibition" && (
+                <>
+                    <Typography gutterBottom variant="h5" component="div">
+                    {artwork.title}
+                    </Typography>
+                    <Typography variant="body2" color="text.secondary">
+                    {`${artwork.artist}, ${artwork.year}`}
+                    </Typography>
+                </>
+                )}
+
                 {type === "artwork" && (
                 <>
                     <Typography gutterBottom variant="h5" component="div">
@@ -34,7 +45,7 @@ function DisplayImages({artwork, type, func}){
                     {artwork.status === "auction" && (
                       <Typography variant="body1" sx={{fontWeight: 'bold', color:"purple"}}>On Auction</Typography>
                     )}
-                    {artwork.price > 0 && (
+                    {artwork.status === "sale" && (
                     <Typography variant="body1">${artwork.price}</Typography>
                     )}
                 </>

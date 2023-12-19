@@ -1,7 +1,7 @@
 import React from 'react';
 import { Typography, Card, CardMedia, CardContent, CardActionArea} from '@mui/material';
 
-function DisplayEvents({event, func}){
+function DisplayEvents({event, func, type}){
     return(
         <Card sx = 
         {{mr:2, '&:hover': {
@@ -16,15 +16,34 @@ function DisplayEvents({event, func}){
               alt={event.title}
             />
             <CardContent>
-            <Typography gutterBottom variant="h4" component="div">
-            {event.exhibition_name}
-            </Typography>
-            <Typography gutterBottom variant="h7" component="div">
-            {event.startDate}
-            </Typography>
-            <Typography gutterBottom variant="h7" component="div">
-            {event.endDate}
-            </Typography>
+              {(type == "exhibition" &&
+              <>
+               <Typography gutterBottom variant="h4" component="div">
+                {event.exhibition_name}
+                </Typography>
+                <Typography gutterBottom variant="h7" component="div">
+                {event.startDate}
+                </Typography>
+                <Typography gutterBottom variant="h7" component="div">
+                {event.endDate}
+                </Typography>
+              </>
+              )}
+
+             {(type == "event" &&
+              <>
+               <Typography gutterBottom variant="h4" component="div">
+                {event.title}
+                </Typography>
+                <Typography gutterBottom variant="h7" component="div">
+                {event.start_date}
+                </Typography>
+                <Typography gutterBottom variant="h7" component="div">
+                {event.end_date}
+                </Typography>
+              </>
+              )}
+           
 
 
 

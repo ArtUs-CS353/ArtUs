@@ -47,6 +47,7 @@ function DetailsArtistPage({ popup, context }) {
     else{
       setExhibition(exhibitionName)
       const exhibition = currentExhibitions.find(exhibition => (exhibition.exhibition_name) === exhibitionName);
+      console.log("exhibitiion id is ", exhibition.exhibition_id)
       if (exhibition) {
         setExhibitionId(exhibition.exhibition_id)
       }
@@ -58,14 +59,63 @@ function DetailsArtistPage({ popup, context }) {
     setUserPrice(event.target.value);
   };
 
+  const handleDelete = async () => {
+    try {
+      const response = await axios.delete(`http://localhost:8080/artwork/delete/${artworkId}`)
+      console.log(response.data);
+    } catch (error) {
+      console.error('Error deleting artwork:', error);
+    }
+  }
+
+  const handleUpdate = async (title,type,size,movement,price,description,material,rarity,imageURL,date,availability) => {
+    const formData = new FormData();
+    formData.append('title', title); 
+    formData.append('type', type);
+    formData.append('size', size); 
+    formData.append('movement', movement); 
+    formData.append('price', price); 
+    formData.append('description', description); 
+    formData.append('material', material); 
+    formData.append('rarity', rarity); 
+    formData.append('imageURL', imageURL); 
+    formData.append('date', date); 
+    formData.append('availability', availability); 
+    try {
+        const response = await axios.post(`http://localhost:8080/artwork/update/${artworkId}`, formData)
+        console.log(response.data);
+      } catch (error) {
+        console.error('Error sending update artwork request:', error);
+      }
+  }
   const handleSaveDescription = () => {
-    artwork.description = userDescription;
-    console.log("Updated ArtworkData:", artworks);
+    console.log("Updated ArtworkData:", userDescription);
+    handleUpdate( artwork.title, 
+                  artwork.type, 
+                  artwork.size, 
+                  artwork.movement, 
+                  artwork.price,
+                  userDescription, 
+                  artwork.material, 
+                  artwork.rarity, 
+                  artwork.imageURL, 
+                  artwork.date, 
+                  artwork.availability)
   };
 
   const handleSavePrice = () => {
-    artwork.price = userPrice;
-    console.log("Updated ArtworkData:", artworks);
+    console.log("Updated ArtworkData:", userPrice);
+    handleUpdate( artwork.title, 
+      artwork.type, 
+      artwork.size, 
+      artwork.movement, 
+      userPrice,
+      artwork.description, 
+      artwork.material, 
+      artwork.rarity, 
+      artwork.imageURL, 
+      artwork.date, 
+      artwork.availability)
   };
 
   const handleAddToExhibition = async() => {
@@ -74,7 +124,8 @@ function DetailsArtistPage({ popup, context }) {
   };
 
   const handleDeleteArtwork = () => {
-    console.log("Delete artwork");
+    console.log("Delete artwork ", artworkId );
+    handleDelete()
   };
   function handleClose() {
     setPopupEnabled(false)
@@ -85,7 +136,7 @@ function DetailsArtistPage({ popup, context }) {
     formData.append('exhibitionId', exhibitionId); 
     try {
         const response = await axios.post(`http://localhost:8080/artwork/${artworkId}/addToExhibition`, null, {
-          params: { exhibitionId: 1 }
+          params: { exhibitionId: exhibitionId }
         });
         console.log(response.data);
       } catch (error) {
