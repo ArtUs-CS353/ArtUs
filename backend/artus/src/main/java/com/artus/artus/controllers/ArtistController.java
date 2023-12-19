@@ -45,4 +45,9 @@ public class ArtistController {
     public ResponseEntity<List<Artist>> getFeaturingArtists(){
         return new ResponseEntity<>(artistService.getFeaturingArtists(),HttpStatus.OK);
     }
+
+    @GetMapping("/{artist_id}/artwork_url")
+    public ResponseEntity<String> getImageURL(@PathVariable int artist_id){
+        return new ResponseEntity<>(artistService.getImageURL(artist_id), HttpStatus.OK);
+    }
 }
