@@ -24,6 +24,7 @@ import DetailsCollectorPage from './Components/Pages/DetailsCollectorPage';
 import CollectorProfilePage from './Components/Pages/CollectorProfilePage';
 import ArtistDisplayedProfile from './Components/Pages/ArtistDisplayedProfile';
 import SearchResultPage from './Components/Pages/SearchResultPage';
+import FilteredArtworkPage from './Components/Pages/FilteredArtworkPage';
 
 function App() {
   //const showNavbar = !['/login'].includes(window.location.pathname);
@@ -55,6 +56,7 @@ function App() {
         <Route path="/exhibitionDetails/:exhibitionId/:artworkId" element={<DetailsExhibition userId = {userId} userType={userType} />} />
         <Route path="/artistNoti" element={<ArtistNotificationPage userId = {userId} />} />
         <Route path="/searchResultPage" element={<SearchResultPage userId = {userId} userType={userType}/>} />
+        <Route path="/filteredPage" element={<FilteredArtworkPage userId = {userId} userType={userType}/>} />
         <Route path="/detailsCollector/:id" element={<DetailsCollectorPage userId = {userId}/>} />
         <Route path="/collectorProfile" element={<CollectorProfilePage userId = {userId}/>} />
       </Routes>

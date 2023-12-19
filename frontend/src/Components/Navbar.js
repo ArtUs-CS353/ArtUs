@@ -1,9 +1,12 @@
-import * as React from 'react';
+import React, {useEffect, useState} from 'react';
+import axios from "axios";
 import { styled, alpha } from '@mui/material/styles';
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Toolbar from '@mui/material/Toolbar';
+import { Popover, MenuItem, FormControl, InputLabel, Select, TextField } from '@mui/material';
+import FilterListIcon from '@mui/icons-material/FilterList';
 import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
 import InputBase from '@mui/material/InputBase';
@@ -13,6 +16,7 @@ import SearchIcon from '@mui/icons-material/Search';
 import AccountCircle from '@mui/icons-material/AccountCircle';
 import MailIcon from '@mui/icons-material/Mail';
 import NotificationsIcon from '@mui/icons-material/Notifications';
+import DatePicker from './DatePicker'
 import { useNavigate } from 'react-router-dom';
 
 const Search = styled('div')(({ theme }) => ({
@@ -67,6 +71,23 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
 
 export default function Navbar({userType}) {
     const [isNavbarVisible, setIsNavbarVisible] = React.useState(true);
+    const [types, setTypes] = React.useState([]);
+    const [materials, setMaterial] = React.useState([]);
+    const [rarity, setRarity] = React.useState([]);
+    const [status, setStatus] = React.useState([]);
+    const [start_date, setStartDate] = React.useState('');
+    const [end_date, setEndDate] = React.useState('');
+    const [max_price, setMaxPrice] = React.useState(null);
+    const [min_price, setMinPrice] = React.useState(null);
+    
+    const [typeOptions, setTypeOptions] = useState([])
+    const [materialOptions, setMaterialOptions] = React.useState([])
+    const [rarityOptions, setRarityOptions] = React.useState([])
+    const statusOptions = ["sale", "auction", "sold", "waiting"]
+    const [movementOptions, setMovementOptions] = React.useState([])
+    
+    const [anchorEl, setAnchorEl] = React.useState(null);
+
 
     console.log("user type: ", userType)
     let pages = [];
@@ -92,12 +113,38 @@ switch (userType) {
       console.log("search ", event.target.value)
       setSearchInput(event.target.value);
     };
+    const handleApplyFilters = () => {
+      handleClose();
+      navigate('/filteredPage', { state: { types, materials, rarity, status,start_date, end_date,max_price,min_price} });
+    };
+    const handleClick = (event) => {
+      setAnchorEl(event.currentTarget);
+    };
+    
+    const handleClose = () => {
+      setAnchorEl(null);
+    };
     const handleSearchSubmit = (event) => {
       console.log("came to submit ", searchInput)
       event.preventDefault();
       navigate(`/searchResultPage`, { state: { query: searchInput } });
     };
 
+    const handleMinPriceChange = (event) => {
+      setMinPrice(event.target.value);
+    }
+
+    const handleMaxPriceChange = (event) => {
+      setMaxPrice(event.target.value);
+    }
+
+    const handleStartDateSelection = (newDate) =>{
+      setStartDate(newDate);
+    };
+
+    const handleEndDateSelection = (newDate) =>{
+      setEndDate(newDate);
+    };
 
     const handleNavbarTrigger = () => {
         setIsNavbarVisible(!isNavbarVisible);
@@ -142,6 +189,28 @@ switch (userType) {
         }
        
     };
+
+    
+    
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const typesResponse = await axios.get('http://localhost:8080/register/getTypes');
+        const materialsResponse = await axios.get('http://localhost:8080/register/getMaterials');
+        const raritiesResponse = await axios.get('http://localhost:8080/register/getRarities');
+        const movementsResponse = await axios.get('http://localhost:8080/register/getMovements');
+
+        setTypeOptions(typesResponse.data);
+        setMaterialOptions(materialsResponse.data);
+        setRarityOptions(raritiesResponse.data);
+        setMovementOptions(movementsResponse.data);
+      } catch (error) {
+        console.error('Error fetching preferences data:', error);
+      }
+    };
+
+    fetchData();
+  }, []);
   return (
     <Box sx={{ flexGrow: 1 }} >
       <AppBar position="static" 
@@ -240,6 +309,120 @@ switch (userType) {
           </NavbarWrapper>
             )
           }
+        <IconButton
+  size="large"
+  aria-label="filter list"
+  onClick={handleClick}
+  sx={{color:"white", ml: 50}}
+>
+  <FilterListIcon />
+</IconButton>
+<Popover
+  id="filter-popover"
+  open={Boolean(anchorEl)}
+  anchorEl={anchorEl}
+  onClose={handleClose}
+  anchorOrigin={{
+    vertical: 'bottom',
+    horizontal: 'left',
+  }}
+>
+  <div style={{ padding: '16px' }}>
+    {/* Filter Dropdowns */}
+     {/* Type */}
+    <FormControl fullWidth margin="normal">
+      <InputLabel>Type</InputLabel>
+      <Select
+        multiple
+        value={types}
+        onChange={(e) => setTypes(e.target.value)}
+        renderValue={(selected) => selected.join(', ')}
+      >
+        {typeOptions.map((option) => (
+          <MenuItem key={option} value={option}>
+            {option}
+          </MenuItem>
+        ))}
+      </Select>
+    </FormControl>
+     {/* Material */}
+    <FormControl fullWidth margin="normal">
+      <InputLabel>Material</InputLabel>
+      <Select
+        multiple
+        value={materials}
+        onChange={(e) => setMaterial(e.target.value)}
+        renderValue={(selected) => selected.join(', ')}
+      >
+        {materialOptions.map((option) => (
+          <MenuItem key={option} value={option}>
+            {option}
+          </MenuItem>
+        ))}
+      </Select>
+    </FormControl>
+     {/* Rarity */}
+     <FormControl fullWidth margin="normal">
+      <InputLabel>Rarity</InputLabel>
+      <Select
+        multiple
+        value={rarity}
+        onChange={(e) => setRarity(e.target.value)}
+        renderValue={(selected) => selected.join(', ')}
+      >
+        {rarityOptions.map((option) => (
+          <MenuItem key={option} value={option}>
+            {option}
+          </MenuItem>
+        ))}
+      </Select>
+    </FormControl>
+     {/* Min Price */}
+     <FormControl fullWidth margin="normal">
+      <InputLabel>Min Price</InputLabel>
+      <TextField onChange={handleMinPriceChange} fullWidth label="" variant="outlined" margin="normal" />
+    </FormControl>
+     {/* Max Price */}
+     <FormControl fullWidth margin="normal">
+      <InputLabel>Max Price</InputLabel>
+      <TextField onChange={handleMaxPriceChange} fullWidth label="" variant="outlined" margin="normal" />
+    </FormControl>
+     {/* Start Date */}
+     <FormControl fullWidth margin="normal">
+      <Typography>StartDate</Typography>
+      <DatePicker handleSelection = {handleStartDateSelection}/>
+    </FormControl>
+     
+     {/* End Date */}
+     <FormControl fullWidth margin="normal">
+     <Typography>EndDate</Typography>
+      <DatePicker handleSelection = {handleEndDateSelection}/>
+    </FormControl>
+
+     {/* Status */}
+     <FormControl fullWidth margin="normal">
+      <InputLabel>Status</InputLabel>
+      <Select
+        multiple
+        value={status}
+        onChange={(e) => setStatus(e.target.value)}
+        renderValue={(selected) => selected.join(', ')}
+      >
+        {statusOptions.map((option) => (
+          <MenuItem key={option} value={option}>
+            {option}
+          </MenuItem>
+        ))}
+      </Select>
+    </FormControl>
+
+    {/* Repeat for other filters... */}
+
+    {/* Apply Button */}
+    <Button color="primary" onClick={handleApplyFilters}>Apply Filters</Button>
+  </div>
+</Popover>
+
         </Toolbar>
       </AppBar>
     </Box>

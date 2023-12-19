@@ -172,7 +172,7 @@ public class ArtworkController {
         return new ResponseEntity<>(null, HttpStatus.I_AM_A_TEAPOT);
     }
 
-    @GetMapping("filter")
+    @GetMapping("/filter")
     public ResponseEntity<List<Artwork>> filterArtworks(@RequestParam(value = "types" , required = false) List<String> types,
                                                         @RequestParam(value = "material" , required = false) List<String> material,
                                                         @RequestParam(value = "rarity" , required = false) List<String> rarities,
