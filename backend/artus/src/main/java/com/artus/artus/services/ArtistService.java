@@ -52,6 +52,9 @@ public class ArtistService {
 
     public String getImageURL(int artist_id) {
         String sql = "SELECT imageURL FROM artwork where artist_id = ? ORDER BY RAND() LIMIT 1";
-        return jdbcTemplate.queryForObject(sql, String.class, artist_id);
+        try{return jdbcTemplate.queryForObject(sql, String.class, artist_id);}
+        catch (Exception e){
+            return "";
+        }
     }
 }
