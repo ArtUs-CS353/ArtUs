@@ -443,7 +443,7 @@ function Requests() {
               <CardMedia
                 component="img"
                 sx={{ width: 160 }} // Adjust the width as needed
-                image={request.posterURL}
+                image={request.poster_URL}
                 alt={request.title}
               />
               <Grid container direction="column" justifyContent="center" sx={{ padding: 2 }}>
