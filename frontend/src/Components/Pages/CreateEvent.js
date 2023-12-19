@@ -17,12 +17,12 @@ function CreateEvent({userId}) {
   const sendRequest = async () =>  {
     console.log("send ", id)
     const formData = new FormData();
-    //formData.append('title', title); 
+    formData.append('title', title); 
     formData.append('user_id', id);
     formData.append('startDate', startDate);
     formData.append('endDate', endDate);
     formData.append('posterURL', '');
-    formData.append('eventLink', link);
+    formData.append('event link', link);
     try {
         const response = await axios.post(`http://localhost:8080/event/create`, formData);
         console.log(response.data);

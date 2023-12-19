@@ -23,6 +23,17 @@ function DisplayImages({artwork, type, func}){
                   </Typography>
                 )}
 
+                {type === "exhibition" && (
+                <>
+                    <Typography gutterBottom variant="h5" component="div">
+                    {artwork.title}
+                    </Typography>
+                    <Typography variant="body2" color="text.secondary">
+                    {`${artwork.artist}, ${artwork.year}`}
+                    </Typography>
+                </>
+                )}
+
                 {type === "artwork" && (
                 <>
                     <Typography gutterBottom variant="h5" component="div">

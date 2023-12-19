@@ -47,6 +47,7 @@ function DetailsArtistPage({ popup, context }) {
     else{
       setExhibition(exhibitionName)
       const exhibition = currentExhibitions.find(exhibition => (exhibition.exhibition_name) === exhibitionName);
+      console.log("exhibitiion id is ", exhibition.exhibition_id)
       if (exhibition) {
         setExhibitionId(exhibition.exhibition_id)
       }
@@ -135,7 +136,7 @@ function DetailsArtistPage({ popup, context }) {
     formData.append('exhibitionId', exhibitionId); 
     try {
         const response = await axios.post(`http://localhost:8080/artwork/${artworkId}/addToExhibition`, null, {
-          params: { exhibitionId: 1 }
+          params: { exhibitionId: exhibitionId }
         });
         console.log(response.data);
       } catch (error) {
