@@ -12,7 +12,7 @@ function DisplayEvents({event, func, type}){
           <CardMedia
               component="img"
               height="270"
-              image={'https://d7hftxdivxxvm.cloudfront.net?height=667&quality=85&resize_to=fit&src=https%3A%2F%2Fd32dm0rphc51dk.cloudfront.net%2FOK0GVkyEWSSFJFz2TOqf0Q%2Fnormalized.jpg&width=800'}
+              image={event.poster_URL}
               alt={event.title}
             />
             <CardContent>

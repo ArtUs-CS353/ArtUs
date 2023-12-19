@@ -1,9 +1,10 @@
 import React, {useEffect, useState} from 'react';
-import { Grid, Container, Typography, IconButton, TextField} from '@mui/material';
+import { Grid, Container, Typography, IconButton, TextField, MenuItem, Select, FormControl, InputLabel, Card, CardMedia} from '@mui/material';
 import Button from '@mui/material/Button';
 import axios from "axios";
 import Popup from '../Popup';
 import DateTimePicker from '../DateTimePicker'
+import { PosterData } from '../PosterData';
 import { useNavigate } from 'react-router-dom';
 import dayjs from 'dayjs';
 function CreateEvent({userId}) {
@@ -13,6 +14,8 @@ function CreateEvent({userId}) {
   const [startDate, setStartDate] = useState('')
   const [endDate, setEndDate] = useState('')
   const [popupEnabled, setPopupEnabled] = useState(false)
+  const [poster, setPoster] = useState('')
+  const [posterURL, setPosterURL] = useState('')
 
   const sendRequest = async () =>  {
     console.log("send ", id)
@@ -21,7 +24,7 @@ function CreateEvent({userId}) {
     formData.append('user_id', id);
     formData.append('startDate', startDate);
     formData.append('endDate', endDate);
-    formData.append('posterURL', '');
+    formData.append('posterURL', posterURL);
     formData.append('event link', link);
     try {
         const response = await axios.post(`http://localhost:8080/event/create`, formData);
@@ -40,6 +43,23 @@ function CreateEvent({userId}) {
     setPopupEnabled(true)
   }
 
+  const handlePosterSelection = (event) => {
+    setPoster(event.target.value);
+    if(event.target.value === "DefaultPoster1"){
+      setPosterURL(PosterData[0].imageURL)
+    }
+    else if(event.target.value === "DefaultPoster2"){
+      setPosterURL(PosterData[1].imageURL)
+    }
+    else if(event.target.value === "DefaultPoster3"){
+      setPosterURL(PosterData[2].imageURL)
+    }
+    else{
+      setPosterURL('')
+    }
+    
+    
+  };
   function handleClose() {
     setPopupEnabled(false)
   }
@@ -58,7 +78,7 @@ function CreateEvent({userId}) {
   const handleLinkChange = (event) => {
     setLink(event.target.value)
   }
-  const isSubmitDisabled = !title || !startDate || !endDate || !link;
+  const isSubmitDisabled = !title || !startDate || !endDate || !link || (posterURL == "");;
 
   return (
     <Container sx={{ mr: 2, ml:8, mt: 5 }}>
@@ -92,6 +112,36 @@ function CreateEvent({userId}) {
           </Grid>
         </Grid>
         <br></br>
+        <FormControl fullWidth margin="normal">
+                <InputLabel id="poster-select-label">Poster</InputLabel>
+                <Select
+                  labelId="poster-select-label"
+                  id="poster-select"
+                  value={poster}
+                  label="Poster"
+                  onChange={handlePosterSelection}
+                >
+                  <MenuItem value="">
+                    <em>None</em>
+                  </MenuItem>
+                  <MenuItem value="DefaultPoster1">DefaultPoster1</MenuItem>
+                  <MenuItem value="DefaultPoster2">DefaultPoster2</MenuItem>
+                  <MenuItem value="DefaultPoster3">DefaultPoster3</MenuItem>
+                </Select>
+              </FormControl>
+              <Card sx={{ display: 'flex', marginBottom: 2 
+              ,'&:hover': {
+               boxShadow: '2px 4px 8px 2px rgba(0, 0, 0.1, 0.3)',
+               transition: '0.3s'}
+              }}
+              >
+                 <CardMedia
+                   component="img"
+                   sx={{ width: 160 }} // Adjust the width as needed
+                   image={posterURL}
+                   alt={"poster"}
+                 />
+                  </Card>
           <Button onClick={submit} sx={{ mt: 2, backgroundColor: isSubmitDisabled ? "#65647a" : "#302F4D" }} variant="contained" color="primary" disabled={isSubmitDisabled}>
             Submit
           </Button>
