@@ -180,10 +180,10 @@ public class ArtworkController {
                                                         @RequestParam(value = "max_price" , required = false) Integer maxPrice,
                                                         @RequestParam(value = "start_date" , required = false) LocalDate startDatetime,
                                                         @RequestParam(value = "end_date", required = false) LocalDate endDatetime,
-                                                        @RequestParam(value = "status", required = false) List<String> status)
+                                                        @RequestParam(value = "status", required = false) List<String> status,
+                                                        @RequestParam(value = "is_desc", required = false)Boolean isDesc)
     {
-        System.out.println("types: "+ types + " material: " + material + " rarity: " + rarities + " min price: " + minPrice + " max price: " + maxPrice + " start date:" + startDatetime + " end date: " + endDatetime + " status: " + status);
-        return new ResponseEntity<>(artworkService.filterArtworks(types,material,rarities,minPrice,maxPrice,startDatetime,endDatetime,status),HttpStatus.OK);
+        return new ResponseEntity<>(artworkService.filterArtworks(types,material,rarities,minPrice,maxPrice,startDatetime,endDatetime,status,isDesc),HttpStatus.OK);
     }
 
     @GetMapping("/explorePage")
