@@ -5,7 +5,7 @@ import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Toolbar from '@mui/material/Toolbar';
-import { Popover, MenuItem, FormControl, InputLabel, Select, TextField } from '@mui/material';
+import { Popover, MenuItem, FormControl, InputLabel, Select, TextField, Checkbox, FormControlLabel} from '@mui/material';
 import FilterListIcon from '@mui/icons-material/FilterList';
 import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
@@ -85,6 +85,8 @@ export default function Navbar({userType}) {
     const [rarityOptions, setRarityOptions] = React.useState([])
     const statusOptions = ["sale", "auction", "sold", "waiting"]
     const [movementOptions, setMovementOptions] = React.useState([])
+    const [sortByPrice, setSortByPrice] = React.useState(false);
+
     
     const [anchorEl, setAnchorEl] = React.useState(null);
 
@@ -113,9 +115,14 @@ switch (userType) {
       console.log("search ", event.target.value)
       setSearchInput(event.target.value);
     };
+
+    const handleSortByPriceChange = (event) => {
+      setSortByPrice(event.target.checked);
+    };
+
     const handleApplyFilters = () => {
       handleClose();
-      navigate('/filteredPage', { state: { types, materials, rarity, status,start_date, end_date,max_price,min_price} });
+      navigate('/filteredPage', { state: { types, materials, rarity, status,start_date, end_date,max_price,min_price, sortByPrice} });
     };
     const handleClick = (event) => {
       setAnchorEl(event.currentTarget);
@@ -387,6 +394,16 @@ switch (userType) {
       <InputLabel>Max Price</InputLabel>
       <TextField onChange={handleMaxPriceChange} fullWidth label="" variant="outlined" margin="normal" />
     </FormControl>
+    <FormControlLabel
+      control={
+        <Checkbox
+          checked={sortByPrice}
+          onChange={handleSortByPriceChange}
+          name="sortByPrice"
+        />
+      }
+      label="Sort by Price"
+    />
      {/* Start Date */}
      <FormControl fullWidth margin="normal">
       <Typography>StartDate</Typography>

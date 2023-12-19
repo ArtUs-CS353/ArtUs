@@ -15,7 +15,7 @@ function FilteredArtworkPage({userId, userType}) {
   const filters = location.state || {};
 
   // Extracting individual filters
-  const { types, materials, rarity, status, start_date, end_date, max_price, min_price } = filters;
+  const { types, materials, rarity, status, start_date, end_date, max_price, min_price, sortByPrice } = filters;
 
   
 
@@ -67,6 +67,9 @@ function FilteredArtworkPage({userId, userType}) {
         
             if (min_price != null) params.append('min_price', min_price);
             if (max_price != null) params.append('max_price', max_price);
+
+            if (sortByPrice != null) params.append('is_desc', sortByPrice);
+            
         
             try {
                 const response = await axios.get(`http://localhost:8080/artwork/filter`, { params });
