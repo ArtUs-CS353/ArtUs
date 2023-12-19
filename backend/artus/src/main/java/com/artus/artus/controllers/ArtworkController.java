@@ -172,7 +172,7 @@ public class ArtworkController {
         return new ResponseEntity<>(null, HttpStatus.I_AM_A_TEAPOT);
     }
 
-    @GetMapping("filter")
+    @GetMapping("/filter")
     public ResponseEntity<List<Artwork>> filterArtworks(@RequestParam(value = "types" , required = false) List<String> types,
                                                         @RequestParam(value = "material" , required = false) List<String> material,
                                                         @RequestParam(value = "rarity" , required = false) List<String> rarities,
@@ -182,6 +182,7 @@ public class ArtworkController {
                                                         @RequestParam(value = "end_date", required = false) LocalDate endDatetime,
                                                         @RequestParam(value = "status", required = false) List<String> status)
     {
+        System.out.println("types: "+ types + " material: " + material + " rarity: " + rarities + " min price: " + minPrice + " max price: " + maxPrice + " start date:" + startDatetime + " end date: " + endDatetime + " status: " + status);
         return new ResponseEntity<>(artworkService.filterArtworks(types,material,rarities,minPrice,maxPrice,startDatetime,endDatetime,status),HttpStatus.OK);
     }
 
