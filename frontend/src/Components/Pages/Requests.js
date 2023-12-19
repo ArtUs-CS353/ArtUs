@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import { Grid, Container, Typography, Card, CardMedia} from '@mui/material';
+import { Grid, Container, Typography, Card, CardMedia, Tabs, Tab} from '@mui/material';
 import Button from '@mui/material/Button';
 import axios from "axios";
 import Popup from '../Popup';
@@ -13,6 +13,7 @@ function Requests() {
   const [requestType, setRequestType] = useState('')
   const [id,setId] = useState(-1)
   const [id2,setId2] = useState(-1)
+  const [selectedTab, setSelectedTab] = useState(0);
 
   const getArtwork = async (id) => {
     try {
@@ -326,6 +327,9 @@ function Requests() {
   function handleClose() {
     setPopupEnabled(false)
   }
+  const handleTabChange = (event, newValue) => {
+    setSelectedTab(newValue);
+  };
   return (
     <Container sx={{ mr: 2, ml:8, mt: 5 }}>
       {(popupEnabled &&
@@ -336,44 +340,59 @@ function Requests() {
         handleRequest={sendRequest}
         > 
         </Popup>)}
-        <Typography gutterBottom variant='h5'>Auction Requests</Typography>
-      {auctionRequests.map((request, index) => (
-           <>
-           <Grid spacing={4}>
-           <Card sx={{ display: 'flex', marginBottom: 2 
-           ,'&:hover': {
-            boxShadow: '2px 4px 8px 2px rgba(0, 0, 0.1, 0.3)',
-            transition: '0.3s'}
-           }}
-           >
-              <CardMedia
-                component="img"
-                sx={{ width: 160 }} // Adjust the width as needed
-                image={request.imageURL}
-                alt={request.title}
-              />
-              <Grid container direction="column" justifyContent="center" sx={{ padding: 2 }}>
-                <Typography variant="h8"><span style={{ fontWeight: 'bold' }}>{"Artwork Name: "}</span>{request.title}</Typography>
-                <Typography variant="h8"><span style={{ fontWeight: 'bold' }}>{"Artist Name: "}</span></Typography>
-                <Typography variant="h8"><span style={{ fontWeight: 'bold' }}>{"Size: "}</span>{request.size}</Typography>
-                <Typography variant="h8"><span style={{ fontWeight: 'bold' }}>{"Auction Type: "}</span>{request.auctionType}</Typography>
-                <Typography variant="h8"><span style={{ fontWeight: 'bold' }}>{"Starting Amount: "}</span> ${request.starting_amount}</Typography>
-                <Typography variant="h8"><span style={{ fontWeight: 'bold' }}>{"Description: "}</span> {request.description}</Typography>
-                <Typography variant="h8"><span style={{ fontWeight: 'bold' }}>{"Start Date: "}</span> {request.start}</Typography>
-                <Typography variant="h8"><span style={{ fontWeight: 'bold' }}>{"End Date: "}</span>{request.end}</Typography>
-                {/* Add more text information here */}
+        <Tabs
+        value={selectedTab}
+        onChange={handleTabChange}
+        centered
+        sx={{ '& .MuiTab-root': { minWidth: '30%' } }}
+      >
+        <Tab label="Auction Requests" />
+        <Tab label="Exhibition Requests" />
+        <Tab label="Event Requests" />
+      </Tabs>
+        
+        {selectedTab === 0 && (
+          <>
+            {auctionRequests.map((request, index) => (
+              <>
+              <Grid spacing={4}>
+              <Card sx={{ display: 'flex', marginBottom: 2 
+              ,'&:hover': {
+               boxShadow: '2px 4px 8px 2px rgba(0, 0, 0.1, 0.3)',
+               transition: '0.3s'}
+              }}
+              >
+                 <CardMedia
+                   component="img"
+                   sx={{ width: 160 }} // Adjust the width as needed
+                   image={request.imageURL}
+                   alt={request.title}
+                 />
+                 <Grid container direction="column" justifyContent="center" sx={{ padding: 2 }}>
+                   <Typography variant="h8"><span style={{ fontWeight: 'bold' }}>{"Artwork Name: "}</span>{request.title}</Typography>
+                   <Typography variant="h8"><span style={{ fontWeight: 'bold' }}>{"Artist Name: "}</span></Typography>
+                   <Typography variant="h8"><span style={{ fontWeight: 'bold' }}>{"Size: "}</span>{request.size}</Typography>
+                   <Typography variant="h8"><span style={{ fontWeight: 'bold' }}>{"Auction Type: "}</span>{request.auctionType}</Typography>
+                   <Typography variant="h8"><span style={{ fontWeight: 'bold' }}>{"Starting Amount: "}</span> ${request.starting_amount}</Typography>
+                   <Typography variant="h8"><span style={{ fontWeight: 'bold' }}>{"Description: "}</span> {request.description}</Typography>
+                   <Typography variant="h8"><span style={{ fontWeight: 'bold' }}>{"Start Date: "}</span> {request.start}</Typography>
+                   <Typography variant="h8"><span style={{ fontWeight: 'bold' }}>{"End Date: "}</span>{request.end}</Typography>
+                   {/* Add more text information here */}
+                 </Grid>
+                 <Grid container sx = {{mt:8,ml:15}}>
+                 <Button onClick={() => handleAccept(index)}>ACCEPT</Button>
+                 <Button onClick={() => handleReject(index)}>REJECT</Button>
+                 </Grid>
+               </Card>
               </Grid>
-              <Grid container sx = {{mt:8,ml:15}}>
-              <Button onClick={() => handleAccept(index)}>ACCEPT</Button>
-              <Button onClick={() => handleReject(index)}>REJECT</Button>
-              </Grid>
-            </Card>
-           </Grid>
+               
+             </>
             
-          </>
-         
-        ))}
-         <Typography gutterBottom variant='h5'>Exhibition Requests</Typography>
+           ))}
+           </>
+        )}
+         {selectedTab === 1 && (
+          <>
          {formattedExhibitionRequest.map((request, index) => (
                  request.artworks.map((artwork, artworkIndex) =>
            <>
@@ -406,8 +425,12 @@ function Requests() {
             
           </>
           )))}
+          </>
+         )}
+      
 
-      <Typography gutterBottom variant='h5'>Event Requests</Typography>
+      {selectedTab === 2 && (
+        <>
       {eventRequests.map((request, index) => (
            <>
            <Grid spacing={4}>
@@ -439,6 +462,8 @@ function Requests() {
           </>
          
         ))}
+        </>
+      )}
     </Container>
   );
 }

@@ -21,33 +21,23 @@ function DisplayEvents({event, func, type}){
                <Typography gutterBottom variant="h4" component="div">
                 {event.exhibition_name}
                 </Typography>
-                <Typography gutterBottom variant="h7" component="div">
-                {event.startDate}
-                </Typography>
-                <Typography gutterBottom variant="h7" component="div">
-                {event.endDate}
-                </Typography>
+
               </>
               )}
-
-             {(type == "event" &&
+               {(type == "event" &&
               <>
                <Typography gutterBottom variant="h4" component="div">
                 {event.title}
                 </Typography>
-                <Typography gutterBottom variant="h7" component="div">
-                {event.start_date}
-                </Typography>
-                <Typography gutterBottom variant="h7" component="div">
-                {event.end_date}
-                </Typography>
               </>
               )}
-           
 
-
-
-                 
+            <Typography gutterBottom variant="h7" component="div">
+                {event.startDate}
+            </Typography>
+            <Typography gutterBottom variant="h7" component="div">
+                {event.endDate}
+            </Typography>  
             </CardContent>
           </CardActionArea>
           </Card>
