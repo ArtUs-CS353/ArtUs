@@ -103,13 +103,12 @@ switch (userType) {
         setIsNavbarVisible(!isNavbarVisible);
     };
     const goToProfile = () => {
-      if(userType == 2){
+      if(userType === 2){
         navigate(`/artistProfile`);
       }
-      // else{
-      //   navigate(`/collectorProfile`);
-      // }
-     
+      else if (userType === 4) {
+        navigate(`/collectorProfile`);
+      }
     };
 
     const navigateToNotifications = () => {
