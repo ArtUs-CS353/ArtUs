@@ -11,7 +11,7 @@ import { ArtworkData } from '../ArtworkData';
 import { ArtistData } from '../ArtistData';
 import axios from "axios";
 import DisplayEvents from '../DisplayEvents';
-
+import Popup from '../Popup';
 
 function ExplorePage() {
   const settings = {
@@ -30,6 +30,8 @@ function ExplorePage() {
   const [featuringArtists, setFeaturingArtists] = useState([]);
   const [exhibitions, setExhibitions] = useState([]);
   const [events, setEvents] = useState([]);
+  const [popupEnabled, setPopupEnabled] = useState(false)
+  const [link, setLink] = useState('')
 
 
   const getFeaturingArtists = async () => {
@@ -71,7 +73,9 @@ function ExplorePage() {
 
   
   function handleEventClick(exhibition) {
-    console.log("cliked exh ")
+    console.log("cliked exh ", exhibition)
+    setLink(exhibition.meeting_link)
+    setPopupEnabled(true)
   }
 
   const getArtist = async (id) => {
@@ -184,8 +188,31 @@ function ExplorePage() {
       try {
         const response = await axios.get(`http://localhost:8080/event/getAllApprovedFutureEvents`);
         const events = response.data;
-        console.log("event: ", events)
-        setEvents(events)
+        const eventsFormatted = await Promise.all(events.map(async (event) => {
+          const date1 = new Date(event.start_date);
+          const startDate = date1.toLocaleString('en-US', {
+            month: 'long',
+            day: 'numeric',
+            year: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit',
+          });
+          const date2 = new Date(event.end_date);
+          const endDate = date2.toLocaleString('en-US', {
+            month: 'long',
+            day: 'numeric',
+            year: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit',
+          });
+          console.log("start ", startDate)
+          return {
+            ...event,
+            startDate: "Starts: " +startDate,
+            endDate: "Ends: " + endDate
+          };
+        }));
+        setEvents(eventsFormatted)
       } catch (error) {
         console.error("Failed to fetch events: ", error);
         throw error;
@@ -194,8 +221,21 @@ function ExplorePage() {
   
     getEvents();
   }, []); 
+  function handleClose() {
+    setPopupEnabled(false)
+  }
   return (
     <Container>
+      {(popupEnabled &&
+        <Popup 
+        buttonName={"OK"}
+        state={popupEnabled}
+        textField={<Typography>{link}</Typography>}
+        handleClose={handleClose} 
+        dialogTitle={"Event takes place at the following link "} 
+        handleRequest={handleClose}
+        > 
+        </Popup>)}
       <Typography sx = {{mt: 2}} variant="h5" gutterBottom >
           Featured Artworks
         </Typography>
