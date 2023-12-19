@@ -19,6 +19,8 @@ import Exhibition from './Components/Pages/Exhibition';
 import CreateEvent from './Components/Pages/CreateEvent';
 import Balance from './Components/Pages/Balance';
 import ArtistNotificationPage from './Components/Pages/ArtistNotificationPage';
+import CollectorNotificationPage from './Components/Pages/CollectorNotificationPage';
+import EnthusiastNotificationPage from './Components/Pages/EnthusiastNotificationPage';
 import DetailsExhibition from './Components/Pages/DetailsExhibition';
 import DetailsCollectorPage from './Components/Pages/DetailsCollectorPage';
 import CollectorProfilePage from './Components/Pages/CollectorProfilePage';
@@ -55,10 +57,12 @@ function App() {
         <Route path="/balance" element={<Balance userId = {userId} userType={userType} />} />
         <Route path="/exhibitionDetails/:exhibitionId/:artworkId" element={<DetailsExhibition userId = {userId} userType={userType} />} />
         <Route path="/artistNoti" element={<ArtistNotificationPage userId = {userId} />} />
+        <Route path="/collectorNoti" element={<CollectorNotificationPage userId = {userId} />} />
+        <Route path="/enthusiastNoti" element={<EnthusiastNotificationPage userId = {userId} />} />
         <Route path="/searchResultPage" element={<SearchResultPage userId = {userId} userType={userType}/>} />
-        <Route path="/filteredPage" element={<FilteredArtworkPage userId = {userId} userType={userType}/>} />
         <Route path="/detailsCollector/:id" element={<DetailsCollectorPage userId = {userId}/>} />
         <Route path="/collectorProfile" element={<CollectorProfilePage userId = {userId}/>} />
+        <Route path="/filteredPage" element={<FilteredArtworkPage userId = {userId} userType={userType}/>} />
       </Routes>
     </Router>
   );

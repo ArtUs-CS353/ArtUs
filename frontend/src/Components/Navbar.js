@@ -169,12 +169,12 @@ switch (userType) {
       if (userType === 2 ) {
         navigate('/artistNoti');
       }
-      /*else if (userType === 3 ) {
+      else if (userType === 3 ) {
         navigate('/enthusiastNoti');
       }
       else if (userType === 4 ) {
         navigate('/collectorNoti');
-      }*/
+      }
     };
 
     const handleNavigation = (page) => {

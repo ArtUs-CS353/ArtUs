@@ -4,23 +4,21 @@ import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
 import Box from '@mui/material/Box';
 
-const ArtistNotificationPage = ({ userId }) => {
-  const [artistNotifications, setArtistNotifications] = useState([]);
+const EnthusiastNotificationPage = ({ userId }) => {
+  const [enthusiastNotifications, setEnthusiastNotifications] = useState([]);
   const [activityHistory, setActivityHistory] = useState({});
   const [selectedTab, setSelectedTab] = useState(0);
 
   useEffect(() => {
-    // Fetch artist notifications for the given userId and type 'Artist'
-    const fetchArtistNotifications = async () => {
+    const fetchEnthusiastNotifications = async () => {
       try {
-        const response = await axios.get(`/notification/${userId}/2`);
-        setArtistNotifications(response.data);
+        const response = await axios.get(`/notification/${userId}/3`);
+        setCollectorNotifications(response.data);
       } catch (error) {
-        console.error('Error fetching artist notifications:', error);
+        console.error('Error fetching enthusiast notifications:', error);
       }
     };
 
-    // Fetch activity history for the given userId
     const fetchActivityHistory = async () => {
       try {
         const response = await axios.get(`/activityHistory/${userId}`);
@@ -30,8 +28,7 @@ const ArtistNotificationPage = ({ userId }) => {
       }
     };
 
-    // Call the fetchArtistNotifications and fetchActivityHistory functions
-    fetchArtistNotifications();
+    fetchEnthusiastNotifications();
     fetchActivityHistory();
   }, [userId]);
 
@@ -53,7 +50,7 @@ const ArtistNotificationPage = ({ userId }) => {
 
       {selectedTab === 0 && (
         <Box>
-          {artistNotifications.map((notification) => (
+          {enthusiastNotifications.map((notification) => (
             <Box key={notification.notification_id} sx={{ border: '1px solid #ccc', marginBottom: '10px', padding: '10px' }}>
               <strong>{notification.type}:</strong> {notification.content}
             </Box>
@@ -74,4 +71,4 @@ const ArtistNotificationPage = ({ userId }) => {
   );
 };
 
-export default ArtistNotificationPage;
+export default EnthusiastNotificationPage;
