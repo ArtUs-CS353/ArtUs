@@ -13,7 +13,7 @@ import axios from "axios";
 import DisplayEvents from '../DisplayEvents';
 import Popup from '../Popup';
 
-function ExplorePage() {
+function ExplorePage({userId, userType}) {
   const settings = {
     infinite: false,
     speed: 500,
@@ -32,21 +32,14 @@ function ExplorePage() {
   const [events, setEvents] = useState([]);
   const [popupEnabled, setPopupEnabled] = useState(false)
   const [link, setLink] = useState('')
-
-
-  const getFeaturingArtists = async () => {
-    try {
-      const response = await axios.get(`http://localhost:8080/artwork/getFeaturingArtist`);
-      const artist = response.data;
-      return artist;
-    } catch (error) {
-      console.error("Failed to fetch featuring artist: ", error);
-      throw error;
-    }
-  };
+  console.log("user type is ", userType)
 
   function handleArtworkClick(artwork){
-    if (artwork.status === "auction"){
+    console.log("here withh ", userType)
+    if(userType == 2 ){
+      navigate(`/details/${artwork.artwork_id}`);
+    }
+    else if (artwork.status === "auction"){
       //navigate to auction page
       console.log("GOING TO AUCTION PAGE")
       navigate(`/auction/${artwork.artwork_id}`);
@@ -63,7 +56,8 @@ function ExplorePage() {
 
   }
   function handleArtistClick(artist){
-    console.log("ARTIST CLICKED")
+    console.log("ARTIST CLICKED ", artist.user_id)
+    navigate(`/artistDisplayed/${artist.user_id}`)
   }
 
   function handleExhibitionClick(exhibition) {
@@ -85,6 +79,17 @@ function ExplorePage() {
       return artist;
     } catch (error) {
       console.error("Failed to fetch artist: ", error);
+      throw error;
+    }
+  };
+
+  const getArtistUrl = async (id) => {
+    try {
+      const response = await axios.get(`http://localhost:8080/artists/${id}/artwork_url`);
+      const url = response.data;
+      return url;
+    } catch (error) {
+      console.error("Failed to fetch artist url: ", error);
       throw error;
     }
   };
@@ -114,6 +119,30 @@ function ExplorePage() {
     };
   
     getRecommendedArtworks();
+  }, []); 
+
+  useEffect(() => {
+    const getFeaturingArtists = async () => {
+      try {
+        const response = await axios.get(`http://localhost:8080/artists/featuring_artists`);
+        const artists = response.data;
+        console.log("featuring artists are: ", artists)
+        const formattedArtists = await Promise.all(artists.map(async (artist) => {
+        const url = await getArtistUrl(artist.user_id);
+          return {
+            ...artist,
+            artist: artist.user_name + " " + artist.user_surname,
+            imageURL: url
+          };
+        }));
+        setFeaturingArtists(formattedArtists)
+        console.log("featuing artists ", featuringArtists)
+      } catch (error) {
+        console.error("Failed to fetch featuring artist: ", error);
+        throw error;
+      }
+    };
+    getFeaturingArtists()
   }, []); 
 
   useEffect(() => {
@@ -250,7 +279,7 @@ function ExplorePage() {
           Featured Artists
         </Typography>
         <Slider {...settings}>
-        {artists.map((artist, index) => (
+        {featuringArtists.map((artist, index) => (
            <div key={index}>
             <DisplayImages type = "artist" artwork={artist} func = {handleArtistClick}/>
            </div>

@@ -53,11 +53,8 @@ function BuyArtworkPage({userId}) {
         throw error;
       }
     };
-  
-    if (userId !== -1) {
       getBalance();
-    }
-  }, [userId]);
+  });
   return (
     <DetailsPage 
      setId={setId}

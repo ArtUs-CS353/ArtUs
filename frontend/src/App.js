@@ -20,6 +20,8 @@ import CreateEvent from './Components/Pages/CreateEvent';
 import Balance from './Components/Pages/Balance';
 import ArtistNotificationPage from './Components/Pages/ArtistNotificationPage';
 import DetailsExhibition from './Components/Pages/DetailsExhibition';
+import ArtistDisplayedProfile from './Components/Pages/ArtistDisplayedProfile';
+import SearchResultPage from './Components/Pages/SearchResultPage';
 
 function App() {
   //const showNavbar = !['/login'].includes(window.location.pathname);
@@ -33,12 +35,13 @@ function App() {
         <Route path="/" element={<LoginPage setLoggedIn = {setLoggedIn} setUserType={setUserType} setUserId={setUserId} />} />
         <Route path="/register" element={<RegisterPage />} />
         <Route path="/preferences" element={<PreferencesPage />} />
-        <Route path="/explore" element={<Explore userId = {userId}/>} />
+        <Route path="/explore" element={<Explore userId = {userId} userType={userType}/>} />
         <Route path="/buy/:id" element={<BuyArtwork userId = {userId}/>} />
         <Route path="/uploadArtwork" element={<UploadArtwork userId = {userId} userType={userType}/>} />
         <Route path="/details/:id" element={<DetailsPage userId = {userId}/>} />
         <Route path="/auction/:id" element={<AuctionPage userId = {userId} />} />
         <Route path="/artistProfile" element={<ArtistProfile userId = {userId}/>} />
+        <Route path="/artistDisplayed/:artistId" element={<ArtistDisplayedProfile userId = {userId} userType={userType} />} />
         <Route path="/detailsArtist/:id" element={<DetailsArtistPage userId = {userId}/>} />
         <Route path="/requests" element={<Requests userId = {userId}/>} />
         <Route path="/manageAccounts" element={<ManageAccounts/>} />
@@ -49,6 +52,7 @@ function App() {
         <Route path="/balance" element={<Balance userId = {userId} userType={userType} />} />
         <Route path="/exhibitionDetails/:exhibitionId/:artworkId" element={<DetailsExhibition userId = {userId} userType={userType} />} />
         <Route path="/artistNoti" element={<ArtistNotificationPage userId = {userId} />} />
+        <Route path="/searchResultPage" element={<SearchResultPage userId = {userId} userType={userType}/>} />
       </Routes>
     </Router>
   );

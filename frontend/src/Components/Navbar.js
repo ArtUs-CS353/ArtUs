@@ -86,6 +86,18 @@ switch (userType) {
         break;
 }
     const navigate = useNavigate();
+    const [searchInput, setSearchInput] = React.useState('');
+
+    const handleSearchInputChange = (event) => {
+      console.log("search ", event.target.value)
+      setSearchInput(event.target.value);
+    };
+    const handleSearchSubmit = (event) => {
+      console.log("came to submit ", searchInput)
+      event.preventDefault();
+      navigate(`/searchResultPage`, { state: { query: searchInput } });
+    };
+
 
     const handleNavbarTrigger = () => {
         setIsNavbarVisible(!isNavbarVisible);
@@ -171,13 +183,20 @@ switch (userType) {
             Art.Us
           </Typography>
           <Box sx={{ flexGrow: 1 }} />
-          <Search>
+          <Search component="form" onSubmit={handleSearchSubmit}>
             <SearchIconWrapper>
               <SearchIcon />
             </SearchIconWrapper>
             <StyledInputBase
               placeholder="Search…"
               inputProps={{ 'aria-label': 'search' }}
+              value={searchInput}
+              onChange={handleSearchInputChange}
+              onKeyPress={(event) => {
+                if (event.key === 'Enter') {
+                  handleSearchSubmit(event);
+                }
+              }}
             />
           </Search>
           <Box sx={{ flexGrow: 10 }} />
