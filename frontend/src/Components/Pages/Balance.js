@@ -68,7 +68,7 @@ function Balance({userId,userType}) {
         </Popup>)}
     
               <Grid container direction="column" justifyContent="center" sx={{ padding: 2 }}>
-                <Typography  variant="h5" gutterBottom>Create Artist</Typography>
+                <Typography  variant="h5" gutterBottom>Add Balance</Typography>
                 <Typography  variant="h6" gutterBottom>Current Balance : {currentBalance}</Typography>
                 <TextField onChange={handleAmountChange} value = {amount} fullWidth label="Amount" variant="outlined" margin="normal" />
                 <Button  onClick={submit} sx={{ mt: 2, backgroundColor: isSubmitDisabled ? "#65647a" : "#302F4D" }} variant="contained" color="primary" disabled={isSubmitDisabled}>
