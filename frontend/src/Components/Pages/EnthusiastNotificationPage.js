@@ -12,8 +12,8 @@ const EnthusiastNotificationPage = ({ userId }) => {
   useEffect(() => {
     const fetchEnthusiastNotifications = async () => {
       try {
-        const response = await axios.get(`/notification/${userId}/3`);
-        setCollectorNotifications(response.data);
+        const response = await axios.get(`http://localhost:8080/notification/${userId}/3`);
+        setEnthusiastNotifications(response.data);
       } catch (error) {
         console.error('Error fetching enthusiast notifications:', error);
       }
@@ -21,7 +21,7 @@ const EnthusiastNotificationPage = ({ userId }) => {
 
     const fetchActivityHistory = async () => {
       try {
-        const response = await axios.get(`/activityHistory/${userId}`);
+        const response = await axios.get(`http://localhost:8080/activityHistory/${userId}`);
         setActivityHistory(response.data);
       } catch (error) {
         console.error('Error fetching activity history:', error);

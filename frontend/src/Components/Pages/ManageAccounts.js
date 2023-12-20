@@ -1,44 +1,93 @@
-import React, { useState, useEffect }  from 'react';
-import {Typography, Container, TextField, Select, MenuItem, Button, Grid, Card, ThemeProvider, createTheme, InputLabel, FormControl, Box } from '@mui/material';
-import PhotoCamera from '@mui/icons-material/PhotoCamera';
-import DatePicker from '../DatePicker'
-import dayjs from 'dayjs';
-import axios from "axios";
-import AWS from 'aws-sdk';
-import Popup from '../Popup';
-import { useNavigate } from 'react-router-dom';
-import CloudDownloadIcon from '@mui/icons-material/CloudDownload';
+import React, { useState } from 'react';
+import { Container, TextField, Button, Grid, Box } from '@mui/material';
+import axios from 'axios';
 
 function ManageAccounts() {
-
-
-  const theme = createTheme({
-    palette: {
-      primary: {
-        main: '#302F4D',
-      },
-      background: {
-        default: '#FFFBF5'
-      },
-      window: {
-        default: "#FFFBF5"
-      }
-    },
-    components: {
-      MuiCard: {
-        styleOverrides: {
-          root: {
-            backgroundColor: '#FFFBF5'
-          }
-        }
-      }
-    }
+  const [formData, setFormData] = useState({
+    email: '',
+    password: '',
+    name: '',
+    surname: '',
+    contactInfo: '',
   });
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prevData) => ({
+      ...prevData,
+      [name]: value,
+    }));
+  };
+
+  const handleFormSubmit = async (e) => {
+    e.preventDefault();
+
+    try {
+      const response = await axios.post('/addNewAdmin', { ...formData, role: 1 });
+      console.log(response.data);
+    } catch (error) {
+      console.error('Error adding new admin:', error);
+    }
+  };
+
   return (
-    <ThemeProvider theme={theme}>
-        <Container sx={{pt: 5, pb: 2}}>
+    <Container sx={{ pt: 15, pb: 2 }}>
+      <Grid container justifyContent="center">
+        <Box sx={{ width: '50%' }}>
+          <form onSubmit={handleFormSubmit}>
+            <TextField
+              label="Email"
+              name="email"
+              value={formData.email}
+              onChange={handleInputChange}
+              fullWidth
+              required
+              sx={{ mb: 2 }}
+            />
+            <TextField
+              label="Password"
+              type="password"
+              name="password"
+              value={formData.password}
+              onChange={handleInputChange}
+              fullWidth
+              required
+              sx={{ mb: 2 }}
+            />
+            <TextField
+              label="Name"
+              name="name"
+              value={formData.name}
+              onChange={handleInputChange}
+              fullWidth
+              required
+              sx={{ mb: 2 }}
+            />
+            <TextField
+              label="Surname"
+              name="surname"
+              value={formData.surname}
+              onChange={handleInputChange}
+              fullWidth
+              required
+              sx={{ mb: 2 }}
+            />
+            <TextField
+              label="Contact Info"
+              name="contactInfo"
+              value={formData.contactInfo}
+              onChange={handleInputChange}
+              fullWidth
+              required
+              sx={{ mb: 2 }}
+            />
+            <Button type="submit" variant="contained" color="primary">
+              Add Admin
+            </Button>
+          </form>
+        </Box>
+      </Grid>
     </Container>
-    </ThemeProvider>
   );
 }
 

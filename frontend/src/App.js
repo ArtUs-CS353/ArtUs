@@ -27,6 +27,7 @@ import CollectorProfilePage from './Components/Pages/CollectorProfilePage';
 import ArtistDisplayedProfile from './Components/Pages/ArtistDisplayedProfile';
 import SearchResultPage from './Components/Pages/SearchResultPage';
 import FilteredArtworkPage from './Components/Pages/FilteredArtworkPage';
+import AdminStatisticsPage from './Components/Pages/AdminStatisticsPage';
 
 function App() {
   //const showNavbar = !['/login'].includes(window.location.pathname);
@@ -49,7 +50,7 @@ function App() {
         <Route path="/artistDisplayed/:artistId" element={<ArtistDisplayedProfile userId = {userId} userType={userType} />} />
         <Route path="/detailsArtist/:id" element={<DetailsArtistPage userId = {userId}/>} />
         <Route path="/requests" element={<Requests userId = {userId}/>} />
-        <Route path="/manageAccounts" element={<ManageAccounts/>} />
+        <Route path="/manageAccounts" element={<ManageAccounts />} />
         <Route path="/createExhibition" element={<CreateExhibition/>} />
         <Route path="/createEvent" element={<CreateEvent userId = {userId}/>} />
         <Route path="/exhibition/:id" element={<Exhibition/>} />
@@ -63,6 +64,7 @@ function App() {
         <Route path="/detailsCollector/:id" element={<DetailsCollectorPage userId = {userId}/>} />
         <Route path="/collectorProfile" element={<CollectorProfilePage userId = {userId}/>} />
         <Route path="/filteredPage" element={<FilteredArtworkPage userId = {userId} userType={userType}/>} />
+        <Route path="/adminStatistics" element={<AdminStatisticsPage userId = {userId}/>} />
       </Routes>
     </Router>
   );

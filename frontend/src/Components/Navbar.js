@@ -105,7 +105,7 @@ switch (userType) {
         pages = ['Explore', 'BALANCE'];
         break;
     default:
-        pages = ['Create Exhibition', 'Requests', 'Manage Accounts'];
+        pages = ['Create Exhibition', 'Requests', 'Manage Accounts', 'Statistics'];
         break;
 }
     const navigate = useNavigate();
@@ -186,6 +186,9 @@ switch (userType) {
         }
         else if( page === "Manage Accounts") {
           navigate("/manageAccounts")
+        }
+        else if ( page === "Statistics") {
+          navigate("/adminStatistics")
         }
         else if( page === "Create Event") {
           navigate("/createEvent")
@@ -303,7 +306,7 @@ switch (userType) {
                 <NotificationsIcon />
               </IconButton>
             )}
-            {(userType == 2 || userType == 4) &&
+            {(userType === 2 || userType === 4) &&
             <>
                   <IconButton
                   color="inherit">

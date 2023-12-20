@@ -13,7 +13,7 @@ const ArtistNotificationPage = ({ userId }) => {
     // Fetch artist notifications for the given userId and type 'Artist'
     const fetchArtistNotifications = async () => {
       try {
-        const response = await axios.get(`/notification/${userId}/2`);
+        const response = await axios.get(`http://localhost:8080/notification/${userId}/2`);
         setArtistNotifications(response.data);
       } catch (error) {
         console.error('Error fetching artist notifications:', error);
@@ -23,7 +23,7 @@ const ArtistNotificationPage = ({ userId }) => {
     // Fetch activity history for the given userId
     const fetchActivityHistory = async () => {
       try {
-        const response = await axios.get(`/activityHistory/${userId}`);
+        const response = await axios.get(`http://localhost:8080/activityHistory/${userId}`);
         setActivityHistory(response.data);
       } catch (error) {
         console.error('Error fetching activity history:', error);

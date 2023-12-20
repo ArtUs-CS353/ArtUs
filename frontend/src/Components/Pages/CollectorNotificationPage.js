@@ -12,7 +12,7 @@ const CollectorNotificationPage = ({ userId }) => {
   useEffect(() => {
     const fetchCollectorNotifications = async () => {
       try {
-        const response = await axios.get(`/notification/${userId}/4`);
+        const response = await axios.get(`http://localhost:8080/notification/${userId}/4`);
         setCollectorNotifications(response.data);
       } catch (error) {
         console.error('Error fetching collector notifications:', error);
@@ -21,7 +21,7 @@ const CollectorNotificationPage = ({ userId }) => {
 
     const fetchActivityHistory = async () => {
       try {
-        const response = await axios.get(`/activityHistory/${userId}`);
+        const response = await axios.get(`http://localhost:8080/activityHistory/${userId}`);
         setActivityHistory(response.data);
       } catch (error) {
         console.error('Error fetching activity history:', error);
