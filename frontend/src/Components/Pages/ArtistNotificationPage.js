@@ -23,7 +23,7 @@ const ArtistNotificationPage = ({ userId }) => {
     // Fetch activity history for the given userId
     const fetchActivityHistory = async () => {
       try {
-        const response = await axios.get(`http://localhost:8080/activityHistory/${userId}`);
+        const response = await axios.get(`http://localhost:8080/notification/activityHistory/${userId}`);
         setActivityHistory(response.data);
       } catch (error) {
         console.error('Error fetching activity history:', error);
@@ -53,23 +53,30 @@ const ArtistNotificationPage = ({ userId }) => {
 
       {selectedTab === 0 && (
         <Box>
-          {artistNotifications.map((notification) => (
-            <Box key={notification.notification_id} sx={{ border: '1px solid #ccc', marginBottom: '10px', padding: '10px' }}>
-              <strong>{notification.type}:</strong> {notification.content}
-            </Box>
-          ))}
+          {artistNotifications.length > 0 && (
+            artistNotifications.map((notification) => (
+              <Box key={notification.notification_id} sx={{ border: '2px solid #ccc', padding: '10px', width: '98%' }}>
+                {notification.content}
+              </Box>
+            ))
+          )}
         </Box>
       )}
 
-      {selectedTab === 1 && (
-        <Box>
-          {Object.entries(activityHistory).map(([key, value]) => (
-            <Box key={key} sx={{ border: '1px solid #ccc', marginBottom: '10px', padding: '10px' }}>
-              <strong>{key}:</strong> {value.join(', ')}
-            </Box>
-          ))}
-        </Box>
-      )}
+    {selectedTab === 1 && (
+      <Box>
+        {Object.entries(activityHistory).map(([activityType, activities]) => (
+          <div key={activityType}>
+            <h3>{activityType} Activities:</h3>
+            {activities.map((activity, index) => (
+              <Box key={index} sx={{ border: '2px solid #ccc', padding: '10px', width: '98%' }}>
+                {activity}
+              </Box>
+            ))}
+          </div>
+        ))}
+      </Box>
+    )}
     </Box>
   );
 };

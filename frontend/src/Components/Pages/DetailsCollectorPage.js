@@ -150,11 +150,6 @@ function DetailsCollectorPage({ context }) {
           </Card>
         </Grid>
         <Grid item xs={12} sx={{ pl: 5 }} md={6}>
-          {artwork.status === "auction" && (
-            <Typography gutterBottom variant="h5" component="div">
-              {artwork.remaining + " left"}
-            </Typography>
-          )}
           <Typography gutterBottom variant="h4" component="div">
             {artwork.title}
           </Typography>

@@ -156,7 +156,7 @@ function AdminStatisticsPage() {
                 <TableBody>
                   {topCollectors.map((collector, index) => {
                     const [name, ownedArtworksCount] = Object.entries(collector)[0];
-                    const cleanName = name.replace(/[{}=\d]/g, '');
+                    const cleanName = name.replace(/{(.*?)=(\d+)}/g, '$1');
 
                     return (
                       <TableRow key={`topCollectors_${index}`}>
@@ -186,7 +186,7 @@ function AdminStatisticsPage() {
                 <TableBody>
                   {highestBids.map((bid, index) => {
                     const [title, highestBid] = Object.entries(bid)[0];
-                    const cleanName = title.replace(/[{}=\d]/g, '');
+                    const cleanName = title.replace(/{(.*?)=(\d+)}/g, '$1');
 
                     return (
                       <TableRow key={`highestBids_${index}`}>

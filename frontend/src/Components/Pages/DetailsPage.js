@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import { ArtworkData } from '../ArtworkData';
-import { Grid, Card, CardMedia, Typography, Container, IconButton } from '@mui/material'
+import { Grid, Card, CardMedia, Typography, Container, IconButton, Button } from '@mui/material'
 import { useParams } from 'react-router-dom';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { useNavigate } from 'react-router-dom';
@@ -17,7 +17,6 @@ function DetailsPage({popup,context, setId}) {
   
   }
   
-
   useEffect(() => {
     const getRecommendedArtworks = async () => {
       try {
@@ -38,6 +37,21 @@ function DetailsPage({popup,context, setId}) {
     console.log("back pressed")
     navigate(`/explore`);
   }
+
+  const handleFavoriteClick = () => {
+    const favoriteEndpoint = `http://localhost:8080/artwork/${artwork.artwork_id}/favorite`;
+
+    axios.post(favoriteEndpoint, {
+      user_id: id,
+      artwork_id: artwork.artwork_id,
+    })
+      .then(response => {
+        console.log('Follow response:', response.data);
+      })
+      .catch(error => {
+        console.error('Follow error:', error);
+      });
+  };
 
   if (!artwork) {
     return (
@@ -99,6 +113,17 @@ function DetailsPage({popup,context, setId}) {
         {artwork.status === "sale" && (
           context
         )}
+        <br />
+        <br />
+        <Button
+          variant="contained"
+          onClick={handleFavoriteClick}
+          sx={{
+            backgroundColor: '#302F4D',
+          }}
+        >
+          Favorite
+        </Button>
       </Grid>
           </>
         )}

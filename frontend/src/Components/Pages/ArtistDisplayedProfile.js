@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import { Grid, Container, IconButton, Typography} from '@mui/material';
+import { Grid, Container, IconButton, Typography, Button} from '@mui/material';
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
@@ -79,6 +79,22 @@ function ArtistDisplayedProfile({userType, userId}) {
     console.log("back pressed")
     navigate(`/explore`);
   }
+
+  const handleFollowClick = () => {
+    const followEndpoint = `http://localhost:8080/artist/${artist.user_id}/follow`;
+
+    axios.post(followEndpoint, {
+      user_id: userId,
+      artist_id: artist.user_id,
+    })
+      .then(response => {
+        // Handle the response data if needed
+        console.log('Follow response:', response.data);
+      })
+      .catch(error => {
+        console.error('Follow error:', error);
+      });
+  };
   
   if(artist == null){
     return(
@@ -114,8 +130,11 @@ function ArtistDisplayedProfile({userType, userId}) {
         </Grid>
       ))}
     </Grid>
+    <br />
+    <Button variant="contained" color="primary" onClick={handleFollowClick}>
+      Follow Artist
+    </Button>
   </Container>
-  
   );
 }
 
