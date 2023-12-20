@@ -14,6 +14,7 @@ function Requests() {
   const [id,setId] = useState(-1)
   const [id2,setId2] = useState(-1)
   const [selectedTab, setSelectedTab] = useState(0);
+  const [artistRequests, setArtistRequest] = useState([])
 
   const getArtwork = async (id) => {
     try {
@@ -69,6 +70,27 @@ function Requests() {
           } catch (error) {
             console.error('Error approving artwork:', error);
           }
+      }
+
+      else if(requestType === "artist"){
+        if(state === "accepted"){
+          console.log("sending accepted ", id)
+          try {
+            const response = await axios.put(`http://localhost:8080/artist_request/accept/${id}`);
+            console.log(response.data);
+          } catch (error) {
+            console.error('Error accepting auction:', error);
+          }
+        }
+        else if(state === "rejected") {
+            console.log("sending rejected")
+            try {
+              const response = await axios.put(`http://localhost:8080/artist_request/decline/${id}`);
+              console.log(response.data);
+            } catch (error) {
+              console.error('Error rejecting auction:', error);
+            }
+        }
       }
     }
     if(requestType === "event"){
@@ -144,6 +166,25 @@ function Requests() {
       setId(formattedExhibitionRequest[index].exhibition_id)
       setId2(formattedExhibitionRequest[index].artworks[artworkIndex].artwork_id)
       console.log('rejected ', formattedExhibitionRequest[index].exhibition_id , " ", formattedExhibitionRequest[index].artworks[artworkIndex].artwork_id)
+      setPopupEnabled(true)
+    }
+   
+  }
+
+  const handleArtistAccept = (index) =>{
+    setRequestType("artist")
+    setState('accepted')
+    if(artistRequests != null){
+      setId(artistRequests[index].request_id)
+      setPopupEnabled(true)
+    }
+   
+  }
+  const handleArtistReject = (index) =>{
+    setRequestType("artist")
+    setState('rejected')
+    if(artistRequests != null){
+      setId(artistRequests[index].request_id)
       setPopupEnabled(true)
     }
    
@@ -324,6 +365,27 @@ function Requests() {
     getEventRequests();
   }, []); 
 
+  useEffect(() => {
+    const getArtistRequests = async () => {
+      try {
+
+        const response = await axios.get(`http://localhost:8080/artist_request/getAll`);
+        const artists = response.data
+        console.log("waiting artists: ",  artists)
+
+        
+        setArtistRequest(artists)
+
+
+      } catch (error) {
+        console.error("Failed to fetch exhibitions: ", error);
+        throw error;
+      }
+    };
+  
+    getArtistRequests();
+  }, []); 
+
   function handleClose() {
     setPopupEnabled(false)
   }
@@ -349,6 +411,7 @@ function Requests() {
         <Tab label="Auction Requests" />
         <Tab label="Exhibition Requests" />
         <Tab label="Event Requests" />
+        <Tab label="Artist Requests" />
       </Tabs>
         
         {selectedTab === 0 && (
@@ -450,11 +513,41 @@ function Requests() {
                 <Typography variant="h8"><span style={{ fontWeight: 'bold' }}>{"Artist Name: "}</span>{request.artist}</Typography>
                 <Typography variant="h8"><span style={{ fontWeight: 'bold' }}>{"Start Date: "}</span>{request.startDate}</Typography>
                 <Typography variant="h8"><span style={{ fontWeight: 'bold' }}>{"End Date: "}</span>{request.endDate}</Typography>
-                <Typography variant="h8"><span style={{ fontWeight: 'bold' }}>{"Link: "}</span> {request.meeting_link}</Typography>
+                <Typography variant="h8"><span style={{ fontWeight: 'bold' }}>{"Link: "}</span> https://us04web.zoom.us/j/76958390769?pwd=HdFXpFcnVuD7smwSfRqANsyhlvWsAR.1</Typography>
               </Grid>
               <Grid container sx = {{mt:8,ml:15}}>
               <Button onClick={() => handleEventAccept(index)}>ACCEPT</Button>
               <Button onClick={() => handleEventReject(index)}>REJECT</Button>
+              </Grid>
+            </Card>
+           </Grid>
+            
+          </>
+         
+        ))}
+        </>
+      )}
+
+{selectedTab === 3 && (
+        <>
+      {artistRequests.map((request, index) => (
+           <>
+           <Grid spacing={4}>
+           <Card sx={{ display: 'flex', marginBottom: 2 
+           ,'&:hover': {
+            boxShadow: '2px 4px 8px 2px rgba(0, 0, 0.1, 0.3)',
+            transition: '0.3s'}
+           }}
+           >
+              <Grid container direction="column" justifyContent="center" sx={{ padding: 2 }}>
+                <Typography variant="h8"><span style={{ fontWeight: 'bold' }}>{"Artist Name: "}</span>{request.user_name}</Typography>
+                <Typography variant="h8"><span style={{ fontWeight: 'bold' }}>{"Artist Surname: "}</span>{request.user_surname}</Typography>
+                <Typography variant="h8"><span style={{ fontWeight: 'bold' }}>{"Details: "}</span>{request.profile_details}</Typography>
+                <Typography variant="h8"><span style={{ fontWeight: 'bold' }}>{"Biography: "}</span> {request.biography}</Typography>
+              </Grid>
+              <Grid container sx = {{mt:8,ml:15}}>
+              <Button onClick={() => handleArtistAccept(index)}>ACCEPT</Button>
+              <Button onClick={() => handleArtistReject(index)}>REJECT</Button>
               </Grid>
             </Card>
            </Grid>

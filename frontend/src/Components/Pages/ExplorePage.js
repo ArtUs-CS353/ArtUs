@@ -254,21 +254,21 @@ function ExplorePage({userId, userType}) {
     setPopupEnabled(false)
   }
   return (
-    <Container>
+    <Container sx={{backgroundColor: "#FFFBF5"}}>
       {(popupEnabled &&
         <Popup 
         buttonName={"OK"}
         state={popupEnabled}
         textField={<Typography>{link}</Typography>}
         handleClose={handleClose} 
-        dialogTitle={"Event takes place at the following link "} 
+        dialogTitle={"Event takes place at the following link"}  
         handleRequest={handleClose}
         > 
         </Popup>)}
       <Typography sx = {{mt: 2}} variant="h5" gutterBottom >
           Featured Artworks
         </Typography>
-        <Slider {...settings}>
+        <Slider  {...settings}>
         {featuredArtworks.map((artwork, index) => (
            <div key={index}>
             <DisplayImages type = "artwork" artwork={artwork} func = {handleArtworkClick}/>
