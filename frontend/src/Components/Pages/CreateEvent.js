@@ -81,7 +81,7 @@ function CreateEvent({userId}) {
   const isSubmitDisabled = !title || !startDate || !endDate || !link || (posterURL == "");;
 
   return (
-    <Container sx={{ mr: 2, ml:8, mt: 5 }}>
+    <Container sx={{ mr: 2, ml:8, mt: 5,mb: 3, backgroundColor:"white", borderRadius: 2}}>
       {(popupEnabled &&
         <Popup 
         state={popupEnabled}

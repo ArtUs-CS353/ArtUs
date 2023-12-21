@@ -45,7 +45,7 @@ function ArtistProfilePage({userId}) {
         return
       }
       console.log("SENDING AUCTION REQUEST...")
-      console.log("price: ", amount)
+      console.log("start date: ", startDate)
       const formData = new FormData();
       formData.append('type', type);
       formData.append('price', amount);
@@ -134,8 +134,8 @@ function ArtistProfilePage({userId}) {
                 label="Type"
                 onChange={handleAuctionTypeSelection}
               >
-                <MenuItem value="Normal">Normal</MenuItem>
-                <MenuItem value="Silent">Silent</MenuItem>
+                <MenuItem value="normal">Normal</MenuItem>
+                <MenuItem value="silent">Silent</MenuItem>
               </Select>
               <br></br>
               <br></br>

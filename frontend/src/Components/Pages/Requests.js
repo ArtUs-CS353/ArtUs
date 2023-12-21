@@ -15,6 +15,7 @@ function Requests() {
   const [id2,setId2] = useState(-1)
   const [selectedTab, setSelectedTab] = useState(0);
   const [artistRequests, setArtistRequest] = useState([])
+  const [artworkRequests, setArtworkRequest] = useState([])
 
   const getArtwork = async (id) => {
     try {
@@ -114,6 +115,26 @@ function Requests() {
       }
     }
     
+    if(requestType === "artwork"){
+      if(state === "accepted"){
+        console.log("sending accepted ", id)
+        try {
+          const response = await axios.put(`http://localhost:8080/artwork/approve/${id}`);
+          console.log(response.data);
+        } catch (error) {
+          console.error('Error approving artwork:', error);
+        }
+      }
+      else if(state === "rejected") {
+          console.log("sending rejected")
+          try {
+            const response = await axios.put(`http://localhost:8080/artwork/decline/${id}`);
+            console.log(response.data);
+          } catch (error) {
+            console.error('Error approving artwork:', error);
+          }
+      }
+    }
     handleClose()
   }
   const handleAccept = (index) =>{
@@ -185,6 +206,25 @@ function Requests() {
     setState('rejected')
     if(artistRequests != null){
       setId(artistRequests[index].request_id)
+      setPopupEnabled(true)
+    }
+   
+  }
+
+  const handleArtworkAccept = (index) =>{
+    setRequestType("artwork")
+    setState('accepted')
+    if(artworkRequests != null){
+      setId(artworkRequests[index].artwork_id)
+      setPopupEnabled(true)
+    }
+   
+  }
+  const handleArtworkReject = (index) =>{
+    setRequestType("artwork")
+    setState('rejected')
+    if(artworkRequests != null){
+      setId(artworkRequests[index].artwork_id)
       setPopupEnabled(true)
     }
    
@@ -386,6 +426,28 @@ function Requests() {
     getArtistRequests();
   }, []); 
 
+
+  useEffect(() => {
+    const getArtworkRequests = async () => {
+      try {
+
+        // const response = await axios.get(`http://localhost:8080/artwork/getAll/${"waiting"}`);
+        // const artworks = response.data
+        //console.log("waiting artworks: ",  artworks)
+
+        
+        // setArtworkRequest(artworks)
+
+
+      } catch (error) {
+        console.error("Failed to fetch artworks: ", error);
+        throw error;
+      }
+    };
+  
+    getArtworkRequests();
+  }, []); 
+
   function handleClose() {
     setPopupEnabled(false)
   }
@@ -406,12 +468,13 @@ function Requests() {
         value={selectedTab}
         onChange={handleTabChange}
         centered
-        sx={{ '& .MuiTab-root': { minWidth: '30%' } }}
+        sx={{ '& .MuiTab-root': { minWidth: '20%' } }}
       >
         <Tab label="Auction Requests" />
         <Tab label="Exhibition Requests" />
         <Tab label="Event Requests" />
         <Tab label="Artist Requests" />
+        <Tab label="Artwork Requests" />
       </Tabs>
         
         {selectedTab === 0 && (
@@ -548,6 +611,47 @@ function Requests() {
               <Grid container sx = {{mt:8,ml:15}}>
               <Button onClick={() => handleArtistAccept(index)}>ACCEPT</Button>
               <Button onClick={() => handleArtistReject(index)}>REJECT</Button>
+              </Grid>
+            </Card>
+           </Grid>
+            
+          </>
+         
+        ))}
+        </>
+      )}
+
+
+{selectedTab === 4 && (
+        <>
+      {artworkRequests.map((request, index) => (
+           <>
+           <Grid spacing={4}>
+           <Card sx={{ display: 'flex', marginBottom: 2 
+           ,'&:hover': {
+            boxShadow: '2px 4px 8px 2px rgba(0, 0, 0.1, 0.3)',
+            transition: '0.3s'}
+           }}
+           >
+              <Grid container direction="column" justifyContent="center" sx={{ padding: 2 }}>
+              <CardMedia
+                   component="img"
+                   sx={{ width: 160 }} // Adjust the width as needed
+                   image={request.imageURL}
+                   alt={request.title}
+                 />
+              <Typography variant="h8"><span style={{ fontWeight: 'bold' }}>{"Artwork Name: "}</span>{request.title}</Typography>
+                <Typography variant="h8"><span style={{ fontWeight: 'bold' }}>{"Artist Name: "}</span>{request.user_name} {request.user_surname}</Typography>
+                <Typography variant="h8"><span style={{ fontWeight: 'bold' }}>{"Description: "}</span>{request.description}</Typography>
+                <Typography variant="h8"><span style={{ fontWeight: 'bold' }}>{"Type: "}</span> {request.type}</Typography>
+                <Typography variant="h8"><span style={{ fontWeight: 'bold' }}>{"Material: "}</span> {request.material}</Typography>
+                <Typography variant="h8"><span style={{ fontWeight: 'bold' }}>{"Size: "}</span> {request.size}</Typography>
+                <Typography variant="h8"><span style={{ fontWeight: 'bold' }}>{"Rarity: "}</span> {request.rarity}</Typography>
+                <Typography variant="h8"><span style={{ fontWeight: 'bold' }}>{"Price: "}</span> {request.price}</Typography>
+              </Grid>
+              <Grid container sx = {{mt:8,ml:15}}>
+              <Button onClick={() => handleArtworkAccept(index)}>ACCEPT</Button>
+              <Button onClick={() => handleArtworkReject(index)}>REJECT</Button>
               </Grid>
             </Card>
            </Grid>

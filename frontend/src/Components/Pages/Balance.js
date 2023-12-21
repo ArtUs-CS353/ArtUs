@@ -42,7 +42,6 @@ function Balance({userId,userType}) {
       try {
         const response = await axios.get(`http://localhost:8080/enthusiast/${userId}`);
         const enthusiast = response.data;
-        console.log("enthisast ", enthusiast)
         setBalance(enthusiast.balance)
       } catch (error) {
         console.error("Failed to fetch recommended artwork: ", error);
@@ -62,7 +61,7 @@ function Balance({userId,userType}) {
         <Popup 
         state={popupEnabled}
         handleClose={handleClose} 
-        dialogTitle={"Are you sure to send artist request to admin? Please be sure that the information is correct."} 
+        dialogTitle={"Are you sure to increase your balance"} 
         handleRequest={sendRequest}
         > 
         </Popup>)}

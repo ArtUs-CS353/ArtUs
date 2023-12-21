@@ -10,6 +10,9 @@ function AuctionPage({userId}) {
   const [isError, setIsError] = React.useState(false);
   const [id, setId] = React.useState(-1);
   const [auction, setAuction] = React.useState(null)
+  const [isDisabled, setDisabled] = useState(true)
+  const [currentBalance, setBalance] = useState(0)
+  const [auctionType, setAuctionType] = useState('')
   
   function handlePlaceBid(){
     console.log("PLACE BID CLICKED")
@@ -19,6 +22,23 @@ function AuctionPage({userId}) {
     console.log("CLOSE IS SEND")
     setState(false)
   }
+
+  useEffect(() => {
+    const getBalance = async () => {
+      try {
+        const response = await axios.get(`http://localhost:8080/enthusiast/${userId}`);
+        const enthusiast = response.data;
+        console.log("enthisast ", enthusiast)
+        setBalance(enthusiast.balance)
+        setDisabled(currentBalance - highestBid < 0)
+      } catch (error) {
+        console.error("Failed to fetch recommended artwork: ", error);
+        throw error;
+      }
+    };
+      getBalance();
+  });
+
   const sendBidRequest = async () => {
 
     console.log("sending bid request ", userId)
@@ -54,7 +74,7 @@ function AuctionPage({userId}) {
         
         var highestBid = response.data.price
 
-        if(highestBid == 0){
+        if(highestBid == 0 || auction.type == "silent"){
           //use auction id to get the auction and set the starting amount
           highestBid = auction.starting_amount
         }
@@ -73,11 +93,13 @@ function AuctionPage({userId}) {
       const response = await axios.get(`http://localhost:8080/artwork/auction/${id}`);
       const auction = response.data
       setAuction(auction)
+      setAuctionType(auction.type)
       return auction
     } catch (error) {
       console.error('Error fetching highest bid:', error);
     }
 }
+
 
   return (
     <DetailsPage 
@@ -104,10 +126,21 @@ function AuctionPage({userId}) {
      ></Popup>}
      context={  <>
       <hr style={{ width: '50%', marginRight: '50%' }}></hr>
-      <Typography gutterBottom variant="h5" component="div">
-        {"Highest Bid: "}<span style={{ fontWeight: 'bold' }}>{highestBid} $</span>
+      <Typography gutterBottom sx = {{color: currentBalance-highestBid >= 0 ? "green" :  "red"}} variant="h5" component="div">
+        {"Your Balance: "}<span style={{ fontWeight: 'bold' }}>{currentBalance}$</span>
       </Typography>
-      <Button onClick={handlePlaceBid} sx={{ mt: 2, backgroundColor: "#302F4D", '&:hover': { backgroundColor: "#1e1d30" }, pr: 4, pl: 4 }} variant="contained">
+      {auctionType === "normal" && (
+        <Typography gutterBottom variant="h5" component="div">
+        {"Highest Bid: "}<span style={{ fontWeight: 'bold' }}>{highestBid}$</span>
+      </Typography>
+      )}
+      {auctionType === "silent" && (
+        <Typography gutterBottom variant="h5" component="div">
+        {"Starting Amount: "}<span style={{ fontWeight: 'bold' }}>{highestBid}$</span>
+      </Typography>
+      )}
+      
+      <Button disabled={isDisabled} onClick={handlePlaceBid} sx={{ mt: 2, backgroundColor: "#302F4D", '&:hover': { backgroundColor: "#1e1d30" }, pr: 4, pl: 4 }} variant="contained">
         Place Bid
       </Button>
     </>}
