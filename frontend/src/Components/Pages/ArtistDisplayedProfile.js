@@ -81,7 +81,7 @@ function ArtistDisplayedProfile({userType, userId}) {
   }
 
   const handleFollowClick = () => {
-    const followEndpoint = `http://localhost:8080/artist/${artist.user_id}/follow`;
+    const followEndpoint = `http://localhost:8080/artist/Follow/${artist.user_id}/${userId}`;
 
     axios.post(followEndpoint, {
       user_id: userId,

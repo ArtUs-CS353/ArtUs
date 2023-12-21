@@ -39,7 +39,7 @@ function DetailsPage({popup,context, setId}) {
   }
 
   const handleFavoriteClick = () => {
-    const favoriteEndpoint = `http://localhost:8080/artwork/${artwork.artwork_id}/favorite`;
+    const favoriteEndpoint = `http://localhost:8080/artwork/markAsFavorite/${artwork.artwork_id}/${id}`;
 
     axios.post(favoriteEndpoint, {
       user_id: id,
