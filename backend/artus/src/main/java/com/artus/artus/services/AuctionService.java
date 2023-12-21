@@ -193,5 +193,16 @@ private final AuctionMapper auctionMapper;
         },user_id);
     }
 
-
+    public Boolean finishAuction(int auctionId){
+        try{
+            String delete = "Update Auction set status = 'finished'  where auction_id =?";
+            jdbcTemplate.update(delete, auctionId);
+            return true;
+        }catch (Exception e) {
+            // Handle exceptions, log errors, etc.
+            e.printStackTrace();
+            // If the insertion fails, return false
+            return false;
+        }
+    }
 }

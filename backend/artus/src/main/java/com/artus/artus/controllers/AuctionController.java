@@ -133,6 +133,13 @@ public class AuctionController {
         }
     }
 
+    @PutMapping("/finish/{auctionId}")
+    public ResponseEntity<Boolean> finishAuction(@PathVariable int auctionId){
+        if(auctionService.finishAuction(auctionId))
+            return new ResponseEntity<>(true,HttpStatus.OK);
+        return new ResponseEntity<>(false,HttpStatus.BAD_REQUEST);
+    }
+
     public String getStatus(int auctionId){
         return auctionService.getAuctionStatus(auctionId);
     }
