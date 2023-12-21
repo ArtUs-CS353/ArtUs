@@ -225,7 +225,7 @@ switch (userType) {
     <Box sx={{ flexGrow: 1 }} >
       <AppBar position="static" 
             sx={{ 
-                backgroundColor: isNavbarVisible ? '#302F4D' : '#FFFBF5',
+                backgroundColor: isNavbarVisible ? '#03001C' : '#d5d6da00',
                 boxShadow: isNavbarVisible? 'auto' : 'none'}} >
         <Toolbar>
         <IconButton
@@ -323,9 +323,9 @@ switch (userType) {
   size="large"
   aria-label="filter list"
   onClick={handleClick}
-  sx={{color:"white", ml: 50}}
+  sx={{color: isNavbarVisible ? 'white' : '#d5d6da00', ml: 50}}
 >
-  <FilterListIcon />
+  <FilterListIcon/>
 </IconButton>
 <Popover
   id="filter-popover"

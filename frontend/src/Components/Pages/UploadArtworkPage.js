@@ -25,6 +25,10 @@ function UploadArtworkPage({userId, userType}) {
   const [selectedArtist, setArtist] = useState('')
   const [artists, setArtists] = useState([])
   const [createNewVisible, setVisible] = useState(false);
+  const [materialChoices, setMaterials] = useState([])
+  const [movementChoices, setMovements] = useState([])
+  const [typeChoices, setTypes] = useState([])
+  const [rarityChoices, setRarities] = useState([])
   const isSubmitDisabled = !type || !material || !movement || !rarity || !date || !file || !title || !size || !description || (userType == 4 ? (!selectedArtist || selectedArtist == 'Other'): (false)) ; 
   const fileUrl = file ? URL.createObjectURL(file) : '';
   function handleClose() {
@@ -160,6 +164,15 @@ function UploadArtworkPage({userId, userType}) {
         console.log(key, value);
       }
 
+      setTitle('')
+      setType('')
+      setMovement('')
+      setPrice('')
+      setRarity('')
+      setMovement('')
+      setSize('')
+      setDescription('')
+
       try {
         const response = await axios.post('http://localhost:8080/artwork/upload', formData);
         console.log(response.data);
@@ -182,6 +195,26 @@ function UploadArtworkPage({userId, userType}) {
   
     getArtists();
   }, []); 
+
+  useEffect(() => {
+    const getChoices = async () => {
+      try {
+        const typesResponse = await axios.get('http://localhost:8080/register/getTypes');
+        const materialsResponse = await axios.get('http://localhost:8080/register/getMaterials');
+        const raritiesResponse = await axios.get('http://localhost:8080/register/getRarities');
+        const movementsResponse = await axios.get('http://localhost:8080/register/getMovements');
+
+        setTypes(typesResponse.data);
+        setMaterials(materialsResponse.data);
+        setRarities(raritiesResponse.data);
+        setMovements(movementsResponse.data);
+      } catch (error) {
+        console.error('Error fetching preferences data:', error);
+      }
+    };
+
+    getChoices();
+  }, []);
 
   const theme = createTheme({
     palette: {
@@ -239,12 +272,9 @@ function UploadArtworkPage({userId, userType}) {
                   label="Type"
                   onChange={handleTypeSelection}
                 >
-                  <MenuItem value="">
-                    <em>None</em>
-                  </MenuItem>
-                  <MenuItem value="Painting">Painting</MenuItem>
-                  <MenuItem value="Sculpture">Sculpture</MenuItem>
-                  <MenuItem value="Photography">Photography</MenuItem>
+                   {typeChoices.map((mov, index) => (
+                    <MenuItem key={index} value={mov}>{mov}</MenuItem>
+                ))}
                   {/* ...other types */}
                 </Select>
               </FormControl>
@@ -258,17 +288,9 @@ function UploadArtworkPage({userId, userType}) {
                   label="Movement"
                   onChange={handleMovementSelection}
                 >
-                  <MenuItem value="">
-                    <em>None</em>
-                  </MenuItem>
-                  <MenuItem value="Impressionism">Impressionism</MenuItem>
-                  <MenuItem value="Expressionism">Expressionism</MenuItem>
-                  <MenuItem value="Cubism">Cubism</MenuItem>
-                  <MenuItem value="Surrealism">Surrealism</MenuItem>
-                  <MenuItem value="Expressionism">Expressionism</MenuItem>
-                  <MenuItem value="Abstract Expressionism">Abstract Expressionism</MenuItem>
-                  <MenuItem value="Minimalism">Minimalism</MenuItem>
-                  <MenuItem value="Pop Art">Pop Art</MenuItem>
+               {movementChoices.map((mov, index) => (
+                    <MenuItem key={index} value={mov}>{mov}</MenuItem>
+                ))}
                 </Select>
               </FormControl>
             <TextField onChange={handlePriceChange} fullWidth label="Price" variant="outlined" margin="normal" />
@@ -319,14 +341,9 @@ function UploadArtworkPage({userId, userType}) {
                   label="material"
                   onChange={handleMaterialSelection}
                 >
-                  <MenuItem value="">
-                    <em>None</em>
-                  </MenuItem>
-                  <MenuItem value="Bronze">Bronze</MenuItem>
-                  <MenuItem value="Gemstones">Gemstones</MenuItem>
-                  <MenuItem value="Metal">Metal</MenuItem>
-                  <MenuItem value="Glass">Glass</MenuItem>
-                  <MenuItem value="Wax">Wax</MenuItem>
+                   {materialChoices.map((mov, index) => (
+                    <MenuItem key={index} value={mov}>{mov}</MenuItem>
+                ))}
                 </Select>
               </FormControl>
               <FormControl fullWidth margin="normal">
@@ -338,13 +355,9 @@ function UploadArtworkPage({userId, userType}) {
                   label="rarity"
                   onChange={handleRaritySelection}
                 >
-                  <MenuItem value="">
-                    <em>None</em>
-                  </MenuItem>
-                  <MenuItem value="Unique">Unique</MenuItem>
-                  <MenuItem value="Very Rare">Very Rare</MenuItem>
-                  <MenuItem value="Rare">Rare</MenuItem>
-                  <MenuItem value="Common">Common</MenuItem>
+                  {rarityChoices.map((mov, index) => (
+                    <MenuItem key={index} value={mov}>{mov}</MenuItem>
+                ))}
                 </Select>
               </FormControl>
               <TextField onChange={handleDescriptionChange} fullWidth label="Description" variant="outlined" margin="normal" multiline rows={4.5} />

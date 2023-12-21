@@ -12,6 +12,7 @@ import { ArtistData } from '../ArtistData';
 import axios from "axios";
 import DisplayEvents from '../DisplayEvents';
 import Popup from '../Popup';
+import "../../App.css"
 
 function ExplorePage({userId, userType}) {
   const settings = {
@@ -97,7 +98,14 @@ function ExplorePage({userId, userType}) {
   useEffect(() => {
     const getRecommendedArtworks = async () => {
       try {
-        const response = await axios.get(`http://localhost:8080/artwork/getAll`);
+        let response;
+        if(userType == 2){
+          response = await axios.get(`http://localhost:8080/artwork/explorePage/${userId}`);
+        }
+        else{
+          response = await axios.get(`http://localhost:8080/artwork/explorePage`);
+        }
+        
         const artworks = response.data;
         console.log("ARTWORKS: ", artworks)
         const artworksWithArtists = await Promise.all(artworks.map(async (artwork) => {
@@ -254,7 +262,7 @@ function ExplorePage({userId, userType}) {
     setPopupEnabled(false)
   }
   return (
-    <Container sx={{backgroundColor: "#FFFBF5"}}>
+    <Container sx = {{mb: 3}}>
       {(popupEnabled &&
         <Popup 
         buttonName={"OK"}
@@ -265,7 +273,8 @@ function ExplorePage({userId, userType}) {
         handleRequest={handleClose}
         > 
         </Popup>)}
-      <Typography sx = {{mt: 2}} variant="h5" gutterBottom >
+        <Grid sx = {{backgroundColor:"white" , padding: 3 , pt: 0.2, mt: 2.5, borderRadius: 2, boxShadow: 2}}>
+        <Typography sx = {{mt: 2}} variant="h5" gutterBottom >
           Featured Artworks
         </Typography>
         <Slider  {...settings}>
@@ -275,7 +284,11 @@ function ExplorePage({userId, userType}) {
            </div>
       ))}
        </Slider>
-       <Typography sx = {{mt: 5}} variant="h5" gutterBottom >
+
+        </Grid>
+
+        <Grid sx = {{backgroundColor:"white" , padding: 3 , pt: 0, borderRadius: 2, boxShadow: 2}}>
+        <Typography sx = {{mt: 5, pt: 2}} variant="h5" gutterBottom >
           Featured Artists
         </Typography>
         <Slider {...settings}>
@@ -285,10 +298,15 @@ function ExplorePage({userId, userType}) {
            </div>
       ))}
        </Slider>
+        </Grid>
 
-       <Typography sx = {{mt: 5}} variant="h5" gutterBottom >
+        <Grid sx = {{backgroundColor:"white" , padding: 3 , pt: 0, borderRadius: 2, boxShadow: 2}}>
+       <Typography sx = {{mt: 5, pt: 2}} variant="h5" gutterBottom >
           Online Exhibitions
         </Typography>
+        {exhibitions.length == 0 && (
+          <Typography>There are no available online exhibitions</Typography>
+        )}
         <Slider {...settings}>
         {exhibitions.map((exhibition, index) => (
            <div key={index}>
@@ -296,10 +314,15 @@ function ExplorePage({userId, userType}) {
            </div>
       ))}
        </Slider>
+       </Grid>
 
-       <Typography sx = {{mt: 5}} variant="h5" gutterBottom >
+       <Grid sx = {{backgroundColor:"white" , padding: 3 , pt: 0, borderRadius: 2, boxShadow: 2}}>
+       <Typography sx = {{mt: 5, pt: 2}} variant="h5" gutterBottom >
           Events
         </Typography>
+        {exhibitions.length == 0 && (
+          <Typography>There are no available events</Typography>
+        )}
         <Slider {...settings}>
         {events.map((workshops, index) => (
            <div key={index}>
@@ -307,10 +330,21 @@ function ExplorePage({userId, userType}) {
            </div>
       ))}
        </Slider>
+       </Grid>
+      
 
-        <Typography sx = {{mt: 2}} variant="h5" gutterBottom >
+       <Grid sx = {{backgroundColor:"white" , padding: 3 , pt: 0, borderRadius: 2, boxShadow: 2}}>
+        {userType == 2 && (
+           <Typography sx = {{mt: 2, pt: 2}} variant="h5" gutterBottom >
+           Explore
+         </Typography>
+        )}
+        {(userType == 3 || userType == 3)   && (
+          <Typography sx = {{mt: 2, pt: 2}} variant="h5" gutterBottom >
           For You
         </Typography>
+        )}
+       
         <Grid container spacing={4}>
       {recommendedArtworks.map((artwork, index) => (
         <Grid item xs={12} sm={6} md={4} key={index}>
@@ -319,6 +353,8 @@ function ExplorePage({userId, userType}) {
       ))}
     </Grid>
 
+       </Grid>
+       
     </Container>
   );
 }
