@@ -116,23 +116,12 @@ function Requests() {
     }
     
     if(requestType === "artwork"){
-      if(state === "accepted"){
-        console.log("sending accepted ", id)
-        try {
-          const response = await axios.put(`http://localhost:8080/artwork/approve/${id}`);
-          console.log(response.data);
-        } catch (error) {
-          console.error('Error approving artwork:', error);
-        }
-      }
-      else if(state === "rejected") {
-          console.log("sending rejected")
-          try {
-            const response = await axios.put(`http://localhost:8080/artwork/decline/${id}`);
-            console.log(response.data);
-          } catch (error) {
-            console.error('Error approving artwork:', error);
-          }
+
+      try {
+        const response = await axios.put(`http://localhost:8080/artwork/changeStatus/${id}/${state}`);
+        console.log(response.data);
+      } catch (error) {
+        console.error('Error approving artwork:', error);
       }
     }
     handleClose()
@@ -213,7 +202,7 @@ function Requests() {
 
   const handleArtworkAccept = (index) =>{
     setRequestType("artwork")
-    setState('accepted')
+    setState('approved')
     if(artworkRequests != null){
       setId(artworkRequests[index].artwork_id)
       setPopupEnabled(true)
@@ -222,7 +211,7 @@ function Requests() {
   }
   const handleArtworkReject = (index) =>{
     setRequestType("artwork")
-    setState('rejected')
+    setState('declined')
     if(artworkRequests != null){
       setId(artworkRequests[index].artwork_id)
       setPopupEnabled(true)
@@ -431,12 +420,12 @@ function Requests() {
     const getArtworkRequests = async () => {
       try {
 
-        // const response = await axios.get(`http://localhost:8080/artwork/getAll/${"waiting"}`);
-        // const artworks = response.data
-        //console.log("waiting artworks: ",  artworks)
+         const response = await axios.get(`http://localhost:8080/artwork/getAll/${"waiting"}`);
+         const artworks = response.data
+        console.log("waiting artworks: ",  artworks)
 
         
-        // setArtworkRequest(artworks)
+        setArtworkRequest(artworks)
 
 
       } catch (error) {

@@ -24,6 +24,5 @@ public class Artwork {
     private Boolean is_featuring;
     private float price;
     private String status;
-    private String availability;
     private int favorite_count;
 }

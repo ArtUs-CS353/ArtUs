@@ -26,7 +26,6 @@ public class ArtworkMapper implements RowMapper<Artwork> {
         Boolean is_featuring = rs.getBoolean("is_featuring");
         float price = rs.getFloat("price");
         String status = rs.getString("status");
-        String availability = rs.getString("availability");
         int favorite_count = rs.getInt("favorite_count");
 
         Artwork artwork = new Artwork();
@@ -44,7 +43,6 @@ public class ArtworkMapper implements RowMapper<Artwork> {
         artwork.setIs_featuring(is_featuring);
         artwork.setPrice(price);
         artwork.setStatus(status);
-        artwork.setAvailability(availability);
         artwork.setFavorite_count(favorite_count);
 
         return artwork;

@@ -35,8 +35,7 @@ public class ArtworkController {
             @RequestParam("material") String material,
             @RequestParam("rarity") String rarity,
             @RequestParam("imageURL") String imageURL,
-            @RequestParam("date") LocalDate date,
-            @RequestParam("availability") String availability
+            @RequestParam("date") LocalDate date
     ) {
         Artwork artwork = new Artwork();
         artwork.setArtist_id(artistId);
@@ -50,7 +49,6 @@ public class ArtworkController {
         artwork.setMovement(movement);
         artwork.setPrice(price);
         artwork.setDate(date);
-        artwork.setAvailability(availability);
         artwork.setStatus("waiting");
         boolean result = artworkService.createArtwork(artwork);
 
@@ -74,8 +72,7 @@ public class ArtworkController {
             @RequestParam("material") String material,
             @RequestParam("rarity") String rarity,
             @RequestParam("imageURL") String imageURL,
-            @RequestParam("date") LocalDate date,
-            @RequestParam("availability") String availability
+            @RequestParam("date") LocalDate date
     ) {
         Artwork artwork = new Artwork();
         artwork.setArtwork_id(artworkId);
@@ -89,7 +86,6 @@ public class ArtworkController {
         artwork.setMovement(movement);
         artwork.setPrice(price);
         artwork.setDate(date);
-        artwork.setAvailability(availability);
         artwork.setStatus("waiting");
         boolean result = artworkService.updateArtwork(artwork);
 
@@ -122,6 +118,17 @@ public class ArtworkController {
         }
     }
 
+    @GetMapping("/getAll/{status}")
+    public ResponseEntity<List<Artwork>> getAllArtworksWithStatus(@PathVariable String status) {
+        List<Artwork> artworks = artworkService.getAllArtworksWithStatus(status);
+        if(artworks != null){
+            return new ResponseEntity<>(artworks, HttpStatus.OK);
+        }
+        else{
+            return new ResponseEntity<>(null, HttpStatus.I_AM_A_TEAPOT);
+        }
+    }
+
     @GetMapping("/getAllFeatured")
     public ResponseEntity<List<Artwork>> getAllFeaturedArtworks() {
         List<Artwork> artworks = artworkService.getAllFeaturedArtworks();
@@ -143,6 +150,7 @@ public class ArtworkController {
             return new ResponseEntity<>(null, HttpStatus.I_AM_A_TEAPOT);
         }
     }
+
     @GetMapping("/auction/{artworkId}")
     public ResponseEntity<Auction> getArtworkAuction(@PathVariable int artworkId) {
         Auction auction = artworkService.getArtworkAuction(artworkId);
@@ -196,27 +204,16 @@ public class ArtworkController {
     public ResponseEntity<List<Artwork>> getExplorePageAccordingToUser(@PathVariable int user_id){
         return new ResponseEntity<>(artworkService.getExplorePageAccordingToUserPreferences(user_id),HttpStatus.OK);
     }
-    @PutMapping("/approve/{artworkId}")
-    public ResponseEntity<Artwork> approveArtwork(@PathVariable int artworkId){
-        Artwork result = artworkService.approveArtwork(artworkId);
+
+    @PutMapping("/changeStatus/{artworkId}/{status}")
+    public ResponseEntity<Artwork> changeArtworkStatus(@PathVariable int artworkId, @PathVariable String status){
+        Artwork result = artworkService.changeArtworkStatus(artworkId, status);
         if(result != null ){
             return new ResponseEntity<>(result, HttpStatus.OK);
         }
         else{
             return new ResponseEntity<>(null, HttpStatus.I_AM_A_TEAPOT);
         }
-    }
-
-    @PutMapping("/decline/{artworkId}")
-    public ResponseEntity<Artwork> declineArtwork(@PathVariable int artworkId){
-        Artwork result = artworkService.declineArtwork(artworkId);
-        if(result != null ){
-            return new ResponseEntity<>(result, HttpStatus.OK);
-        }
-        else{
-            return new ResponseEntity<>(null, HttpStatus.I_AM_A_TEAPOT);
-        }
-
     }
 
     @PostMapping("/{artworkID}/direct-purchase")

@@ -22,9 +22,6 @@ public class EventController {
 
 
     @PostMapping("/create")
-    /*
-    user_id int, event_id int NOT NULL AUTO_INCREMENT, link varchar(50), start_date datetime, end_date datetime, poster_URL varchar(50), meeting_link varchar(50), status varchar(50)
-     */
     public ResponseEntity<Event> createEvent(@RequestParam("user_id") int artistId,
                                              @RequestParam("title") String title,
                                                  @RequestParam("event link") String link,
@@ -116,22 +113,10 @@ public class EventController {
         }
     }
 
-
-    @PutMapping("/approve/{eventId}")
-    public ResponseEntity<Boolean> approveEvent(@PathVariable int eventId){
-        Boolean result = eventService.approveEvent(eventId);
+    @PutMapping("/change/{eventId}")
+    public ResponseEntity<Boolean> changeEventStatus(@PathVariable int eventId, @RequestParam("newStatus") String status){
+        Boolean result = eventService.changeEventStatus(eventId, status);
         if(result){
-            return new ResponseEntity<>(true, HttpStatus.OK);
-        }
-        else{
-            return new ResponseEntity<>(false, HttpStatus.I_AM_A_TEAPOT);
-        }
-    }
-
-    @PutMapping("/decline/{eventId}")
-    public ResponseEntity<Boolean> declineEvent(@PathVariable int eventId){
-        Boolean result = eventService.declineEvent(eventId);
-        if(result ){
             return new ResponseEntity<>(true, HttpStatus.OK);
         }
         else{
