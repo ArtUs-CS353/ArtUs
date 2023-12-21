@@ -339,7 +339,7 @@ function ExplorePage({userId, userType}) {
            Explore
          </Typography>
         )}
-        {(userType == 3 || userType == 4)   && (
+        {(userType == 3 || userType == 3)   && (
           <Typography sx = {{mt: 2, pt: 2}} variant="h5" gutterBottom >
           For You
         </Typography>
