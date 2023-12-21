@@ -69,6 +69,19 @@ private final EventMapper eventMapper;
         }
     }
 
+    public Boolean changeEventStatus(int eventId, String status) {
+        try {
+            String sql = "UPDATE Event SET status = ? WHERE event_id = ?";
+            jdbcTemplate.update(sql, status, eventId);
+            return true;
+        } catch (Exception e) {
+            // Handle exceptions, log errors, etc.
+            e.printStackTrace();
+            // If the update fails, return false
+            return false;
+        }
+    }
+
     public Boolean approveEvent(int eventId) {
         try {
             String sql = "UPDATE Event SET status = 'approved' WHERE event_id = ?";
@@ -131,4 +144,6 @@ private final EventMapper eventMapper;
             return "You have event! Starts at "+start_date+", ends at "+end_date+". \nMeeting link: "+ link+ "\nStatus: "+ status;
         },user_id);
     }
+
+
 }

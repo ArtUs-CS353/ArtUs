@@ -11,10 +11,8 @@ import java.util.List;
 
 
 @Service
-public class ArtistService {
+public class ArtistService{
     private final JdbcTemplate jdbcTemplate;
-
-
 
     public ArtistService(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
@@ -41,7 +39,7 @@ public class ArtistService {
     }
 
     public List<Artist> getFeaturingArtists() {
-        String sql = "Select * from Artist A, USER U where A.user_id = U.user_id AND A.is_featuring = true order by A.follower_count DESC;";
+        String sql = "Select * from Artist A, User U where A.user_id = U.user_id AND A.is_featuring = true order by A.follower_count DESC;";
         return jdbcTemplate.query(sql, new ArtistMapper());
     }
 
@@ -51,7 +49,7 @@ public class ArtistService {
     }
 
     public String getImageURL(int artist_id) {
-        String sql = "SELECT imageURL FROM artwork where artist_id = ? ORDER BY RAND() LIMIT 1";
+        String sql = "SELECT imageURL FROM Artwork where artist_id = ? ORDER BY RAND() LIMIT 1";
         try{return jdbcTemplate.queryForObject(sql, String.class, artist_id);}
         catch (Exception e){
             return "";
