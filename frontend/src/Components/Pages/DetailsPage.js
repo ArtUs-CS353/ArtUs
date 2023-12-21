@@ -7,20 +7,19 @@ import { useNavigate } from 'react-router-dom';
 import axios from "axios";
 
 
-function DetailsPage({popup,context, setId}) {
+function DetailsPage({userId, popup, context, setId}) {
   const artworks = ArtworkData;
   const [artwork, setArtwork] = useState(null);
   const navigate = useNavigate();
   let { id } = useParams();
   if(setId){
     setId(id)
-  
   }
   
   useEffect(() => {
     const getRecommendedArtworks = async () => {
       try {
-        console.log("getting with id ", id)
+        console.log("getting with id ", id);
         const response = await axios.get(`http://localhost:8080/artwork/${id}`);
         const artwork = response.data;
         setArtwork(artwork)
@@ -39,11 +38,12 @@ function DetailsPage({popup,context, setId}) {
   }
 
   const handleFavoriteClick = () => {
-    const favoriteEndpoint = `http://localhost:8080/artwork/markAsFavorite/${artwork.artwork_id}/${id}`;
+    const favoriteEndpoint = `http://localhost:8080/artwork/markAsFavorite/${id}/${userId}`;
 
-    axios.post(favoriteEndpoint, {
-      user_id: id,
-      artwork_id: artwork.artwork_id,
+    console.log("userId", userId);
+    axios.put(favoriteEndpoint, {
+      artworkId: id,
+      userId: userId,
     })
       .then(response => {
         console.log('Follow response:', response.data);
