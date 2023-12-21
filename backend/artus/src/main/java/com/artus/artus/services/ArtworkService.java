@@ -332,7 +332,7 @@ public class ArtworkService {
 
 
     public boolean putForSale(int artwork_id, int price){
-        String sql = "Update Artwork Set availability = 'available', status = 'sale', price = ? where artwork_id = ?;";
+        String sql = "Update Artwork Set availability = 'available', status = 'on sale', price = ? where artwork_id = ?;";
         try {
             jdbcTemplate.update(sql,price,artwork_id);
             return true;
