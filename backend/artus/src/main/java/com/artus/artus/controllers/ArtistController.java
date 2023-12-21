@@ -50,4 +50,14 @@ public class ArtistController {
     public ResponseEntity<String> getImageURL(@PathVariable int artist_id){
         return new ResponseEntity<>(artistService.getImageURL(artist_id), HttpStatus.OK);
     }
+
+    @PutMapping("/Follow/{artistId}/{userId}")
+    public ResponseEntity<Boolean> followArtist(@PathVariable int artistId, @PathVariable int userId) {
+        boolean result = artistService.followArtist(artistId, userId);
+        if(result){
+            return new ResponseEntity<>(true, HttpStatus.OK);
+        }else{
+            return new ResponseEntity<>(false, HttpStatus.I_AM_A_TEAPOT);
+        }
+    }
 }
