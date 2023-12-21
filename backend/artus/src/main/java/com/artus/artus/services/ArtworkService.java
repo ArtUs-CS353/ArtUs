@@ -30,7 +30,7 @@ public class ArtworkService {
 
     public boolean createArtwork(Artwork artwork) {
         try{
-            String sql = "INSERT INTO Artwork (artist_id, title, description, type, material, size, rarity, imageURL, movement, date, is_featuring, price, status, availability) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+            String sql = "INSERT INTO Artwork (artist_id, title, description, type, material, size, rarity, imageURL, movement, date, is_featuring, price, status) VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
             jdbcTemplate.update(sql,  artwork.getArtist_id(), artwork.getTitle(), artwork.getDescription(), artwork.getType(),
                     artwork.getMaterial(), artwork.getSize(), artwork.getRarity(), artwork.getImageURL(), artwork.getMovement(), artwork.getDate(),
                     false, artwork.getPrice(), artwork.getStatus(), artwork.getAvailability());
@@ -46,9 +46,9 @@ public class ArtworkService {
 
     public boolean updateArtwork(Artwork artwork) {
         try{
-            String sql = "UPDATE Artwork set title=? , description=? , type=? ,  material=? , size=? ,  rarity=? ,  imageURL=? ,  movement=? ,  date=? , price=? ,  availability=? where artwork_id=?";
+            String sql = "UPDATE Artwork set title=? , description=? , type=? ,  material=? , size=? ,  rarity=? ,  imageURL=? ,  movement=? ,  date=? , price=? where artwork_id=?";
             jdbcTemplate.update(sql,  artwork.getTitle(), artwork.getDescription(), artwork.getType(), artwork.getMaterial(), artwork.getSize(), artwork.getRarity(), artwork.getImageURL(), artwork.getMovement(), artwork.getDate(),
-                     artwork.getPrice(), artwork.getAvailability(), artwork.getArtwork_id());
+                     artwork.getPrice(), artwork.getArtwork_id());
             return true;
         }
         catch(Exception e){
@@ -63,6 +63,19 @@ public class ArtworkService {
         try{
             String sql = "SELECT * FROM Artwork";
             return jdbcTemplate.query(sql, artworkMapper);
+        }
+        catch(Exception e){
+            // Handle exceptions, log errors, etc.
+            e.printStackTrace();
+            // If the insertion fails, return false
+            return null;
+        }
+    }
+
+    public List<Artwork> getAllArtworksWithStatus(String status) {
+        try{
+            String sql = "SELECT * FROM Artwork WHERE status =?";
+            return jdbcTemplate.query(sql, artworkMapper, status);
         }
         catch(Exception e){
             // Handle exceptions, log errors, etc.
@@ -244,11 +257,12 @@ public class ArtworkService {
                 "GROUP BY A.artwork_id " +
                 "ORDER BY total_preference_match_count DESC, A.artwork_id;";
         return jdbcTemplate.query(sql,new ArtworkMapper(),user_id);
-    } 
-    public Artwork approveArtwork(int artworkId) {
+    }
+
+    public Artwork changeArtworkStatus(int artworkId, String status) {
         try {
-            String sql = "UPDATE Artwork SET status = 'approved' WHERE artwork_id = ?";
-            jdbcTemplate.update(sql, artworkId);
+            String sql = "UPDATE Artwork SET status = ? WHERE artwork_id = ?";
+            jdbcTemplate.update(sql, status, artworkId);
             sql = "SELECT * FROM Artwork WHERE artwork_id = ?";
             Artwork artwork = jdbcTemplate.queryForObject(sql, artworkMapper, artworkId);
             if(artwork == null){
@@ -258,20 +272,6 @@ public class ArtworkService {
             String sql2 = "UPDATE Artwork SET status = 'on sale' WHERE artwork_id = ?";
             jdbcTemplate.update(sql2, artwork.getArtwork_id());
             return artwork;
-        } catch (Exception e) {
-            // Handle exceptions, log errors, etc.
-            e.printStackTrace();
-            // If the update fails, return false
-            return null;
-        }
-    }
-
-    public Artwork declineArtwork(int artworkId) {
-        try {
-            String sql = "UPDATE Artwork SET status = 'declined' WHERE artwork_id = ?";
-            jdbcTemplate.update(sql, artworkId);
-            sql = "SELECT * FROM Artwork WHERE artwork_id = ?";
-            return jdbcTemplate.queryForObject(sql, artworkMapper, artworkId);
         } catch (Exception e) {
             // Handle exceptions, log errors, etc.
             e.printStackTrace();
@@ -341,6 +341,7 @@ public class ArtworkService {
             return false;
         }
     }
+
     public boolean addArtworkToExhibition(int artworkId, int exhibitionId) {
         try{
             String add = "Insert into Includes(exhibition_id,artwork_id, status) values (?,?, 'waiting');";
@@ -415,4 +416,6 @@ public class ArtworkService {
             return false;
         }
     }
+
+
 }

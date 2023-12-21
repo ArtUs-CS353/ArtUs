@@ -11,10 +11,8 @@ import java.util.List;
 
 
 @Service
-public class ArtistService {
+public class ArtistService{
     private final JdbcTemplate jdbcTemplate;
-
-
 
     public ArtistService(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
