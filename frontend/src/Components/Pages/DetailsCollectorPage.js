@@ -18,12 +18,28 @@ function DetailsCollectorPage({ context }) {
   const [userPrice, setUserPrice] = useState('');
   const [artwork, setArtwork] = useState(null)
   const [artist, setArtist] = useState(null)
+  const [isOnSale, setIsOnSale] = useState(false)
 
   function handleGoBack() {
     console.log("back pressed");
     navigate(`/collectorProfile`);
   }
 
+  const handleSale = async () => {
+    const formData = new FormData()
+    formData.append("price", userPrice)
+    try {
+      const response = await axios.post(`http://localhost:8080/artwork/${artworkId}/putForSale`, formData)
+      console.log(response.data);
+      setIsOnSale(true)
+    } catch (error) {
+      console.error('Error put artwork for sale:', error);
+    }
+  }
+  const handlePutToSale = () => {
+    console.log("Put to sale ", artworkId );
+    handleSale()
+  };
   const handleDescriptionChange = (event) => {
     setUserDescription(event.target.value);
   };
@@ -191,6 +207,10 @@ function DetailsCollectorPage({ context }) {
             </Button>
           </Typography>
           <br />
+          <br />
+          <Button  disabled={isOnSale} variant="contained" onClick={handlePutToSale}>
+            Put to sale
+          </Button>
           <br />
           <br />
           <Button variant="contained" onClick={handleDeleteArtwork} style={{ marginBottom: '16px' }}>

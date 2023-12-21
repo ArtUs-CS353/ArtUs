@@ -320,7 +320,7 @@ function ExplorePage({userId, userType}) {
        <Typography sx = {{mt: 5, pt: 2}} variant="h5" gutterBottom >
           Events
         </Typography>
-        {exhibitions.length == 0 && (
+        {events.length == 0 && (
           <Typography>There are no available events</Typography>
         )}
         <Slider {...settings}>

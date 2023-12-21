@@ -22,7 +22,7 @@ function DetailsArtistPage({ popup, context }) {
   const [selectedExhibition, setExhibition] = useState('')
   const [currentExhibitions, setCurrentExhibitions] = useState([])
   const [exhibitionId, setExhibitionId] = useState(-1)
-
+  const [isOnSale, setIsOnSale] = useState(false)
 
   function handleGoBack() {
     console.log("back pressed");
@@ -67,6 +67,19 @@ function DetailsArtistPage({ popup, context }) {
       console.error('Error deleting artwork:', error);
     }
   }
+
+  const handleSale = async () => {
+    const formData = new FormData()
+    formData.append("price", userPrice)
+    try {
+      const response = await axios.post(`http://localhost:8080/artwork/${artworkId}/putForSale`, formData)
+      console.log(response.data);
+      setIsOnSale(true)
+    } catch (error) {
+      console.error('Error put artwork for sale:', error);
+    }
+  }
+
 
   const handleUpdate = async (title,type,size,movement,price,description,material,rarity,imageURL,date,availability) => {
     const formData = new FormData();
@@ -123,6 +136,10 @@ function DetailsArtistPage({ popup, context }) {
     setPopupEnabled(true)
   };
 
+  const handlePutToSale = () => {
+    console.log("Put to sale ", artworkId );
+    handleSale()
+  };
   const handleDeleteArtwork = () => {
     console.log("Delete artwork ", artworkId );
     handleDelete()
@@ -155,6 +172,9 @@ function DetailsArtistPage({ popup, context }) {
         const artwork = response.data;
         console.log("ARTWORK IS: ", artwork, " ", artwork.status)
         setArtwork(artwork)
+        if(artwork.status == "sale"){
+          setIsOnSale(true)
+        }
         setUserDescription(artwork.description || '');
         setUserPrice(artwork.price || '');
       } catch (error) {
@@ -277,9 +297,15 @@ function DetailsArtistPage({ popup, context }) {
           </Button>
           <br />
           <br />
+          <Button  disabled={isOnSale} variant="contained" onClick={handlePutToSale}>
+            Put to sale
+          </Button>
+          <br />
+          <br />
           <Button variant="contained" onClick={handleDeleteArtwork}>
             Delete artwork
           </Button>
+          <br />
           {artwork.status === "auction" && (
             context
           )}
