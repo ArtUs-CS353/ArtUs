@@ -86,7 +86,7 @@ function CreateEvent({userId}) {
         <Popup 
         state={popupEnabled}
         handleClose={handleClose} 
-        dialogTitle={"Are you sure to create an exhibition with these data? Please be sure that the information is correct."} 
+        dialogTitle={"Are you sure to create an event with these data? Please be sure that the information is correct."} 
         handleRequest={sendRequest}
         > 
         </Popup>)}

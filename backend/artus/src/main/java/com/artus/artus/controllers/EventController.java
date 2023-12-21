@@ -113,8 +113,8 @@ public class EventController {
         }
     }
 
-    @PutMapping("/change/{eventId}")
-    public ResponseEntity<Boolean> changeEventStatus(@PathVariable int eventId, @RequestParam("newStatus") String status){
+    @PutMapping("/change/{eventId}/{status}")
+    public ResponseEntity<Boolean> changeEventStatus(@PathVariable int eventId, @PathVariable String status){
         Boolean result = eventService.changeEventStatus(eventId, status);
         if(result){
             return new ResponseEntity<>(true, HttpStatus.OK);

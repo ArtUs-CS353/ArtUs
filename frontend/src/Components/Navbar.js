@@ -99,7 +99,7 @@ switch (userType) {
       pages = ['Explore', 'Upload Artwork', 'Create Event'];
       break;
     case 4:
-        pages = ['Explore', 'Upload Artwork', 'Create Event', 'BALANCE'];
+        pages = ['Explore', 'Upload Artwork', 'BALANCE'];
         break;
     case 3:
         pages = ['Explore', 'BALANCE'];

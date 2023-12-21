@@ -95,23 +95,11 @@ function Requests() {
       }
     }
     if(requestType === "event"){
-      if(state === "accepted"){
-        console.log("sending accepted ", id)
-        try {
-          const response = await axios.put(`http://localhost:8080/event/approve/${id}`);
-          console.log(response.data);
-        } catch (error) {
-          console.error('Error uploading artwork:', error);
-        }
-      }
-      else if(state === "rejected") {
-          console.log("sending rejected")
-          try {
-            const response = await axios.put(`http://localhost:8080/event/decline/${id}`);
-            console.log(response.data);
-          } catch (error) {
-            console.error('Error uploading artwork:', error);
-          }
+      try {
+        const response = await axios.put(`http://localhost:8080/event/change/${id}/${state}`);
+        console.log(response.data);
+      } catch (error) {
+        console.error('Error changing event status:', error);
       }
     }
     
@@ -145,14 +133,14 @@ function Requests() {
   const handleEventAccept = (index) =>{
     setRequestType("event")
     console.log("accept ", eventRequests[index].event_id)
-    setState('accepted')
+    setState('approved')
     setId(eventRequests[index].event_id)
     setPopupEnabled(true)
   }
   const handleEventReject = (index) =>{
     setRequestType("event")
     console.log("rejected ", eventRequests[index].event_id)
-    setState('rejected')
+    setState('declined')
     setId(eventRequests[index].event_id)
     setPopupEnabled(true)
   }
@@ -320,13 +308,17 @@ function Requests() {
         const artworksPromises = exhibitions.map(exhibition => getAllWaiting(exhibition.exhibition_id));
         const artworksResults = await Promise.all(artworksPromises);
 
+
         // list format: exhibition info , artwork info
         for (let i = 0; i < exhibitions.length; i++) {
+          console.log("artwork results are ", artworksResults[i])
           exhibitionsWithArtworks.push({
             ...exhibitions[i],
-            artworks: artworksResults[i]
+            artworks: artworksResults[i],
           });
         }
+
+
 
         console.log("Exhibitions formatted: ", exhibitionsWithArtworks);
         setFormattedExhibitionRequests(exhibitionsWithArtworks)
@@ -526,7 +518,7 @@ function Requests() {
               />
               <Grid container direction="column" justifyContent="center" sx={{ padding: 2 }}>
               <Typography variant="h8"><span style={{ fontWeight: 'bold' }}>{"Exhibition Name: "}</span>{request.exhibition_name}</Typography>
-              <Typography variant="h8"><span style={{ fontWeight: 'bold' }}>{"Artist Name: "}</span>{artwork.artist_name}</Typography>
+              <Typography variant="h8"><span style={{ fontWeight: 'bold' }}>{"Artist Name: "}</span>{artwork.artist}</Typography>
                 <Typography variant="h8"><span style={{ fontWeight: 'bold' }}>{"Artwork Name: "}</span>{artwork.title}</Typography>
                 <Typography variant="h8"><span style={{ fontWeight: 'bold' }}>{"Description: "}</span> {artwork.description}</Typography>
                 {/* Add more text information here */}

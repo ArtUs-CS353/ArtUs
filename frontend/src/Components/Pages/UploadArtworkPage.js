@@ -146,6 +146,7 @@ function UploadArtworkPage({userId, userType}) {
       }
       // else the selected artist's id , it is already set 
 
+      const collectorId = userType == 4 ? userId : -1
       formData.append('artistId', artistId); 
       formData.append('title', title);
       formData.append('type', type);
@@ -157,8 +158,8 @@ function UploadArtworkPage({userId, userType}) {
       formData.append('rarity', rarity);
       formData.append('imageURL', fileUrl);
       formData.append('date', date);
-      formData.append('availability', availability);
       formData.append('Status', Status);
+      formData.append('collectorId', collectorId);
 
       for (let [key, value] of formData.entries()) {
         console.log(key, value);
@@ -169,8 +170,9 @@ function UploadArtworkPage({userId, userType}) {
       setMovement('')
       setPrice('')
       setRarity('')
-      setMovement('')
+      setMaterials('')
       setSize('')
+     // setArtists('')
       setDescription('')
 
       try {
