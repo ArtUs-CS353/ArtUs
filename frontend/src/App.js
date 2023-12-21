@@ -44,7 +44,7 @@ function App() {
         <Route path="/explore" element={<Explore userId = {userId} userType={userType}/>} />
         <Route path="/buy/:id" element={<BuyArtwork userId = {userId}/>} />
         <Route path="/uploadArtwork" element={<UploadArtwork userId = {userId} userType={userType}/>} />
-        <Route path="/details/:id" element={<DetailsPage userId = {userId}/>} />
+        <Route path="/details/:id" element={<DetailsPage userId = {userId} userType = {userType}/>} />
         <Route path="/auction/:id" element={<AuctionPage userId = {userId} />} />
         <Route path="/artistProfile" element={<ArtistProfile userId = {userId}/>} />
         <Route path="/artistDisplayed/:artistId" element={<ArtistDisplayedProfile userId = {userId} userType={userType} />} />

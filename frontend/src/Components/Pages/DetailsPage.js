@@ -7,7 +7,7 @@ import { useNavigate } from 'react-router-dom';
 import axios from "axios";
 
 
-function DetailsPage({userId, popup, context, setId}) {
+function DetailsPage({userId, userType, popup, context, setId}) {
   const artworks = ArtworkData;
   const [artwork, setArtwork] = useState(null);
   const navigate = useNavigate();
@@ -115,7 +115,8 @@ function DetailsPage({userId, popup, context, setId}) {
         )}
         <br />
         <br />
-        <Button
+        {(userType == 3 || userType == 4) && (
+          <Button
           variant="contained"
           onClick={handleFavoriteClick}
           sx={{
@@ -124,6 +125,8 @@ function DetailsPage({userId, popup, context, setId}) {
         >
           Favorite
         </Button>
+        ) }
+        
       </Grid>
           </>
         )}
