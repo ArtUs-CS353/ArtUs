@@ -28,12 +28,19 @@ public class ArtworkService {
         this.auctionMapper = auctionMapper;
     }
 
-    public boolean createArtwork(Artwork artwork) {
+    public boolean createArtwork(Artwork artwork, int collectorId) {
         try{
-            String sql = "INSERT INTO Artwork (artist_id, title, description, type, material, size, rarity, imageURL, movement, date, is_featuring, price, status) VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+            String sql = "INSERT INTO Artwork (artist_id, title, description, type, material, size, rarity, imageURL, movement, date, is_featuring, price, status, favorite_count) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
             jdbcTemplate.update(sql,  artwork.getArtist_id(), artwork.getTitle(), artwork.getDescription(), artwork.getType(),
                     artwork.getMaterial(), artwork.getSize(), artwork.getRarity(), artwork.getImageURL(), artwork.getMovement(), artwork.getDate(),
-                    false, artwork.getPrice(), artwork.getStatus());
+                    false, artwork.getPrice(), artwork.getStatus(),0);
+
+            if(collectorId != -1){
+                sql = "SELECT artwork_id FROM Artwork WHERE artist_id=? AND title=?";
+                int artworkId = jdbcTemplate.queryForObject(sql, Integer.class, artwork.getArtist_id(), artwork.getTitle());
+                sql = "INSERT INTO Owns ( artwork_id , user_id ) VALUES (?, ?)";
+                jdbcTemplate.update(sql, artworkId, collectorId);
+            }
             return true;
         }
         catch(Exception e){
@@ -49,6 +56,23 @@ public class ArtworkService {
             String sql = "UPDATE Artwork set title=? , description=? , type=? ,  material=? , size=? ,  rarity=? ,  imageURL=? ,  movement=? ,  date=? , price=? where artwork_id=?";
             jdbcTemplate.update(sql,  artwork.getTitle(), artwork.getDescription(), artwork.getType(), artwork.getMaterial(), artwork.getSize(), artwork.getRarity(), artwork.getImageURL(), artwork.getMovement(), artwork.getDate(),
                      artwork.getPrice(), artwork.getArtwork_id());
+            return true;
+        }
+        catch(Exception e){
+            // Handle exceptions, log errors, etc.
+            e.printStackTrace();
+            // If the insertion fails, return false
+            return false;
+        }
+    }
+
+    public boolean markAsFavorite(int artworkId, int userId) {
+        try{
+            String sql = "update Artwork set favorite_count= favorite_count+1 where artwork_id=?";
+            jdbcTemplate.update(sql,  artworkId);
+
+            sql = "insert into Favorite(user_id , artwork_id) values (?,?)";
+            jdbcTemplate.update(sql,userId, artworkId);
             return true;
         }
         catch(Exception e){
@@ -237,7 +261,7 @@ public class ArtworkService {
     }
 
     public List<Artwork> getExplorePage(){
-        String sql = "select * from Artwork where status <> 'waiting' order by favorite_count DESC;";
+        String sql = "select * from Artwork where status <> 'waiting'  and  status <> 'declined' order by favorite_count DESC;";
         return jdbcTemplate.query(sql,new ArtworkMapper());
     }
 
@@ -254,7 +278,7 @@ public class ArtworkService {
                 "   A.movement = UP.preference_name OR " +
                 "   A.type = UP.preference_name OR " +
                 "   A.rarity = UP.preference_name " +
-                "where status <> 'waiting' "+
+                "where status <> 'waiting' and  status <> 'declined' "+
                 "GROUP BY A.artwork_id " +
                 "ORDER BY total_preference_match_count DESC, A.artwork_id;";
         return jdbcTemplate.query(sql,new ArtworkMapper(),user_id);
@@ -269,9 +293,11 @@ public class ArtworkService {
             if(artwork == null){
                 throw new Exception("There is no such artwork");
             }
+            if(status == "sale"){
+                String sql2 = "UPDATE Artwork SET status = 'sale' WHERE artwork_id = ?";
+                jdbcTemplate.update(sql2, artwork.getArtwork_id());
+            }
 
-            String sql2 = "UPDATE Artwork SET status = 'on sale' WHERE artwork_id = ?";
-            jdbcTemplate.update(sql2, artwork.getArtwork_id());
             return artwork;
         } catch (Exception e) {
             // Handle exceptions, log errors, etc.

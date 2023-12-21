@@ -55,4 +55,21 @@ public class ArtistService{
             return "";
         }
     }
+
+    public boolean followArtist(int artistId, int userId) {
+        try{
+            String sql = "update Artist set follower_count= follower_count+1 where user_id=?";
+            jdbcTemplate.update(sql, artistId);
+
+            sql = "insert into Follow(artist_id , enthusiast_id) values (?,?)";
+            jdbcTemplate.update(sql,artistId, userId);
+            return true;
+        }
+        catch(Exception e){
+            // Handle exceptions, log errors, etc.
+            e.printStackTrace();
+            // If the insertion fails, return false
+            return false;
+        }
+    }
 }
