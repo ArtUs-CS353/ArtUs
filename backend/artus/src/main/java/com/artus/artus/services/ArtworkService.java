@@ -33,7 +33,7 @@ public class ArtworkService {
             String sql = "INSERT INTO Artwork (artist_id, title, description, type, material, size, rarity, imageURL, movement, date, is_featuring, price, status) VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
             jdbcTemplate.update(sql,  artwork.getArtist_id(), artwork.getTitle(), artwork.getDescription(), artwork.getType(),
                     artwork.getMaterial(), artwork.getSize(), artwork.getRarity(), artwork.getImageURL(), artwork.getMovement(), artwork.getDate(),
-                    false, artwork.getPrice(), artwork.getStatus(), artwork.getAvailability());
+                    false, artwork.getPrice(), artwork.getStatus());
             return true;
         }
         catch(Exception e){
