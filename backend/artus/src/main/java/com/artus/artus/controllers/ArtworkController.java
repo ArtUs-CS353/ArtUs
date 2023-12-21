@@ -35,7 +35,8 @@ public class ArtworkController {
             @RequestParam("material") String material,
             @RequestParam("rarity") String rarity,
             @RequestParam("imageURL") String imageURL,
-            @RequestParam("date") LocalDate date
+            @RequestParam("date") LocalDate date,
+            @RequestParam("collectorId") int collectorId
     ) {
         Artwork artwork = new Artwork();
         artwork.setArtist_id(artistId);
@@ -50,7 +51,7 @@ public class ArtworkController {
         artwork.setPrice(price);
         artwork.setDate(date);
         artwork.setStatus("waiting");
-        boolean result = artworkService.createArtwork(artwork);
+        boolean result = artworkService.createArtwork(artwork, collectorId);
 
         if(result)
             return new ResponseEntity<>(artwork, HttpStatus.OK);
@@ -255,6 +256,16 @@ public class ArtworkController {
     @PutMapping("/{artworkID}/declineToExhibition")
     public ResponseEntity<Boolean> declineArtworkToExhibition(@PathVariable int artworkID, @RequestParam int exhibitionId){
         boolean result = artworkService.declineArtworkToExhibition(artworkID, exhibitionId);
+        if(result){
+            return new ResponseEntity<>(true, HttpStatus.OK);
+        }else{
+            return new ResponseEntity<>(false, HttpStatus.I_AM_A_TEAPOT);
+        }
+    }
+
+    @PutMapping("/markAsFavorite/{artworkId}/{userId}")
+    public ResponseEntity<Boolean> markAsFavorite(@PathVariable int artworkId, @PathVariable int userId) {
+        boolean result = artworkService.markAsFavorite(artworkId, userId);
         if(result){
             return new ResponseEntity<>(true, HttpStatus.OK);
         }else{
