@@ -1,5 +1,7 @@
 package com.artus.artus.services;
+import com.artus.artus.mappers.ArtworkMapper;
 import com.artus.artus.mappers.AuctionMapper;
+import com.artus.artus.models.Artwork;
 import com.artus.artus.models.Auction;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -12,11 +14,13 @@ import java.util.List;
 public class AuctionService {
 private final JdbcTemplate jdbcTemplate;
 private final AuctionMapper auctionMapper;
+private final ArtworkService artworkService;
 
     @Autowired
-    public AuctionService(JdbcTemplate jdbcTemplate, AuctionMapper auctionMapper) {
+    public AuctionService(JdbcTemplate jdbcTemplate, AuctionMapper auctionMapper, ArtworkService artworkService) {
         this.jdbcTemplate = jdbcTemplate;
         this.auctionMapper = auctionMapper;
+        this.artworkService = artworkService;
     }
 
     public boolean createAuction(Auction auction){
@@ -197,6 +201,9 @@ private final AuctionMapper auctionMapper;
         try{
             String delete = "Update Auction set status = 'finished'  where auction_id =?";
             jdbcTemplate.update(delete, auctionId);
+            String sql = "SELECT * FROM Artwork AR, Auction AU WHERE AU.auction_id = ? and AU.artwork_id = AR.artwork_id";
+            Artwork artwork = jdbcTemplate.queryForObject(sql, new ArtworkMapper(), auctionId);
+            artworkService.changeArtworkStatus(artwork.getArtwork_id(),"waiting for auction");
             return true;
         }catch (Exception e) {
             // Handle exceptions, log errors, etc.
