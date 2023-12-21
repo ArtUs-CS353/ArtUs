@@ -237,7 +237,7 @@ public class ArtworkService {
     }
 
     public List<Artwork> getExplorePage(){
-        String sql = "select * from Artwork order by favorite_count DESC;";
+        String sql = "select * from Artwork where status <> 'waiting' order by favorite_count DESC;";
         return jdbcTemplate.query(sql,new ArtworkMapper());
     }
 
@@ -254,6 +254,7 @@ public class ArtworkService {
                 "   A.movement = UP.preference_name OR " +
                 "   A.type = UP.preference_name OR " +
                 "   A.rarity = UP.preference_name " +
+                "where status <> 'waiting' "+
                 "GROUP BY A.artwork_id " +
                 "ORDER BY total_preference_match_count DESC, A.artwork_id;";
         return jdbcTemplate.query(sql,new ArtworkMapper(),user_id);
