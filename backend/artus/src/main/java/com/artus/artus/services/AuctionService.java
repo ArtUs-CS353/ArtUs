@@ -199,12 +199,17 @@ private final ArtworkService artworkService;
 
     public Boolean finishAuction(int auctionId){
         try{
-            String delete = "Update Auction set status = 'finished'  where auction_id =?";
-            jdbcTemplate.update(delete, auctionId);
-            String sql = "SELECT * FROM Artwork AR, Auction AU WHERE AU.auction_id = ? and AU.artwork_id = AR.artwork_id";
-            Artwork artwork = jdbcTemplate.queryForObject(sql, new ArtworkMapper(), auctionId);
-            artworkService.changeArtworkStatus(artwork.getArtwork_id(),"waiting for auction");
-            return true;
+            String auctionSql = "SELECT * FROM Auction WHERE auction_id = ?;";
+            Auction auction = jdbcTemplate.query(auctionSql,new AuctionMapper(),auctionId).get(0);
+            if(!auction.getStatus().equals("finished")){
+                String delete = "Update Auction set status = 'finished'  where auction_id =?";
+                jdbcTemplate.update(delete, auctionId);
+                String sql = "SELECT * FROM Artwork AR, Auction AU WHERE AU.auction_id = ? and AU.artwork_id = AR.artwork_id";
+                Artwork artwork = jdbcTemplate.query(sql, new ArtworkMapper(), auctionId).get(0);
+                artworkService.changeArtworkStatus(artwork.getArtwork_id(),"waiting for auction");
+                return true;
+            }
+            return false;
         }catch (Exception e) {
             // Handle exceptions, log errors, etc.
             e.printStackTrace();
