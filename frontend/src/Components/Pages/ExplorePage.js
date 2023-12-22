@@ -13,6 +13,7 @@ import axios from "axios";
 import DisplayEvents from '../DisplayEvents';
 import Popup from '../Popup';
 import "../../App.css"
+import dayjs from 'dayjs';
 
 function ExplorePage({userId, userType}) {
   const settings = {
@@ -95,6 +96,17 @@ function ExplorePage({userId, userType}) {
     }
   };
 
+
+  const auctionStatusChange = async (id) => {
+    try {
+      console.log("finitoo")
+      const response = await axios.put(`http://localhost:8080/auction/finish/${id}`);
+      console.log(response.data);
+    } catch (error) {
+      console.error("Failed to change auction: ", error);
+      throw error;
+    }
+  };
   useEffect(() => {
     const getRecommendedArtworks = async () => {
       try {
@@ -151,6 +163,43 @@ function ExplorePage({userId, userType}) {
       }
     };
     getFeaturingArtists()
+  }, []); 
+
+  useEffect(() => {
+    const getCurrentAuctions = async () => {
+      try {
+        const response = await axios.get(`http://localhost:8080/auction/getAllApprovedAuctions`);
+        const auctions = response.data;
+        console.log("CURRENT AUCTIONS: ", auctions);
+
+        auctions.forEach(auction => {
+          // Parse the endDate to a Date object
+         
+
+          // Get the current time as a Date object
+          let now = dayjs()
+          const formattedDateTime = now.format("YYYY-MM-DDTHH:mm:ss");
+          console.log("now ", formattedDateTime)
+
+
+          // Compare the two Date objects
+          if (auction.end_date < formattedDateTime) {
+            console.log("This auction has finished:", auction);
+            auctionStatusChange(auction.auction_id)
+          } else {
+            console.log("This auction is still running:", auction);
+          }
+        });
+
+
+        
+      } catch (error) {
+        console.error("Failed to fetch featuring artworks: ", error);
+        throw error;
+      }
+    };
+  
+    getCurrentAuctions();
   }, []); 
 
   useEffect(() => {

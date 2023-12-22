@@ -12,7 +12,7 @@ const CollectorNotificationPage = ({ userId }) => {
   useEffect(() => {
     const fetchCollectorNotifications = async () => {
       try {
-        const response = await axios.get(`http://localhost:8080/notification/${userId}/4`);
+        const response = await axios.get(`http://localhost:8080/notification/${userId}`);
         setCollectorNotifications(response.data);
       } catch (error) {
         console.error('Error fetching collector notifications:', error);
