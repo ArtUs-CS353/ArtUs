@@ -6,7 +6,7 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 
-export default function Popup({state, handleClose,handleRequest, dialogTitle, textField, buttonName, isSendDisabled}) {
+export default function Popup({state, handleClose,handleRequest, dialogTitle, textField, buttonName, buttonNameCancel, isSendDisabled}) {
 
   const disabled = isSendDisabled == null ? false: isSendDisabled
   console.log("disbaled ", disabled)
@@ -18,7 +18,7 @@ export default function Popup({state, handleClose,handleRequest, dialogTitle, te
           {textField}
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleClose}>Close</Button>
+          <Button onClick={handleClose}>{buttonNameCancel ? buttonNameCancel : "Cancel"}</Button>
           <Button disabled = {disabled} onClick={handleRequest}>{buttonName ? buttonName : "Send"}</Button>
         </DialogActions>
       </Dialog>
