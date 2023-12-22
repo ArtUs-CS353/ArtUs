@@ -201,6 +201,7 @@ private final ArtworkService artworkService;
         try{
             String auctionSql = "SELECT * FROM Auction WHERE auction_id = ?;";
             Auction auction = jdbcTemplate.query(auctionSql,new AuctionMapper(),auctionId).get(0);
+            System.out.println(auction.getStatus());
             if(!auction.getStatus().equals("finished")){
                 String delete = "Update Auction set status = 'finished'  where auction_id =?";
                 jdbcTemplate.update(delete, auctionId);

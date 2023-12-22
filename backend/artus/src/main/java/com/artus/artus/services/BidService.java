@@ -40,6 +40,10 @@ public class BidService {
         try{
             String sql = "INSERT INTO Bid(user_id ,auction_id , price,time_stamp, status) VALUES (?, ?, ?, ?, ?)";
             jdbcTemplate.update(sql,  userId, auctionId, price, LocalDateTime.now(), "waiting");
+            String selectBid = "Select * from Bid WHERE auction_id =? and price =?";
+            Bid bid  = jdbcTemplate.query(selectBid,new BidMapper(),auctionId,price).get(0);
+            String sqlOtherBids = "Update Bid set status = 'lower bid' where auction_id = ? and price < ? and status != 'lower bid';";
+            jdbcTemplate.update(sqlOtherBids,auctionId,price);
             return true;
         }
         catch(Exception e){
