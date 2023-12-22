@@ -13,6 +13,8 @@ function AuctionPage({userId}) {
   const [isDisabled, setDisabled] = useState(true)
   const [currentBalance, setBalance] = useState(0)
   const [auctionType, setAuctionType] = useState('')
+  const [endTime, setEndTime] = useState('')
+  const [startTime, setStartTime] = useState('')
   
   function handlePlaceBid(){
     console.log("PLACE BID CLICKED")
@@ -94,6 +96,25 @@ function AuctionPage({userId}) {
       const auction = response.data
       setAuction(auction)
       setAuctionType(auction.type)
+      const date1 = new Date(auction.start_date);
+        const startDate = date1.toLocaleString('en-US', {
+          month: 'long',
+          day: 'numeric',
+          year: 'numeric',
+          hour: '2-digit',
+          minute: '2-digit',
+        });
+      setStartTime(startDate)
+
+      const date2 = new Date(auction.end_date);
+      const endDate = date2.toLocaleString('en-US', {
+        month: 'long',
+        day: 'numeric',
+        year: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
+      });
+       setEndTime(endDate)
       return auction
     } catch (error) {
       console.error('Error fetching highest bid:', error);
@@ -126,6 +147,12 @@ function AuctionPage({userId}) {
      ></Popup>}
      context={  <>
       <hr style={{ width: '50%', marginRight: '50%' }}></hr>
+      <Typography gutterBottom variant="h5" component="div">
+        {"Start at: "}<span style={{ fontWeight: 'bold' }}>{startTime}</span>
+      </Typography>
+      <Typography gutterBottom variant="h5" component="div">
+        {"Ends at: "}<span style={{ fontWeight: 'bold' }}>{endTime}</span>
+      </Typography>
       <Typography gutterBottom sx = {{color: currentBalance-highestBid >= 0 ? "green" :  "red"}} variant="h5" component="div">
         {"Your Balance: "}<span style={{ fontWeight: 'bold' }}>{currentBalance}$</span>
       </Typography>

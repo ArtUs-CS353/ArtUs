@@ -102,6 +102,7 @@ function ExplorePage({userId, userType}) {
       console.log("finitoo")
       const response = await axios.put(`http://localhost:8080/auction/finish/${id}`);
       console.log(response.data);
+      return response.data
     } catch (error) {
       console.error("Failed to change auction: ", error);
       throw error;
@@ -172,29 +173,25 @@ function ExplorePage({userId, userType}) {
         const auctions = response.data;
         console.log("CURRENT AUCTIONS: ", auctions);
 
-        auctions.forEach(auction => {
-          // Parse the endDate to a Date object
-         
+        for (const auction of auctions) {
+           // Get the current time as a Date object
+           let now = dayjs()
+           const formattedDateTime = now.format("YYYY-MM-DDTHH:mm:ss");
+           console.log("now ", formattedDateTime)
+ 
+ 
+           // Compare the two Date objects
+           if (auction.end_date < formattedDateTime && auction.status === "approved") {
+             console.log("This auction has finished:", auction);
+             const response2 = await auctionStatusChange(auction.auction_id)
+             console.log("sending status change result : ", response2)
+           } else {
+             console.log("This auction is still running:", auction);
+           }
 
-          // Get the current time as a Date object
-          let now = dayjs()
-          const formattedDateTime = now.format("YYYY-MM-DDTHH:mm:ss");
-          console.log("now ", formattedDateTime)
-
-
-          // Compare the two Date objects
-          if (auction.end_date < formattedDateTime) {
-            console.log("This auction has finished:", auction);
-            auctionStatusChange(auction.auction_id)
-          } else {
-            console.log("This auction is still running:", auction);
-          }
-        });
-
-
-        
+        }
       } catch (error) {
-        console.error("Failed to fetch featuring artworks: ", error);
+        console.error("Failed to fetch current auctions: ", error);
         throw error;
       }
     };

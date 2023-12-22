@@ -170,7 +170,7 @@ function UploadArtworkPage({userId, userType}) {
       setMovement('')
       setPrice('')
       setRarity('')
-      setMaterials('')
+      //setMaterials('')
       setSize('')
      // setArtists('')
       setDescription('')
