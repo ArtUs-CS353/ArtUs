@@ -58,7 +58,7 @@ function DisplayArtworkArtist({ artwork, type, func, funcAuction }) {
           )}
         </CardContent>
         </Grid>
-        {isMouseOver && artwork.status !== 'auction' && (
+        {(isMouseOver && (artwork.status !== 'auction' && artwork.status !== "sold"))  && (
           <Button
             variant="contained"
             size="small"
@@ -76,6 +76,17 @@ function DisplayArtworkArtist({ artwork, type, func, funcAuction }) {
             sx={{...buttonStyles}}
           >
             Already on Auction
+          </Button>
+        )}
+
+        {isMouseOver && artwork.status === 'sold' && (
+          <Button
+            variant="contained"
+            size="small"
+            disabled
+            sx={{...buttonStyles}}
+          >
+            Sold
           </Button>
         )}
       </CardActionArea>

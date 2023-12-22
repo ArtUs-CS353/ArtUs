@@ -72,29 +72,28 @@ function Requests() {
             console.error('Error approving artwork:', error);
           }
       }
-
-      else if(requestType === "artist"){
-        if(state === "accepted"){
-          console.log("sending accepted ", id)
-          try {
-            const response = await axios.put(`http://localhost:8080/artist_request/accept/${id}`);
-            console.log(response.data);
-          } catch (error) {
-            console.error('Error accepting auction:', error);
-          }
-        }
-        else if(state === "rejected") {
-            console.log("sending rejected")
-            try {
-              const response = await axios.put(`http://localhost:8080/artist_request/decline/${id}`);
-              console.log(response.data);
-            } catch (error) {
-              console.error('Error rejecting auction:', error);
-            }
+    }
+    else if(requestType === "artist"){
+      if(state === "accepted"){
+        console.log("HERE SO ACCEPT ARTIST ", id)
+        try {
+          const response = await axios.delete(`http://localhost:8080/artist_request/accept/${id}`);
+          console.log(response.data);
+        } catch (error) {
+          console.error('Error accepting auction:', error);
         }
       }
+      else if(state === "rejected") {
+          console.log("sending rejected")
+          try {
+            const response = await axios.delete(`http://localhost:8080/artist_request/decline/${id}`);
+            console.log(response.data);
+          } catch (error) {
+            console.error('Error rejecting auction:', error);
+          }
+      }
     }
-    if(requestType === "event"){
+    else if(requestType === "event"){
       try {
         const response = await axios.put(`http://localhost:8080/event/change/${id}/${state}`);
         console.log(response.data);
@@ -103,7 +102,7 @@ function Requests() {
       }
     }
     
-    if(requestType === "artwork"){
+    else if(requestType === "artwork"){
 
       try {
         const response = await axios.put(`http://localhost:8080/artwork/changeStatus/${id}/${state}`);
@@ -414,11 +413,18 @@ function Requests() {
 
          const response = await axios.get(`http://localhost:8080/artwork/getAll/${"waiting"}`);
          const artworks = response.data
-        console.log("waiting artworks: ",  artworks)
+         console.log("waiting artworks: ",  artworks)
 
+         const artworksWithArtists = await Promise.all(artworks.map(async (artwork) => {
+          const artist = await getArtist(artwork.artist_id);
+          return {
+            ...artwork,
+            artist: artist.user_name + " " + artist.user_surname,
+          };
+        }));
         
-        setArtworkRequest(artworks)
-
+        setArtworkRequest(artworksWithArtists)
+        
 
       } catch (error) {
         console.error("Failed to fetch artworks: ", error);
@@ -554,6 +560,7 @@ function Requests() {
                 alt={request.title}
               />
               <Grid container direction="column" justifyContent="center" sx={{ padding: 2 }}>
+                <Typography variant="h8"><span style={{ fontWeight: 'bold' }}>{"Artist Name: "}</span>{request.title}</Typography>
                 <Typography variant="h8"><span style={{ fontWeight: 'bold' }}>{"Artist Name: "}</span>{request.artist}</Typography>
                 <Typography variant="h8"><span style={{ fontWeight: 'bold' }}>{"Start Date: "}</span>{request.startDate}</Typography>
                 <Typography variant="h8"><span style={{ fontWeight: 'bold' }}>{"End Date: "}</span>{request.endDate}</Typography>
@@ -622,7 +629,7 @@ function Requests() {
                    alt={request.title}
                  />
               <Typography variant="h8"><span style={{ fontWeight: 'bold' }}>{"Artwork Name: "}</span>{request.title}</Typography>
-                <Typography variant="h8"><span style={{ fontWeight: 'bold' }}>{"Artist Name: "}</span>{request.user_name} {request.user_surname}</Typography>
+                <Typography variant="h8"><span style={{ fontWeight: 'bold' }}>{"Artist Name: "}</span>{request.artist}</Typography>
                 <Typography variant="h8"><span style={{ fontWeight: 'bold' }}>{"Description: "}</span>{request.description}</Typography>
                 <Typography variant="h8"><span style={{ fontWeight: 'bold' }}>{"Type: "}</span> {request.type}</Typography>
                 <Typography variant="h8"><span style={{ fontWeight: 'bold' }}>{"Material: "}</span> {request.material}</Typography>
