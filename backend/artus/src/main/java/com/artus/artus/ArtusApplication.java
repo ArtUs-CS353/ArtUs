@@ -29,7 +29,7 @@ public class ArtusApplication implements CommandLineRunner{
 		jdbcTemplate.execute("create table if not exists Artwork (artwork_id INT NOT NULL AUTO_INCREMENT, artist_id INT, title VARCHAR(50), description VARCHAR(300), type VARCHAR(50), material VARCHAR(150), size VARCHAR(30), rarity VARCHAR(30), imageURL varchar(300), movement varchar(100), date DATE, is_featuring boolean,price NUMERIC(30), status varchar(20),favorite_count INT, primary key (artwork_id), foreign key (artist_id ) REFERENCES Artist(user_id));");
 		jdbcTemplate.execute("create table if not exists Auction(auction_id int NOT NULL AUTO_INCREMENT, artwork_id int,start_date datetime, end_date datetime, type varchar(20), starting_amount double,status varchar(10), primary key (auction_id));");
 		jdbcTemplate.execute("create table if not exists Purchase(user_id int,seller_id int, artwork_id int, purchase_id int NOT NULL AUTO_INCREMENT, purchase_date datetime, price double, receipt BLOB, primary key (purchase_id), foreign key (artwork_id) references Artwork(artwork_id), foreign key (user_id) references Enthusiast(user_id));");
-		jdbcTemplate.execute("create table if not exists Notification(user_id int, notification_id int NOT NULL AUTO_INCREMENT, type varchar(50), content varchar(100), primary key (notification_id), foreign key (user_id) references User(user_id));");
+		jdbcTemplate.execute("create table if not exists Notification(user_id int, notification_id int NOT NULL AUTO_INCREMENT, type varchar(50), content varchar(300), primary key (notification_id), foreign key (user_id) references User(user_id));");
 		jdbcTemplate.execute("create table if not exists Bid(user_id int,auction_id int,bid_id int NOT NULL AUTO_INCREMENT,price double,time_stamp datetime, status varchar(50), primary key (bid_id),foreign key (user_id) references User(user_id),foreign key (auction_id) references Auction(auction_id));");
 		jdbcTemplate.execute("create table if not exists Follow(enthusiast_id int, artist_id int, primary key (enthusiast_id, artist_id),foreign key (enthusiast_id) references Enthusiast(user_id), foreign key (artist_id) references Artist(user_id));");
 		jdbcTemplate.execute("create table if not exists Favorite(user_id int, artwork_id int,primary key (user_id, artwork_id),foreign key (user_id) references Enthusiast (user_id),foreign key (artwork_id) references Artwork(artwork_id));");
@@ -44,6 +44,11 @@ public class ArtusApplication implements CommandLineRunner{
 
 
 		try {
+			jdbcTemplate.execute("CREATE TRIGGER after_higher_bid_insert\n" + //
+					"AFTER INSERT ON Bid FOR EACH ROW BEGIN \n" + //
+					"DECLARE auction_id_var INT;DECLARE user_id_var INT;\n" + //
+					"SET auction_id_var = NEW.auction_id;SET user_id_var = NEW.user_id; \n" + //
+					"IF TRUE THEN UPDATE Bid SET status = 'lower bid' WHERE auction_id = auction_id_var AND price < NEW.price AND status != 'lower bid';END IF;END;");
 			jdbcTemplate.execute(" CREATE TRIGGER notify_other_bidders_end_auction \n" +
 					"  AFTER UPDATE ON Bid FOR EACH ROW BEGIN\n" +
 					"   DECLARE auction_id_var INT;DECLARE user_id_var INT;DECLARE artwork_title VARCHAR(50);  \n" +
@@ -80,7 +85,7 @@ public class ArtusApplication implements CommandLineRunner{
 					"AFTER UPDATE ON Auction FOR EACH ROW \n" +
 					"BEGIN DECLARE user_id INT; \n" +
 					"SELECT artist_id INTO user_id FROM Artwork WHERE artwork_id = NEW.artwork_id; \n" +
-					"IF NEW.status != 'finished' OR NEW.status != 'positive' THEN\n" +
+					"IF NEW.status != 'finished' AND NEW.status != 'positive' THEN\n" +
 					"INSERT INTO Notification(user_id, type, content)\n" +
 					"VALUES (user_id, 'Auction Request', CONCAT('Your auction request for artwork: ',(select title from artwork where artwork_id = NEW.artwork_id) ,' request has been ', NEW.status));END IF; END;");
 			jdbcTemplate.execute("CREATE TRIGGER insert_notification_trigger AFTER INSERT ON Bid FOR EACH ROW BEGIN DECLARE auction_id_var INT;DECLARE user_id_var INT;DECLARE artwork_title VARCHAR(50);  SET auction_id_var = NEW.auction_id;SET user_id_var = NEW.user_id; SELECT title INTO artwork_title FROM Artwork WHERE artwork_id = (SELECT artwork_id FROM Auction WHERE auction_id = auction_id_var); IF (SELECT type FROM Auction WHERE auction_id = auction_id_var) = 'normal' THEN INSERT INTO Notification (user_id, type, content) SELECT DISTINCT user_id, 'Auction Placed', CONCAT('Another user has placed a bid price of ',NEW.price ,' on the same auction (', auction_id_var, ') Artwork title: ',artwork_title) FROM Bid WHERE auction_id = auction_id_var AND user_id != user_id_var;END IF;END;\n");
@@ -106,7 +111,7 @@ public class ArtusApplication implements CommandLineRunner{
 			jdbcTemplate.execute("CREATE TRIGGER delete_enthusiast_data BEFORE DELETE ON Enthusiast FOR EACH ROW BEGIN DELETE FROM Follow WHERE enthusiast_id = OLD.user_id; DELETE FROM Favorite WHERE user_id = OLD.user_id; DELETE FROM Owns WHERE user_id = OLD.user_id; DELETE FROM Purchase WHERE user_id = OLD.user_id; DELETE FROM Bid WHERE user_id = OLD.user_id;END;");
 			jdbcTemplate.execute("CREATE TRIGGER notify_artwork_purchase AFTER INSERT ON Purchase FOR EACH ROW BEGIN INSERT INTO Notification(user_id, type, content)  VALUES (NEW.user_id, 'Purchase', CONCAT('You have successfully purchased artwork ID ', NEW.artwork_id)); END;");
 			//jdbcTemplate.execute("CREATE TRIGGER notify_successful_bid AFTER UPDATE ON Bid FOR EACH ROW BEGIN IF NEW.status = 'ACCEPTED' THEN INSERT INTO Notification(user_id, type, content) VALUES (NEW.user_id, 'Successful Bid', CONCAT('Your bid on auction ID ', NEW.auction_id, ' has been accepted.')); END IF; END;");
-			jdbcTemplate.execute("CREATE TRIGGER notify_unsuccessful_bid AFTER UPDATE ON Bid FOR EACH ROW BEGIN IF NEW.status = 'REJECTED' THEN INSERT INTO Notification(user_id, type, content) VALUES (NEW.user_id, 'Bid Status', CONCAT('Your bid for auction ID ', NEW.auction_id, ' has been rejected.')); END IF; END;");
+			jdbcTemplate.execute("CREATE TRIGGER notify_unsuccessful_bid AFTER UPDATE ON Bid FOR EACH ROW BEGIN IF NEW.status = 'REJECTED' THEN INSERT INTO Notification(user_id, type, content) VALUES (NEW.user_id, 'Bid Status', CONCAT('Your bid for artwork ', (select title from Artwork AR, Auction AU where AU.auction_id = NEW.auction_id AND AU.artwork_id = AR.artwork_id), ' has been rejected.')); END IF; END;");			
 			jdbcTemplate.execute("CREATE TRIGGER increment_follower_count AFTER INSERT ON Follow FOR EACH ROW BEGIN UPDATE Artist SET follower_count = follower_count + 1 WHERE user_id = NEW.artist_id; END;");
 			jdbcTemplate.execute("CREATE TRIGGER decrement_follower_count AFTER DELETE ON Follow FOR EACH ROW BEGIN UPDATE Artist SET follower_count = follower_count - 1 WHERE user_id = OLD.artist_id; END;");
 			jdbcTemplate.execute("CREATE TRIGGER increment_favorite_count AFTER INSERT ON Favorite FOR EACH ROW BEGIN UPDATE Artwork SET favorite_count = favorite_count + 1 WHERE artwork_id = NEW.artwork_id; END;");
