@@ -44,6 +44,27 @@ public class ArtusApplication implements CommandLineRunner{
 
 
 		try {
+			jdbcTemplate.execute("CREATE TRIGGER notify_successful_bid \n" +
+					"AFTER UPDATE ON Bid FOR EACH \n" +
+					"ROW BEGIN IF NEW.status = 'ACCEPTED' THEN \n" +
+					"INSERT INTO Notification(user_id, type, content) \n" +
+					"VALUES (NEW.user_id, 'Successful Bid', CONCAT('Your bid on auction ID ', NEW.auction_id, ' has been accepted.'));\n" +
+					"UPDATE Enthusiast SET balance = balance - NEW.price WHERE user_id = NEW.user_id; END IF; END;");
+			jdbcTemplate.execute("CREATE TRIGGER auction_completion \n" +
+					"AFTER UPDATE ON Auction FOR EACH ROW \n" +
+					"BEGIN DECLARE bidID INT;\n" +
+					"Select bid_id INTO bidID FROM Bid where auction_id = NEW.auction_id AND price = (SELECT MAX(price) FROM Bid WHERE auction_id = NEW.auction_id);\n" +
+					"IF NEW.status = 'finished' THEN \n" +
+					"INSERT INTO Notification(user_id, type, content) \n" +
+					"SELECT (select AR.artist_id from Auction AU, Artwork AR WHERE AU.artwork_id = AR.artwork_id AND AU.auction_id = NEW.auction_id), 'Auction End', CONCAT('Your auction for artwork ID ', ar.artwork_id, ' has ended. bidId:', bidID, ' bid:', (SELECT MAX(price) FROM Bid WHERE auction_id = NEW.auction_id))\n" +
+					"FROM Auction ar WHERE ar.auction_id = NEW.auction_id; END IF; END");
+			jdbcTemplate.execute("CREATE TRIGGER auction_request_notification \n" +
+					"AFTER UPDATE ON Auction FOR EACH ROW \n" +
+					"BEGIN DECLARE user_id INT; \n" +
+					"SELECT artist_id INTO user_id FROM Artwork WHERE artwork_id = NEW.artwork_id; \n" +
+					"IF NEW.status != 'finished' THEN\n" +
+					"INSERT INTO Notification(user_id, type, content)\n" +
+					"VALUES (user_id, 'Auction Request', CONCAT('Your auction request has been ', NEW.status));END IF; END;");
 			jdbcTemplate.execute("CREATE TRIGGER insert_notification_trigger AFTER INSERT ON Bid FOR EACH ROW BEGIN DECLARE auction_id_var INT;DECLARE user_id_var INT;DECLARE artwork_title VARCHAR(50);  SET auction_id_var = NEW.auction_id;SET user_id_var = NEW.user_id; SELECT title INTO artwork_title FROM Artwork WHERE artwork_id = (SELECT artwork_id FROM Auction WHERE auction_id = auction_id_var); IF (SELECT type FROM Auction WHERE auction_id = auction_id_var) = 'normal' THEN INSERT INTO Notification (user_id, type, content) SELECT DISTINCT user_id, 'Auction Placed', CONCAT('Another user has placed a bid price of ',NEW.price ,' on the same auction (', auction_id_var, ') Artwork title: ',artwork_title) FROM Bid WHERE auction_id = auction_id_var AND user_id != user_id_var;END IF;END;\n");
 			//jdbcTemplate.execute("create view Most_Favorite_Artworks AS WITH temp(artwork_id,favorite_count) AS (SELECT artwork_id, COUNT(*) FROM Favorite GROUP BY artwork_id) SELECT A.* FROM Artwork A, temp T, User U WHERE T.artwork_id = A.artwork_id AND A.artist_id = U.user_id AND A.is_featuring = TRUE ORDER BY T.favorite_count DESC;");
 			jdbcTemplate.execute("ALTER TABLE User ADD CONSTRAINT unique_email UNIQUE (email);");
