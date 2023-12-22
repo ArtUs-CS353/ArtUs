@@ -44,27 +44,45 @@ public class ArtusApplication implements CommandLineRunner{
 
 
 		try {
+			jdbcTemplate.execute(" CREATE TRIGGER notify_other_bidders_end_auction \n" +
+					"  AFTER UPDATE ON Bid FOR EACH ROW BEGIN\n" +
+					"   DECLARE auction_id_var INT;DECLARE user_id_var INT;DECLARE artwork_title VARCHAR(50);  \n" +
+					"   SET auction_id_var = NEW.auction_id;SET user_id_var = NEW.user_id; \n" +
+					"   SELECT title INTO artwork_title FROM Artwork WHERE artwork_id = (SELECT artwork_id FROM Auction WHERE auction_id = auction_id_var); \n" +
+					"   IF TRUE THEN \n" +
+					"   INSERT INTO Notification (user_id, type, content) SELECT DISTINCT user_id, 'End Auction'," +
+					"   CONCAT('Auction finished with price of ',NEW.price ,' Artwork title: ',artwork_title,' You are loser!') \n" +
+					"   FROM Bid WHERE auction_id = auction_id_var AND user_id != user_id_var;END IF;END;");
 			jdbcTemplate.execute("CREATE TRIGGER notify_successful_bid \n" +
 					"AFTER UPDATE ON Bid FOR EACH \n" +
-					"ROW BEGIN IF NEW.status = 'ACCEPTED' THEN \n" +
+					"ROW BEGIN IF NEW.status = 'approved' THEN \n" +
 					"INSERT INTO Notification(user_id, type, content) \n" +
-					"VALUES (NEW.user_id, 'Successful Bid', CONCAT('Your bid on auction ID ', NEW.auction_id, ' has been accepted.'));\n" +
-					"UPDATE Enthusiast SET balance = balance - NEW.price WHERE user_id = NEW.user_id; END IF; END;");
+					"VALUES (NEW.user_id, 'Successful Bid', CONCAT('Your bid on auction for artwork ',(select AR.title from Artwork AR, Auction AU where AU.artwork_id = AR.artwork_id AND AU.auction_id =  NEW.auction_id), ' has been accepted. You are the winner!'));\n" +
+					"UPDATE Enthusiast SET balance = balance - NEW.price WHERE user_id = NEW.user_id;" +
+					"INSERT INTO Owns(artwork_id,user_id) VALUES ((select artwork_id from Auction where auction_id = NEW.auction_id),NEW.user_id); END IF; END;");
+			jdbcTemplate.execute("CREATE TRIGGER notify_rejected_bid \n" +
+					"AFTER UPDATE ON Bid FOR EACH \n" +
+					"ROW BEGIN IF NEW.status = 'rejected' THEN \n" +
+					"INSERT INTO Notification(user_id, type, content) \n" +
+					"VALUES (NEW.user_id, 'Unsuccessful Bid', CONCAT('Your bid on auction for artwork ',(select AR.title from Artwork AR, Auction AU where AU.artwork_id = AR.artwork_id AND AU.auction_id =  NEW.auction_id), ' has been rejected. Artist did not accept your bid which was highest!'));\n" +
+					"UPDATE Enthusiast SET balance = balance - NEW.price WHERE user_id = NEW.user_id;" +
+					" END IF; END;");
 			jdbcTemplate.execute("CREATE TRIGGER auction_completion \n" +
 					"AFTER UPDATE ON Auction FOR EACH ROW \n" +
 					"BEGIN DECLARE bidID INT;\n" +
 					"Select bid_id INTO bidID FROM Bid where auction_id = NEW.auction_id AND price = (SELECT MAX(price) FROM Bid WHERE auction_id = NEW.auction_id);\n" +
 					"IF NEW.status = 'finished' THEN \n" +
 					"INSERT INTO Notification(user_id, type, content) \n" +
-					"SELECT (select AR.artist_id from Auction AU, Artwork AR WHERE AU.artwork_id = AR.artwork_id AND AU.auction_id = NEW.auction_id), 'Auction End', CONCAT('Your auction for artwork ID ', ar.artwork_id, ' has ended. bidId:', bidID, ' bid:', (SELECT MAX(price) FROM Bid WHERE auction_id = NEW.auction_id))\n" +
+					"SELECT (select AR.artist_id from Auction AU, Artwork AR WHERE AU.artwork_id = AR.artwork_id AND AU.auction_id = NEW.auction_id), " +
+					"'Auction End', CONCAT('Your auction for artwork: ',(select title from artwork where artwork_id = NEW.artwork_id) ,' has ended. bidId:', bidID, ' bid:', (SELECT MAX(price) FROM Bid WHERE auction_id = NEW.auction_id))" +
 					"FROM Auction ar WHERE ar.auction_id = NEW.auction_id; END IF; END");
 			jdbcTemplate.execute("CREATE TRIGGER auction_request_notification \n" +
 					"AFTER UPDATE ON Auction FOR EACH ROW \n" +
 					"BEGIN DECLARE user_id INT; \n" +
 					"SELECT artist_id INTO user_id FROM Artwork WHERE artwork_id = NEW.artwork_id; \n" +
-					"IF NEW.status != 'finished' THEN\n" +
+					"IF NEW.status != 'finished' OR NEW.status != 'positive' THEN\n" +
 					"INSERT INTO Notification(user_id, type, content)\n" +
-					"VALUES (user_id, 'Auction Request', CONCAT('Your auction request has been ', NEW.status));END IF; END;");
+					"VALUES (user_id, 'Auction Request', CONCAT('Your auction request for artwork: ',(select title from artwork where artwork_id = NEW.artwork_id) ,' request has been ', NEW.status));END IF; END;");
 			jdbcTemplate.execute("CREATE TRIGGER insert_notification_trigger AFTER INSERT ON Bid FOR EACH ROW BEGIN DECLARE auction_id_var INT;DECLARE user_id_var INT;DECLARE artwork_title VARCHAR(50);  SET auction_id_var = NEW.auction_id;SET user_id_var = NEW.user_id; SELECT title INTO artwork_title FROM Artwork WHERE artwork_id = (SELECT artwork_id FROM Auction WHERE auction_id = auction_id_var); IF (SELECT type FROM Auction WHERE auction_id = auction_id_var) = 'normal' THEN INSERT INTO Notification (user_id, type, content) SELECT DISTINCT user_id, 'Auction Placed', CONCAT('Another user has placed a bid price of ',NEW.price ,' on the same auction (', auction_id_var, ') Artwork title: ',artwork_title) FROM Bid WHERE auction_id = auction_id_var AND user_id != user_id_var;END IF;END;\n");
 			//jdbcTemplate.execute("create view Most_Favorite_Artworks AS WITH temp(artwork_id,favorite_count) AS (SELECT artwork_id, COUNT(*) FROM Favorite GROUP BY artwork_id) SELECT A.* FROM Artwork A, temp T, User U WHERE T.artwork_id = A.artwork_id AND A.artist_id = U.user_id AND A.is_featuring = TRUE ORDER BY T.favorite_count DESC;");
 			jdbcTemplate.execute("ALTER TABLE User ADD CONSTRAINT unique_email UNIQUE (email);");
@@ -87,24 +105,24 @@ public class ArtusApplication implements CommandLineRunner{
 			jdbcTemplate.execute("CREATE TRIGGER delete_artwork_data BEFORE DELETE ON Artwork FOR EACH ROW BEGIN  DELETE FROM Auction WHERE artwork_id = OLD.artwork_id; END;");
 			jdbcTemplate.execute("CREATE TRIGGER delete_enthusiast_data BEFORE DELETE ON Enthusiast FOR EACH ROW BEGIN DELETE FROM Follow WHERE enthusiast_id = OLD.user_id; DELETE FROM Favorite WHERE user_id = OLD.user_id; DELETE FROM Owns WHERE user_id = OLD.user_id; DELETE FROM Purchase WHERE user_id = OLD.user_id; DELETE FROM Bid WHERE user_id = OLD.user_id;END;");
 			jdbcTemplate.execute("CREATE TRIGGER notify_artwork_purchase AFTER INSERT ON Purchase FOR EACH ROW BEGIN INSERT INTO Notification(user_id, type, content)  VALUES (NEW.user_id, 'Purchase', CONCAT('You have successfully purchased artwork ID ', NEW.artwork_id)); END;");
-			jdbcTemplate.execute("CREATE TRIGGER notify_successful_bid AFTER UPDATE ON Bid FOR EACH ROW BEGIN IF NEW.status = 'ACCEPTED' THEN INSERT INTO Notification(user_id, type, content) VALUES (NEW.user_id, 'Successful Bid', CONCAT('Your bid on auction ID ', NEW.auction_id, ' has been accepted.')); END IF; END;");
+			//jdbcTemplate.execute("CREATE TRIGGER notify_successful_bid AFTER UPDATE ON Bid FOR EACH ROW BEGIN IF NEW.status = 'ACCEPTED' THEN INSERT INTO Notification(user_id, type, content) VALUES (NEW.user_id, 'Successful Bid', CONCAT('Your bid on auction ID ', NEW.auction_id, ' has been accepted.')); END IF; END;");
 			jdbcTemplate.execute("CREATE TRIGGER notify_unsuccessful_bid AFTER UPDATE ON Bid FOR EACH ROW BEGIN IF NEW.status = 'REJECTED' THEN INSERT INTO Notification(user_id, type, content) VALUES (NEW.user_id, 'Bid Status', CONCAT('Your bid for auction ID ', NEW.auction_id, ' has been rejected.')); END IF; END;");
 			jdbcTemplate.execute("CREATE TRIGGER increment_follower_count AFTER INSERT ON Follow FOR EACH ROW BEGIN UPDATE Artist SET follower_count = follower_count + 1 WHERE user_id = NEW.artist_id; END;");
 			jdbcTemplate.execute("CREATE TRIGGER decrement_follower_count AFTER DELETE ON Follow FOR EACH ROW BEGIN UPDATE Artist SET follower_count = follower_count - 1 WHERE user_id = OLD.artist_id; END;");
 			jdbcTemplate.execute("CREATE TRIGGER increment_favorite_count AFTER INSERT ON Favorite FOR EACH ROW BEGIN UPDATE Artwork SET favorite_count = favorite_count + 1 WHERE artwork_id = NEW.artwork_id; END;");
 			jdbcTemplate.execute("CREATE TRIGGER decrement_favorite_count AFTER DELETE ON Favorite FOR EACH ROW BEGIN UPDATE Artwork SET favorite_count = favorite_count - 1 WHERE artwork_id = OLD.artwork_id; END;");
 			jdbcTemplate.execute("CREATE TRIGGER validate_artwork_availability BEFORE INSERT ON Purchase FOR EACH ROW BEGIN DECLARE available BOOLEAN; SELECT COUNT(*) INTO available FROM Artwork WHERE artwork_id = NEW.artwork_id AND status = 'sale'; IF NOT available THEN SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Artwork is not available for purchase'; END IF; END;");
-			jdbcTemplate.execute("CREATE TRIGGER update_artwork_status_after_purchase AFTER INSERT ON Purchase FOR EACH ROW BEGIN UPDATE Artwork SET status = 'sold', WHERE artwork_id = NEW.artwork_id; END;");
+			jdbcTemplate.execute("CREATE TRIGGER update_artwork_status_after_purchase AFTER INSERT ON Purchase FOR EACH ROW BEGIN UPDATE Artwork SET status = 'sold' WHERE artwork_id = NEW.artwork_id; END;");
 			jdbcTemplate.execute("CREATE TRIGGER after_favorite_insert AFTER INSERT ON Favorite FOR EACH ROW BEGIN DECLARE artistUserID INT; SELECT artist_id INTO artistUserID FROM Artwork WHERE artwork_id = NEW.artwork_id; INSERT INTO Notification(user_id, type, content) VALUES (artistUserID, 'favorite', CONCAT('Your artwork with ID ', NEW.artwork_id, ' has been favorited.')); END;");
-			jdbcTemplate.execute("CREATE TRIGGER after_owns_insert AFTER INSERT ON Owns FOR EACH ROW BEGIN DECLARE artistUserID INT; SELECT artist_id INTO artistUserID FROM Artwork WHERE artwork_id = NEW.artwork_id; INSERT INTO Notification(user_id, type, content) VALUES (artistUserID, 'collection_add', CONCAT('Your artwork with ID ', NEW.artwork_id, ' has been added to a collection.')); END;");
+			jdbcTemplate.execute("CREATE TRIGGER after_owns_insert AFTER INSERT ON Owns FOR EACH ROW BEGIN DECLARE artistUserID INT; SELECT artist_id INTO artistUserID FROM Artwork WHERE artwork_id = NEW.artwork_id; INSERT INTO Notification(user_id, type, content) VALUES (artistUserID, 'collection_add', CONCAT('Your artwork with title: ', (select title from Artwork where artwork_id = NEW.artwork_id), ' has been added to a collection.')); END;");
 			jdbcTemplate.execute("CREATE TRIGGER after_includes_insert AFTER INSERT ON Includes FOR EACH ROW BEGIN DECLARE artistUserID INT; SELECT artist_id INTO artistUserID FROM Artwork WHERE artwork_id = NEW.artwork_id; INSERT INTO Notification(user_id, type, content) VALUES (artistUserID, 'exhibition_add', CONCAT('Your artwork with ID ', NEW.artwork_id, ' has been added to an exhibition.')); END;");
 			jdbcTemplate.execute("CREATE TRIGGER ValidateEnthusiastBalanceBeforePurchase BEFORE INSERT ON Purchase FOR EACH ROW BEGIN DECLARE currentBalance NUMERIC(11,2); SELECT balance INTO currentBalance FROM Enthusiast WHERE user_id = NEW.user_id; IF currentBalance < NEW.price THEN SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Insufficient balance for this purchase'; END IF; END;");
 			jdbcTemplate.execute("CREATE TRIGGER decrease_enthusiast_balance AFTER INSERT ON Purchase FOR EACH ROW BEGIN UPDATE Enthusiast SET balance = balance - NEW.price WHERE user_id = NEW.user_id; END;");
 			jdbcTemplate.execute("CREATE TRIGGER ValidateEnthusiastBalanceBeforeBid BEFORE INSERT ON Bid FOR EACH ROW BEGIN DECLARE currentBalance NUMERIC(11,2); SELECT balance INTO currentBalance FROM Enthusiast WHERE user_id = NEW.user_id; IF currentBalance < NEW.price THEN SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Insufficient balance for placing this bid'; END IF; END;");
 			jdbcTemplate.execute("CREATE TRIGGER notify_highest_bidder_after_auction_end AFTER UPDATE ON Auction FOR EACH ROW BEGIN DECLARE highestBidderID int; DECLARE highestBidAmount DOUBLE; IF OLD.end_date != NEW.end_date AND NEW.end_date < NOW() THEN SELECT user_id, MAX(price) INTO highestBidderID, highestBidAmount FROM Bid WHERE auction_id = NEW.auction_id GROUP BY user_id ORDER BY MAX(price) DESC LIMIT 1; INSERT INTO Notification (user_id, type, content) VALUES (highestBidderID, 'Auction Won', CONCAT('You have the highest bid of ', highestBidAmount, ' for auction ID ', NEW.auction_id, '. Please proceed to purchase.')); END IF; END;");
-			jdbcTemplate.execute("CREATE TRIGGER auction_request_notification AFTER UPDATE ON Auction FOR EACH ROW BEGIN DECLARE user_id INT; SELECT artist_id INTO user_id FROM Artwork WHERE artwork_id = NEW.artwork_id; INSERT INTO Notification(user_id, type, content) VALUES (user_id, 'Auction Request', CONCAT('Your auction request has been ', NEW.status)); END;");
-			jdbcTemplate.execute("CREATE TRIGGER NotifyBidEnthusiastBidStatusChange AFTER UPDATE ON Bid FOR EACH ROW BEGIN IF OLD.status <> NEW.status THEN INSERT INTO Notification(user_id, type, content) VALUES (NEW.user_id, 'Bid Request', CONCAT('Your bid request has been ', NEW.status, '.'));  END IF; END;");
-			jdbcTemplate.execute("CREATE TRIGGER auction_completion AFTER UPDATE ON Auction FOR EACH ROW BEGIN IF  NEW.end_date < NOW() THEN INSERT INTO Notification(user_id, notification_id, type, content) SELECT ar.auction_id, NULL, 'Auction End', CONCAT('Your auction for artwork ID ', ar.artwork_id, ' has ended.') FROM Auction ar WHERE ar.auction_id = NEW.auction_id; END IF; END\n");
+			//jdbcTemplate.execute("CREATE TRIGGER auction_request_notification AFTER UPDATE ON Auction FOR EACH ROW BEGIN DECLARE user_id INT; SELECT artist_id INTO user_id FROM Artwork WHERE artwork_id = NEW.artwork_id; INSERT INTO Notification(user_id, type, content) VALUES (user_id, 'Auction Request', CONCAT('Your auction request has been ', NEW.status)); END;");
+			//jdbcTemplate.execute("CREATE TRIGGER NotifyBidEnthusiastBidStatusChange AFTER UPDATE ON Bid FOR EACH ROW BEGIN IF OLD.status <> NEW.status THEN INSERT INTO Notification(user_id, type, content) VALUES (NEW.user_id, 'Bid Request', CONCAT('Your bid request has been ', NEW.status, '.'));  END IF; END;");
+			//jdbcTemplate.execute("CREATE TRIGGER auction_completion AFTER UPDATE ON Auction FOR EACH ROW BEGIN IF NEW.status = 'finished' THEN INSERT INTO Notification(user_id, notification_id, type, content) SELECT ar.auction_id, NULL, 'Auction End', CONCAT('Your auction for artwork ID ', ar.artwork_id, ' has ended.') FROM Auction ar WHERE ar.auction_id = NEW.auction_id; END IF; END\n");
 			System.out.println("Tables, constraints, and triggers created.");
 		}catch (Exception exception){
 			System.out.println("Error occured while creating trigger or constraint. Check it (You may ignore it):"+exception.getMessage());

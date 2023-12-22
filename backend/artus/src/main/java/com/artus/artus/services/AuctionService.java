@@ -204,7 +204,7 @@ private final ArtworkService artworkService;
             if(!auction.getStatus().equals("finished")){
                 String delete = "Update Auction set status = 'finished'  where auction_id =?";
                 jdbcTemplate.update(delete, auctionId);
-                String sql = "SELECT * FROM Artwork AR, Auction AU WHERE AU.auction_id = ? and AU.artwork_id = AR.artwork_id";
+                String sql = "SELECT AR.* FROM Artwork AR, Auction AU WHERE AU.auction_id = ? and AU.artwork_id = AR.artwork_id";
                 Artwork artwork = jdbcTemplate.query(sql, new ArtworkMapper(), auctionId).get(0);
                 artworkService.changeArtworkStatus(artwork.getArtwork_id(),"waiting for auction");
                 return true;
